@@ -14,19 +14,27 @@
 CPlayerInfo *CPlayerInfo::s_instance = 0;
 
 CPlayerInfo::CPlayerInfo(void)
-	: m_dSpeed(40.0)
-	, m_dAcceleration(10.0)
-	, m_bJumpUpwards(false)
-	, m_dJumpSpeed(10.0)
-	, m_dJumpAcceleration(-10.0)
-	, m_bFallDownwards(false)
-	, m_dFallSpeed(0.0)
-	, m_dFallAcceleration(-10.0)
-	, attachedCamera(NULL)
+//	, m_dAcceleration(10.0)
+//	, m_bJumpUpwards(false)
+//	, m_dJumpSpeed(10.0)
+//	, m_dJumpAcceleration(-10.0)
+//	, m_bFallDownwards(false)
+//	, m_dFallSpeed(0.0)
+//	, m_dFallAcceleration(-10.0)
+	: attachedCamera(NULL)
+    , m_dSpeed(40.0)
 	, m_pTerrain(NULL)
 	, primaryWeapon(NULL)
 	, secondaryWeapon(NULL)
 {
+    m_eyeLevel = m_STAND_EYELEVEL;
+    m_speed = 0.f;
+    m_jumpSpeed = 0.f;
+    m_gravity = -100.f;
+    m_jumpHeight = 0.f;
+
+    m_movementState = MOVEMENT_STATE_IDLE;
+    m_heightState = HEIGHT_STATE_STANDING;
 }
 
 CPlayerInfo::~CPlayerInfo(void)
@@ -71,55 +79,6 @@ void CPlayerInfo::Init(void)
 	secondaryWeapon->Init();
 }
 
-// Returns true if the player is on ground
-bool CPlayerInfo::isOnGround(void)
-{
-	if (m_bJumpUpwards == false && m_bFallDownwards == false)
-		return true;
-
-	return false;
-}
-
-// Returns true if the player is jumping upwards
-bool CPlayerInfo::isJumpUpwards(void)
-{
-	if (m_bJumpUpwards == true && m_bFallDownwards == false)
-		return true;
-
-	return false;
-}
-
-// Returns true if the player is on freefall
-bool CPlayerInfo::isFreeFall(void)
-{
-	if (m_bJumpUpwards == false && m_bFallDownwards == true)
-		return true;
-
-	return false;
-}
-
-// Set the player's status to free fall mode
-void CPlayerInfo::SetOnFreeFall(bool isOnFreeFall)
-{
-	if (isOnFreeFall == true)
-	{
-		m_bJumpUpwards = false;
-		m_bFallDownwards = true;
-		m_dFallSpeed = 0.0;
-	}
-}
-
-// Set the player to jumping upwards
-void CPlayerInfo::SetToJumpUpwards(bool isOnJumpUpwards)
-{
-	if (isOnJumpUpwards == true)
-	{
-		m_bJumpUpwards = true;
-		m_bFallDownwards = false;
-		m_dJumpSpeed = 4.0;
-	}
-}
-
 // Set position
 void CPlayerInfo::SetPos(const Vector3& pos)
 {
@@ -136,18 +95,6 @@ void CPlayerInfo::SetTarget(const Vector3& target)
 void CPlayerInfo::SetUp(const Vector3& up)
 {
 	this->up = up;
-}
-
-// Set m_dJumpAcceleration of the player
-void CPlayerInfo::SetJumpAcceleration(const double m_dJumpAcceleration)
-{
-	this->m_dJumpAcceleration = m_dJumpAcceleration;
-}
-
-// Set Fall Acceleration of the player
-void CPlayerInfo::SetFallAcceleration(const double m_dFallAcceleration)
-{
-	this->m_dFallAcceleration = m_dFallAcceleration;
 }
 
 // Set the boundary for the player info
@@ -168,14 +115,7 @@ void CPlayerInfo::SetTerrain(GroundEntity* m_pTerrain)
 	}
 }
 
-// Stop the player's movement
-void CPlayerInfo::StopVerticalMovement(void)
-{
-	m_bJumpUpwards = false;
-	m_bFallDownwards = false;
-}
-
-// Reset this player instance to default
+// ` this player instance to default
 void CPlayerInfo::Reset(void)
 {
 	// Set the current values to default values
@@ -183,8 +123,14 @@ void CPlayerInfo::Reset(void)
 	target = defaultTarget;
 	up = defaultUp;
 
-	// Stop vertical movement too
-	StopVerticalMovement();
+    m_eyeLevel = m_STAND_EYELEVEL;
+    m_speed = 0.f;
+    m_jumpSpeed = 0.f;
+    m_gravity = -100.f;
+    m_jumpHeight = 0.f;
+
+    m_movementState = MOVEMENT_STATE_IDLE;
+    m_heightState = HEIGHT_STATE_STANDING;
 }
 
 // Get position x of the player
@@ -204,71 +150,14 @@ Vector3 CPlayerInfo::GetUp(void) const
 	return up;
 }
 
-// Get m_dJumpAcceleration of the player
-double CPlayerInfo::GetJumpAcceleration(void) const
-{
-	return m_dJumpAcceleration;
-}
-
 // Get the terrain for the player info
 GroundEntity* CPlayerInfo::GetTerrain(void)
 {
 	return m_pTerrain;
 }
 
-// Update Jump Upwards
-void CPlayerInfo::UpdateJumpUpwards(double dt)
-{
-	if (m_bJumpUpwards == false)
-		return;
-
-	// Update position and target y values
-	// Use SUVAT equation to update the change in position and target
-	// s = u * t + 0.5 * a * t ^ 2
-	position.y += (float)(m_dJumpSpeed * dt + 0.5 * m_dJumpAcceleration * dt * dt);
-	target.y += (float)(m_dJumpSpeed*dt + 0.5 * m_dJumpAcceleration * dt * dt);
-	// Use this equation to calculate final velocity, v
-	// SUVAT: v = u + a * t;
-	// v is m_dJumpSpeed AFTER updating using SUVAT where u is the initial speed and is equal to m_dJumpSpeed
-	m_dJumpSpeed = m_dJumpSpeed + m_dJumpAcceleration * dt;
-	// Check if the jump speed is less than zero, then it should be falling
-	if (m_dJumpSpeed < 0.0)
-	{
-		m_dJumpSpeed = 0.0;
-		m_bJumpUpwards = false;
-		m_dFallSpeed = 0.0;
-		m_bFallDownwards = true;
-	}
-}
-
-// Update FreeFall
-void CPlayerInfo::UpdateFreeFall(double dt)
-{
-	if (m_bFallDownwards == false)
-		return;
-
-	// Update position and target y values
-	// Use SUVAT equation to update the change in position and target
-	// s = u * t + 0.5 * a * t ^ 2
-	position.y += (float)(m_dFallSpeed * dt + 0.5 * m_dJumpAcceleration * dt * dt);
-	target.y += (float)(m_dFallSpeed * dt + 0.5 * m_dJumpAcceleration * dt * dt);
-	// Use this equation to calculate final velocity, v
-	// SUVAT: v = u + a * t;
-	// v is m_dJumpSpeed AFTER updating using SUVAT where u is the initial speed and is equal to m_dJumpSpeed
-	m_dFallSpeed = m_dFallSpeed + m_dFallAcceleration * dt;
-	// Check if the jump speed is below terrain, then it should be reset to terrain height
-	if (position.y < m_pTerrain->GetTerrainHeight(position))
-	{
-		Vector3 viewDirection = target - position;
-		position.y = m_pTerrain->GetTerrainHeight(position);
-		target = position + viewDirection;
-		m_dFallSpeed = 0.0;
-		m_bFallDownwards = false;
-	}
-}
-
 /********************************************************************************
- Hero Update
+ Update
  ********************************************************************************/
 void CPlayerInfo::Update(double dt)
 {
@@ -278,45 +167,146 @@ void CPlayerInfo::Update(double dt)
 	double camera_yaw = mouse_diff_x * 0.0174555555555556;		// 3.142 / 180.0
 	double camera_pitch = mouse_diff_y * 0.0174555555555556;	// 3.142 / 180.0
 
+    m_movementState = MOVEMENT_STATE_IDLE;
+    velocity.SetZero(); // get the velocity every frame
+
+    Vector3 viewVector = target - position;
+    viewVector.y = 0.f;
+    viewVector.Normalize();
+
 	// Update the position if the WASD buttons were activated
 	if (KeyboardController::GetInstance()->IsKeyDown('W') ||
 		KeyboardController::GetInstance()->IsKeyDown('A') ||
 		KeyboardController::GetInstance()->IsKeyDown('S') ||
 		KeyboardController::GetInstance()->IsKeyDown('D'))
 	{
-		Vector3 viewVector = target - position;
-		Vector3 rightUV;
+        m_movementState = MOVEMENT_STATE_WALK;
+
 		if (KeyboardController::GetInstance()->IsKeyDown('W'))
 		{
-            float y = position.y;
-            position += viewVector.Normalized() * (float)m_dSpeed * (float)dt;
-            position.y = y;
+            velocity += viewVector.Normalized();
 		}
 		else if (KeyboardController::GetInstance()->IsKeyDown('S'))
 		{
-            float y = position.y;
-			position -= viewVector.Normalized() * (float)m_dSpeed * (float)dt;
-            position.y = y;
+            velocity -= viewVector.Normalized();
 		}
 		if (KeyboardController::GetInstance()->IsKeyDown('A'))
 		{
-			rightUV = (viewVector.Normalized()).Cross(up);
-			rightUV.y = 0;
-			rightUV.Normalize();
-			position -= rightUV * (float)m_dSpeed * (float)dt;
+            Vector3 right = viewVector.Cross(up);
+            right.y = 0;
+            right.Normalize();
+            velocity -= right;
 		}
 		else if (KeyboardController::GetInstance()->IsKeyDown('D'))
 		{
-			rightUV = (viewVector.Normalized()).Cross(up);
-			rightUV.y = 0;
-			rightUV.Normalize();
-			position += rightUV * (float)m_dSpeed * (float)dt;
+            Vector3 right = viewVector.Cross(up);
+            right.y = 0;
+            right.Normalize();
+            velocity += right;
 		}
-		// Constrain the position
-		Constrain();
-		// Update the target
-		target = position + viewVector;
 	}
+
+    if (velocity.LengthSquared() > Math::EPSILON)
+    {
+        velocity.Normalize();
+        m_prevVelocity = velocity;
+    }
+    if (KeyboardController::GetInstance()->IsKeyPressed(VK_CONTROL))
+    {
+        if (m_heightState == HEIGHT_STATE_STANDING)
+            Crouch();
+        else if (m_heightState == HEIGHT_STATE_CROUCH)
+            StandUp();
+    }
+    if (KeyboardController::GetInstance()->IsKeyDown(VK_SPACE))
+    {
+        Jump();
+    }
+    if (KeyboardController::GetInstance()->IsKeyDown(VK_SHIFT) && m_heightState == HEIGHT_STATE_STANDING)
+    {
+        if (m_movementState != MOVEMENT_STATE_IDLE) {
+            m_movementState = MOVEMENT_STATE_RUN;
+        }
+    }
+
+    if (m_heightState == HEIGHT_STATE_CROUCH)
+    {
+        m_movementState = MOVEMENT_STATE_CROUCH;
+    }
+
+    switch (m_movementState)
+    {
+    case MOVEMENT_STATE_IDLE:
+        //speed = 0;
+        if (m_speed != 0.f)
+        {
+            m_speed -= 100.f * (float)(dt);
+            if (m_speed < 0.f)
+                m_speed = 0.f;
+        }
+        velocity = m_prevVelocity;
+        break;
+
+    case MOVEMENT_STATE_CROUCH:
+        //speed = 5.f;
+        if (m_speed > 5.f)
+        {
+            m_speed -= 30.f * (float)(dt);
+            if (m_speed < 5.f)
+                m_speed = 5.f;
+        }
+        else if (m_speed < 5.f)
+        {
+            m_speed += 30.f * (float)(dt);
+            if (m_speed > 5.f)
+                m_speed = 5.f;
+        }
+        break;
+
+    case MOVEMENT_STATE_WALK:
+        //speed = 20.f;
+        if (m_speed > 20.f)
+        {
+            m_speed -= 40.f * (float)(dt);
+            if (m_speed < 20.f)
+                m_speed = 20.f;
+        }
+        else if (m_speed < 20.f)
+        {
+            m_speed += 40.f * (float)(dt);
+            if (m_speed > 20.f)
+                m_speed = 20.f;
+        }
+        break;
+
+    case MOVEMENT_STATE_RUN:
+        //speed = 60.f;
+        if (m_speed > 60.f)
+        {
+            m_speed -= 60.f * (float)(dt);
+            if (m_speed < 60.f)
+                m_speed = 60.f;
+        }
+        else if (m_speed < 60.f)
+        {
+            m_speed += 60.f * (float)(dt);
+            if (m_speed > 60.f)
+                m_speed = 60.f;
+        }
+        break;
+    }
+
+    position += velocity * m_speed * (float)(dt);
+    UpdatePlayerHeight(dt);
+
+    // Constrain the position
+    Constrain();
+    // Update the target
+    target = position + viewVector;
+
+    //************************************
+    // VIEW
+    //************************************
 
 	// Rotate the view direction
 	if (KeyboardController::GetInstance()->IsKeyDown(VK_LEFT) ||
@@ -405,13 +395,6 @@ void CPlayerInfo::Update(double dt)
 		}
 	}
 
-	// If the user presses SPACEBAR, then make him jump
-	if (KeyboardController::GetInstance()->IsKeyDown(VK_SPACE) &&
-		position.y == m_pTerrain->GetTerrainHeight(position))
-	{
-		SetToJumpUpwards(true);
-	}
-
 	// Update the weapons
 	if (KeyboardController::GetInstance()->IsKeyReleased('R'))
 	{
@@ -443,15 +426,10 @@ void CPlayerInfo::Update(double dt)
 			secondaryWeapon->Discharge(position, target, this);
 	}
 
-	// If the user presses R key, then reset the view to default values
+	// If the user presses P key, then reset the view to default values
 	if (KeyboardController::GetInstance()->IsKeyDown('P'))
 	{
 		Reset();
-	}
-	else
-	{
-		UpdateJumpUpwards(dt);
-		UpdateFreeFall(dt);
 	}
 
 	// If a camera is attached to this playerInfo class, then update it
@@ -463,13 +441,106 @@ void CPlayerInfo::Update(double dt)
 	}
 }
 
+void CPlayerInfo::UpdatePlayerHeight(const double dt)
+{
+    switch (m_heightState)
+    {
+    case HEIGHT_STATE_STANDING:
+        UpdateStandUp(dt);
+        break;
+
+    case HEIGHT_STATE_CROUCH:
+        UpdateCrouch(dt);
+        break;
+
+    case HEIGHT_STATE_JUMP:
+        UpdateJump(dt);
+        break;
+    }
+    position.y = m_eyeLevel + m_jumpHeight;
+}
+
+
+void CPlayerInfo::Crouch()
+{
+    if (m_heightState != HEIGHT_STATE_CROUCH && m_eyeLevel == m_STAND_EYELEVEL)
+    {
+        m_heightState = HEIGHT_STATE_CROUCH;
+    }
+
+    if (m_heightState == HEIGHT_STATE_CROUCH && m_eyeLevel == m_CROUCH_EYELEVEL)
+    {
+        m_heightState = HEIGHT_STATE_STANDING;
+    }
+}
+
+void CPlayerInfo::StandUp()
+{
+    if (m_heightState != HEIGHT_STATE_STANDING && m_eyeLevel == m_CROUCH_EYELEVEL)
+    {
+        m_heightState = HEIGHT_STATE_STANDING;
+    }
+}
+
+void CPlayerInfo::Jump()
+{
+    if (m_heightState != HEIGHT_STATE_JUMP) {
+        m_heightState = HEIGHT_STATE_JUMP;
+
+        m_jumpSpeed = 30.f;    //dt not needed
+    }
+}
+
+void CPlayerInfo::UpdateStandUp(const double dt)
+{
+    if (m_eyeLevel < 25.f)
+    {
+        m_eyeLevel += (float)(20.f * dt);
+        m_eyeLevel = Math::Min(m_STAND_EYELEVEL, m_eyeLevel);
+    }
+}
+
+void CPlayerInfo::UpdateCrouch(const double dt)
+{
+    m_eyeLevel -= (float)(20.f * dt);
+    m_eyeLevel = Math::Max(m_CROUCH_EYELEVEL, m_eyeLevel);
+}
+
+void CPlayerInfo::UpdateJump(const double dt)
+{
+    // Factor in gravity
+    m_jumpSpeed += (float)(m_gravity * dt);
+
+    // Update camera and target position
+
+    m_jumpHeight += m_jumpSpeed * (float)dt;
+
+    // Check if camera reached the ground
+    float newHeight = position.y + m_jumpHeight;  //player would be in the ground already
+    if (newHeight + 1.f <= position.y)
+    {
+        // Camera landing on ground
+        position.y = newHeight;
+
+        //when landing, reduce MoveVel (impact)
+        //m_speed = Math::Max(0.f, m_speed - 20.f);
+
+        // Reset values
+        m_jumpSpeed = 0.f;
+        m_heightState = HEIGHT_STATE_STANDING;
+        m_jumpHeight = 0.f;
+    }
+}
+
 // Constrain the position within the borders
 void CPlayerInfo::Constrain(void)
 {
 	// Constrain player within the boundary
 	if (position.x > maxBoundary.x - 1.0f)
 		position.x = maxBoundary.x - 1.0f;
-	//if (position.y > maxBoundary.y - 1.0f)
+	//if (position.y > maxBoundary.y - 1.0f)// Returns true if the player is on ground
+    bool isOnGround(void);
+    bool IsJumping();
 	//	position.y = maxBoundary.y - 1.0f;
 	if (position.z > maxBoundary.z - 1.0f)
 		position.z = maxBoundary.z - 1.0f;
@@ -481,12 +552,12 @@ void CPlayerInfo::Constrain(void)
 		position.z = minBoundary.z + 1.0f;
 
 	// if the player is not jumping nor falling, then adjust his y position
-	if ((m_bJumpUpwards == false) && (m_bFallDownwards == false))
+	if (m_heightState != HEIGHT_STATE_JUMP)
 	{
 		// if the y position is not equal to terrain height at that position, 
 		// then update y position to the terrain height
 		if (position.y != m_pTerrain->GetTerrainHeight(position))
-			position.y = m_pTerrain->GetTerrainHeight(position);
+			position.y = m_pTerrain->GetTerrainHeight(position) + m_eyeLevel;
 	}
 }
 
