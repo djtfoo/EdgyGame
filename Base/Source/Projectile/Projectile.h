@@ -9,8 +9,9 @@ class CPlayerInfo;
 class CProjectile : public EntityBase, public CCollider
 {
 public:
-	CProjectile(void);
-	CProjectile(Mesh* _modelMesh);
+	//CProjectile(void);
+	//CProjectile(Mesh* _modelMesh);
+    CProjectile(Mesh* _modelMesh, string name = "");
 	~CProjectile(void);
 public:
 	// Activate the projectile. true == active, false == inactive

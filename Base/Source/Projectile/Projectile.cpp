@@ -5,23 +5,36 @@
 #include "GraphicsManager.h"
 #include "RenderHelper.h"
 
-CProjectile::CProjectile(void)
-	: modelMesh(NULL)
-	, m_bStatus(false)
-	, theDirection(0, 0, 0)
-	, m_fLifetime(-1.0f)
-	, m_fSpeed(10.0f)
-	, theSource(NULL)
-{
-}
+//CProjectile::CProjectile(void)
+//	: modelMesh(NULL)
+//	, m_bStatus(false)
+//	, theDirection(0, 0, 0)
+//	, m_fLifetime(-1.0f)
+//	, m_fSpeed(10.0f)
+//	, theSource(NULL)
+//    , EntityBase("Projectile")
+//{
+//}
+//
+//CProjectile::CProjectile(Mesh* _modelMesh)
+//	: modelMesh(_modelMesh)
+//	, m_bStatus(false)
+//	, theDirection(0, 0, 0)
+//	, m_fLifetime(-1)
+//	, m_fSpeed(10.0f)
+//	, theSource(NULL)
+//    , EntityBase("Projectile")
+//{
+//}
 
-CProjectile::CProjectile(Mesh* _modelMesh)
+CProjectile::CProjectile(Mesh* _modelMesh, string name)
 	: modelMesh(_modelMesh)
 	, m_bStatus(false)
 	, theDirection(0, 0, 0)
 	, m_fLifetime(-1)
 	, m_fSpeed(10.0f)
 	, theSource(NULL)
+    , EntityBase("Projectile")
 {
 }
 

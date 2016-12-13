@@ -173,7 +173,7 @@ void SceneText::Init()
     MeshBuilder::GetInstance()->GenerateOBJ("high_res_cube", "OBJ//cube_high_res.obj");
     MeshBuilder::GetInstance()->GetMesh("high_res_cube")->textureID = LoadTGA("Image//Cube//cube_high_res_UV.tga");
     MeshBuilder::GetInstance()->GenerateOBJ("med_res_cube", "OBJ//cube_low_res.obj");
-    MeshBuilder::GetInstance()->GetMesh("med_res_cube")->textureID = LoadTGA("Image//Cube//cube_low_res_UV.tga");
+    MeshBuilder::GetInstance()->GetMesh("med_res_cube")->textureID = LoadTGA("Image//Cube//cube_med_res_UV.tga");
     MeshBuilder::GetInstance()->GenerateOBJ("low_res_cube", "OBJ//cube_low_res.obj");
     MeshBuilder::GetInstance()->GetMesh("low_res_cube")->textureID = LoadTGA("Image//Cube//cube_low_res_UV.tga");
 

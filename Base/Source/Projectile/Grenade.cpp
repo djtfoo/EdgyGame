@@ -13,16 +13,16 @@
 #include <iostream>
 using namespace std;
 
-CGrenade::CGrenade(void)
-	: CProjectile(NULL)
-	, m_fGravity(-10.0f)
-	, m_fElapsedTime(0.0f)
-	, m_pTerrain(NULL)
-{
-}
+//CGrenade::CGrenade(void)
+//	: CProjectile(NULL)
+//	, m_fGravity(-10.0f)
+//	, m_fElapsedTime(0.0f)
+//	, m_pTerrain(NULL)
+//{
+//}
 
 CGrenade::CGrenade(Mesh* _modelMesh)
-	: CProjectile(_modelMesh)
+	: CProjectile(_modelMesh, "Grenade")
 	, m_fGravity(-10.0f)
 	, m_fElapsedTime(0.0f)
 	, m_pTerrain(NULL)

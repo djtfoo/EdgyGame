@@ -9,17 +9,17 @@
 #include <iostream>
 using namespace std;
 
-CLaser::CLaser(void)
-	: CProjectile(NULL)
-	, m_fLength(0.0)
-	, angle_x(0.0)
-	, angle_y(0.0)
-	, angle_z(0.0)
-{
-}
+//CLaser::CLaser(void)
+//	: CProjectile(NULL)
+//	, m_fLength(0.0)
+//	, angle_x(0.0)
+//	, angle_y(0.0)
+//	, angle_z(0.0)
+//{
+//}
 
 CLaser::CLaser(Mesh* _modelMesh)
-	: CProjectile(_modelMesh)
+    : CProjectile(_modelMesh, "Laser")
 	, m_fLength(0.0)
 	, angle_x(0.0)
 	, angle_y(0.0)

@@ -10,7 +10,7 @@ class CPlayerInfo;
 class CLaser : public CProjectile
 {
 public:
-	CLaser(void);
+	//CLaser(void);
 	CLaser(Mesh* _modelMesh);
 	~CLaser(void);
 public:

@@ -4,8 +4,9 @@
 #include "GraphicsManager.h"
 #include "RenderHelper.h"
 
-GenericEntity::GenericEntity(Mesh* _modelMesh)
+GenericEntity::GenericEntity(Mesh* _modelMesh, string name)
 	: modelMesh(_modelMesh)
+    , EntityBase("GenericEntity")
 {
 }
 

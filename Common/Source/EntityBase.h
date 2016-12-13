@@ -3,10 +3,13 @@
 
 #include "Vector3.h"
 
+#include  <string>
+using std::string;
+
 class EntityBase
 {
 public:
-	EntityBase();
+    EntityBase(string name = "");
 	virtual ~EntityBase();
 
 	virtual void Update(double _dt);
@@ -34,6 +37,8 @@ public:
 protected:
 	Vector3 position;
 	Vector3 scale;
+
+    string name;
 
 	bool isDone;
 	bool m_bCollider;

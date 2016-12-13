@@ -4,7 +4,7 @@
 #include "../EntityManager.h"
 
 GenericBalloon::GenericBalloon(Mesh* _modelMesh)
-    : GenericEntity(_modelMesh)
+    : GenericEntity(_modelMesh, "GenericBalloon")
 {
 
 }
@@ -72,6 +72,6 @@ GenericBalloon* Create::Balloon(const std::string& _meshName,
     result->SetPosition(_position);
     result->SetScale(_scale);
     result->SetCollider(false);
-    //EntityManager::GetInstance()->AddEntity(result, true);
+    EntityManager::GetInstance()->GetSpartialPartition()->Add(result);
     return result;
 }

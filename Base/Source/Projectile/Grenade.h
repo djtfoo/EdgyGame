@@ -16,7 +16,7 @@ protected:
 	GroundEntity* m_pTerrain;
 
 public:
-	CGrenade(void);
+	//CGrenade(void);
 	CGrenade(Mesh* _modelMesh);
 	~CGrenade(void);
 
