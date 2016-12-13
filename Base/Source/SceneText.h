@@ -41,6 +41,9 @@ private:
     CEnemy* theEnemy;
 
 	static SceneText* sInstance; // The pointer to the object that gets registered
+
+    // Fucntions to spawn buildings
+    void SpawnArena(Vector3 spawnPos); 
 };
 
 #endif

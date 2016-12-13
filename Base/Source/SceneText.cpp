@@ -132,7 +132,7 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GetMesh("text")->textureID = LoadTGA("Image//calibri.tga");
 	MeshBuilder::GetInstance()->GetMesh("text")->material.kAmbient.Set(1, 0, 0);
 	MeshBuilder::GetInstance()->GenerateOBJ("Chair", "OBJ//chair.obj");
-	MeshBuilder::GetInstance()->GetMesh("Chair")->textureID = LoadTGA("Image//chair.tga");
+	//MeshBuilder::GetInstance()->GetMesh("Chair")->textureID = LoadTGA("Image//chair.tga");
 	MeshBuilder::GetInstance()->GenerateRing("ring", Color(1, 0, 1), 36, 1, 0.5f);
 	MeshBuilder::GetInstance()->GenerateSphere("lightball", Color(1, 1, 1), 18, 36, 1.f);
 	MeshBuilder::GetInstance()->GenerateSphere("sphere", Color(1, 0, 0), 18, 36, 0.5f);
@@ -167,6 +167,14 @@ void SceneText::Init()
 	CSpatialPartition::GetInstance()->SetCamera(&camera);
 	CSpatialPartition::GetInstance()->SetLevelOfDetails(40000.0f, 160000.0f);
 	EntityManager::GetInstance()->SetSpatialPartition(CSpatialPartition::GetInstance());
+
+    // ----------- Basic Blocks ----------- //
+    MeshBuilder::GetInstance()->GenerateOBJ("high_res_cube", "OBJ//cube_high_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("high_res_cube")->textureID = LoadTGA("Image//Cube//cube_high_res_UV.tga");
+    MeshBuilder::GetInstance()->GenerateOBJ("med_res_cube", "OBJ//cube_low_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("med_res_cube")->textureID = LoadTGA("Image//Cube//cube_low_res_UV.tga");
+    MeshBuilder::GetInstance()->GenerateOBJ("low_res_cube", "OBJ//cube_low_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("low_res_cube")->textureID = LoadTGA("Image//Cube//cube_low_res_UV.tga");
 
 	// Create entities into the scene
 	Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
@@ -203,7 +211,7 @@ void SceneText::Init()
 
 	GenericEntity* childCube = Create::Asset("cubeSG", Vector3(0.0f, 0.0f, 0.0f));
 	CSceneNode* childNode = baseNode->AddChild(childCube);
-	childNode->ApplyTranslate(0.0f, 1.0f, 0.0f);
+	childNode->ApplyTranslate(0.0f, 2.0f, 0.0f);
 
 	GenericEntity* grandchildCube = Create::Asset("cubeSG", Vector3(0.0f, 0.0f, 0.0f));
 	CSceneNode* grandchildNode = childNode->AddChild(grandchildCube);
@@ -224,6 +232,9 @@ void SceneText::Init()
 	SkyBoxEntity* theSkyBox = Create::SkyBox("SKYBOX_FRONT", "SKYBOX_BACK",
 											 "SKYBOX_LEFT", "SKYBOX_RIGHT",
 											 "SKYBOX_TOP", "SKYBOX_BOTTOM");
+
+    // ----------- Spawn Buildings ----------- //
+    SpawnArena(Vector3(20, -2.5, 20));
 
 	// Customise the ground entity
 	groundEntity->SetPosition(Vector3(0, -10, 0));
@@ -375,4 +386,134 @@ void SceneText::Exit()
 	// Delete the lights
 	delete lights[0];
 	delete lights[1];
+}
+
+void SceneText::SpawnArena(Vector3 spawnPos)
+{
+    // Base Block / Floor of the arena
+    GenericEntity* baseBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    baseBlock->SetCollider(true);
+    baseBlock->SetScale(Vector3(10, 2, 10));
+    baseBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
+    baseBlock->InitLOD("high_res_cube", "med_res_cube", "low_res_cube");
+
+    // Add to SceneGraph
+    CSceneNode* baseNode = CSceneGraph::GetInstance()->AddNode(baseBlock);
+    baseNode->SetScale(5, 3, 5);
+    baseNode->ApplyTranslate(spawnPos.x, spawnPos.y, spawnPos.x);
+
+    // Left Wall - Btm
+    GenericEntity* leftWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    leftWallBlock->SetCollider(true);
+    leftWallBlock->SetScale(Vector3(0.5, 1, 9));
+    leftWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
+    leftWallBlock->InitLOD("high_res_cube", "med_res_cube", "low_res_cube");
+    CSceneNode* leftWallNode = baseNode->AddChild(leftWallBlock);
+    leftWallNode->ApplyTranslate(-4.75f, 1.5f, 0.f);
+
+    // Left Wall - Top
+    leftWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    leftWallBlock->SetCollider(true);
+    leftWallBlock->SetScale(Vector3(0.5, 1, 9));
+    leftWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
+    leftWallBlock->InitLOD("high_res_cube", "med_res_cube", "low_res_cube");
+    leftWallNode = baseNode->AddChild(leftWallBlock);
+    leftWallNode->ApplyTranslate(-4.75f, 2.5f, 0.f);
+
+    // Right Wall - Btm
+    GenericEntity* rightWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    rightWallBlock->SetCollider(true);
+    rightWallBlock->SetScale(Vector3(0.5, 1, 9));
+    rightWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
+    rightWallBlock->InitLOD("high_res_cube", "med_res_cube", "low_res_cube");
+    CSceneNode* rightWallNode = baseNode->AddChild(rightWallBlock);
+    rightWallNode->ApplyTranslate(4.75f, 1.5f, 0.f);
+
+    // Right Wall - Top
+    rightWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    rightWallBlock->SetCollider(true);
+    rightWallBlock->SetScale(Vector3(0.5, 1, 9));
+    rightWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
+    rightWallBlock->InitLOD("high_res_cube", "med_res_cube", "low_res_cube");
+    rightWallNode = baseNode->AddChild(rightWallBlock);
+    rightWallNode->ApplyTranslate(4.75f, 2.5f, 0.f);
+
+    // Back Wall - Btm
+    GenericEntity* backWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    backWallBlock->SetCollider(true);
+    backWallBlock->SetScale(Vector3(0.5, 1, 9));
+    backWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
+    backWallBlock->InitLOD("high_res_cube", "med_res_cube", "low_res_cube");
+    CSceneNode* backWallNode = baseNode->AddChild(backWallBlock);
+    backWallNode->ApplyTranslate(0.f, 1.5f, -4.75f);
+    backWallNode->ApplyRotate(90, 0, 1, 0);
+
+    // Back Wall - Top
+    backWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    backWallBlock->SetCollider(true);
+    backWallBlock->SetScale(Vector3(0.5, 1, 9));
+    backWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
+    backWallBlock->InitLOD("high_res_cube", "med_res_cube", "low_res_cube");
+    backWallNode = baseNode->AddChild(backWallBlock);
+    backWallNode->ApplyTranslate(0.f, 2.5f, -4.75f);
+    backWallNode->ApplyRotate(90, 0, 1, 0);
+
+    // Front Left Wall - Btm
+    GenericEntity* frontLeftWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    frontLeftWallBlock->SetCollider(true);
+    frontLeftWallBlock->SetScale(Vector3(0.5, 1, 3));
+    frontLeftWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
+    frontLeftWallBlock->InitLOD("high_res_cube", "med_res_cube", "low_res_cube");
+    CSceneNode* frontLeftWallNode = baseNode->AddChild(frontLeftWallBlock);
+    frontLeftWallNode->ApplyTranslate(-3.f, 1.5f, 4.75f);
+    frontLeftWallNode->ApplyRotate(90, 0, 1, 0);
+
+    // Front Left Wall - Top
+    frontLeftWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    frontLeftWallBlock->SetCollider(true);
+    frontLeftWallBlock->SetScale(Vector3(0.5, 1, 3));
+    frontLeftWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
+    frontLeftWallBlock->InitLOD("high_res_cube", "med_res_cube", "low_res_cube");
+    frontLeftWallNode = baseNode->AddChild(frontLeftWallBlock);
+    frontLeftWallNode->ApplyTranslate(-3.f, 2.5f, 4.75f);
+    frontLeftWallNode->ApplyRotate(90, 0, 1, 0);
+
+    // Front Right Wall - Btm
+    GenericEntity* frontRightWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    frontRightWallBlock->SetCollider(true);
+    frontRightWallBlock->SetScale(Vector3(0.5, 1, 3));
+    frontRightWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
+    frontRightWallBlock->InitLOD("high_res_cube", "med_res_cube", "low_res_cube");
+    CSceneNode* frontRightWallNode = baseNode->AddChild(frontRightWallBlock);
+    frontRightWallNode->ApplyTranslate(3.f, 1.5f, 4.75f);
+    frontRightWallNode->ApplyRotate(90, 0, 1, 0);
+
+    // Front Right Wall - Top
+    frontRightWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    frontRightWallBlock->SetCollider(true);
+    frontRightWallBlock->SetScale(Vector3(0.5, 1, 3));
+    frontRightWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
+    frontRightWallBlock->InitLOD("high_res_cube", "med_res_cube", "low_res_cube");
+    frontRightWallNode = baseNode->AddChild(frontRightWallBlock);
+    frontRightWallNode->ApplyTranslate(3.f, 2.5f, 4.75f);
+    frontRightWallNode->ApplyRotate(90, 0, 1, 0);
+
+    // First Step
+    GenericEntity* firstStepBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    firstStepBlock->SetCollider(true);
+    firstStepBlock->SetScale(Vector3(3, 1, 2));
+    firstStepBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
+    firstStepBlock->InitLOD("high_res_cube", "med_res_cube", "low_res_cube");
+    CSceneNode* firstStepNode = baseNode->AddChild(firstStepBlock);
+    firstStepNode->ApplyTranslate(0.f, -0.5f, 6.f);
+
+    // Second Step
+    GenericEntity* secondStepBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    secondStepBlock->SetCollider(true);
+    secondStepBlock->SetScale(Vector3(3, 1, 1));
+    secondStepBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
+    secondStepBlock->InitLOD("high_res_cube", "med_res_cube", "low_res_cube");
+    CSceneNode* secondStepNode = baseNode->AddChild(secondStepBlock);
+    secondStepNode->ApplyTranslate(0.f, 0.5f, 5.5f);
+
 }
