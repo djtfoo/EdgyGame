@@ -123,6 +123,12 @@
     <ClCompile Include="Source\Enemy\Enemy.cpp">
       <Filter>Header Files\Enemy</Filter>
     </ClCompile>
+    <ClCompile Include="Source\WeaponInfo\HeldWeapon.cpp">
+      <Filter>WeaponInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\WeaponInfo\NeedleGun.cpp">
+      <Filter>WeaponInfo</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -205,6 +211,12 @@
     </ClInclude>
     <ClInclude Include="Source\Enemy\Enemy.h">
       <Filter>Header Files\Enemy</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WeaponInfo\HeldWeapon.h">
+      <Filter>WeaponInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\WeaponInfo\NeedleGun.h">
+      <Filter>WeaponInfo</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

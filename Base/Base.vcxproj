@@ -35,8 +35,10 @@
     <ClCompile Include="Source\SpatialPartition\SpatialPartition.cpp" />
     <ClCompile Include="Source\SpriteEntity.cpp" />
     <ClCompile Include="Source\TextEntity.cpp" />
+    <ClCompile Include="Source\WeaponInfo\HeldWeapon.cpp" />
     <ClCompile Include="Source\WeaponInfo\GrenadeThrow.cpp" />
     <ClCompile Include="Source\WeaponInfo\LaserBlaster.cpp" />
+    <ClCompile Include="Source\WeaponInfo\NeedleGun.cpp" />
     <ClCompile Include="Source\WeaponInfo\Pistol.cpp" />
     <ClCompile Include="Source\WeaponInfo\WeaponInfo.cpp" />
   </ItemGroup>
@@ -64,8 +66,10 @@
     <ClInclude Include="Source\SpatialPartition\SpatialPartition.h" />
     <ClInclude Include="Source\SpriteEntity.h" />
     <ClInclude Include="Source\TextEntity.h" />
+    <ClInclude Include="Source\WeaponInfo\HeldWeapon.h" />
     <ClInclude Include="Source\WeaponInfo\GrenadeThrow.h" />
     <ClInclude Include="Source\WeaponInfo\LaserBlaster.h" />
+    <ClInclude Include="Source\WeaponInfo\NeedleGun.h" />
     <ClInclude Include="Source\WeaponInfo\Pistol.h" />
     <ClInclude Include="Source\WeaponInfo\WeaponInfo.h" />
   </ItemGroup>

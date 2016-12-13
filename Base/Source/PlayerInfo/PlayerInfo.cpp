@@ -9,6 +9,9 @@
 #include "../WeaponInfo/LaserBlaster.h"
 #include "../WeaponInfo/GrenadeThrow.h"
 
+#include "GraphicsManager.h"
+#include "MatrixStack.h"
+
 // Allocating and initializing CPlayerInfo's static data member.  
 // The pointer is allocated but not the object's constructor.
 CPlayerInfo *CPlayerInfo::s_instance = 0;
@@ -24,8 +27,8 @@ CPlayerInfo::CPlayerInfo(void)
 	: attachedCamera(NULL)
     , m_dSpeed(40.0)
 	, m_pTerrain(NULL)
-	, primaryWeapon(NULL)
-	, secondaryWeapon(NULL)
+//	, primaryWeapon(NULL)
+//	, secondaryWeapon(NULL)
 {
     m_eyeLevel = m_STAND_EYELEVEL;
     m_speed = 0.f;
@@ -39,30 +42,36 @@ CPlayerInfo::CPlayerInfo(void)
 
 CPlayerInfo::~CPlayerInfo(void)
 {
-	if (secondaryWeapon)
-	{
-		delete secondaryWeapon;
-		secondaryWeapon = NULL;
-	}
-	if (primaryWeapon)
-	{
-		delete primaryWeapon;
-		primaryWeapon = NULL;
-	}
+	//if (secondaryWeapon)
+	//{
+	//	delete secondaryWeapon;
+	//	secondaryWeapon = NULL;
+	//}
+	//if (primaryWeapon)
+	//{
+	//	delete primaryWeapon;
+	//	primaryWeapon = NULL;
+	//}
 	m_pTerrain = NULL;
+
+    if (m_heldWeapon)
+    {
+        delete m_heldWeapon;
+        m_heldWeapon = NULL;
+    }
 }
 
 // Initialise this class instance
 void CPlayerInfo::Init(void)
 {
 	// Set the default values
-	defaultPosition.Set(0,0,10);
-	defaultTarget.Set(0,0,0);
+	defaultPosition.Set(0,m_STAND_EYELEVEL,10);
+    defaultTarget.Set(0, m_STAND_EYELEVEL, 0);
 	defaultUp.Set(0,1,0);
 
 	// Set the current values
-	position.Set(0, 0, 10);
-	target.Set(0, 0, 0);
+    position.Set(0, m_STAND_EYELEVEL, 10);
+    target.Set(0, m_STAND_EYELEVEL, 0);
 	up.Set(0, 1, 0);
 
 	// Set Boundary
@@ -70,13 +79,16 @@ void CPlayerInfo::Init(void)
 	minBoundary.Set(-1, -1, -1);
 
 	// Set the pistol as the primary weapon
-	primaryWeapon = new CPistol();
-	primaryWeapon->Init();
-	// Set the laser blaster as the secondary weapon
-	//secondaryWeapon = new CLaserBlaster();
+	//primaryWeapon = new CPistol();
+	//primaryWeapon->Init();
+	//// Set the laser blaster as the secondary weapon
+	////secondaryWeapon = new CLaserBlaster();
+	////secondaryWeapon->Init();
+	//secondaryWeapon = new CGrenadeThrow();
 	//secondaryWeapon->Init();
-	secondaryWeapon = new CGrenadeThrow();
-	secondaryWeapon->Init();
+    
+    m_heldWeapon = new HeldWeapon();
+    m_heldWeapon->Init();
 }
 
 // Set position
@@ -156,6 +168,11 @@ GroundEntity* CPlayerInfo::GetTerrain(void)
 	return m_pTerrain;
 }
 
+HeldWeapon* CPlayerInfo::GetHeldWeapon()
+{
+    return m_heldWeapon;
+}
+
 /********************************************************************************
  Update
  ********************************************************************************/
@@ -170,9 +187,10 @@ void CPlayerInfo::Update(double dt)
     m_movementState = MOVEMENT_STATE_IDLE;
     velocity.SetZero(); // get the velocity every frame
 
-    Vector3 viewVector = target - position;
-    viewVector.y = 0.f;
-    viewVector.Normalize();
+    Vector3 viewVector = (target - position).Normalize();
+    Vector3 movementView = viewVector;  // without y value
+    movementView.y = 0.f;
+    movementView.Normalize();
 
 	// Update the position if the WASD buttons were activated
 	if (KeyboardController::GetInstance()->IsKeyDown('W') ||
@@ -184,22 +202,22 @@ void CPlayerInfo::Update(double dt)
 
 		if (KeyboardController::GetInstance()->IsKeyDown('W'))
 		{
-            velocity += viewVector.Normalized();
+            velocity += movementView.Normalized();
 		}
 		else if (KeyboardController::GetInstance()->IsKeyDown('S'))
 		{
-            velocity -= viewVector.Normalized();
+            velocity -= movementView.Normalized();
 		}
 		if (KeyboardController::GetInstance()->IsKeyDown('A'))
 		{
-            Vector3 right = viewVector.Cross(up);
+            Vector3 right = movementView.Cross(up);
             right.y = 0;
             right.Normalize();
             velocity -= right;
 		}
 		else if (KeyboardController::GetInstance()->IsKeyDown('D'))
 		{
-            Vector3 right = viewVector.Cross(up);
+            Vector3 right = movementView.Cross(up);
             right.y = 0;
             right.Normalize();
             velocity += right;
@@ -222,7 +240,7 @@ void CPlayerInfo::Update(double dt)
     {
         Jump();
     }
-    if (KeyboardController::GetInstance()->IsKeyDown(VK_SHIFT) && m_heightState == HEIGHT_STATE_STANDING)
+    if (KeyboardController::GetInstance()->IsKeyDown(VK_SHIFT) && m_heightState != HEIGHT_STATE_CROUCH)
     {
         if (m_movementState != MOVEMENT_STATE_IDLE) {
             m_movementState = MOVEMENT_STATE_RUN;
@@ -396,35 +414,57 @@ void CPlayerInfo::Update(double dt)
 	}
 
 	// Update the weapons
+    if (m_movementState == MOVEMENT_STATE_RUN)
+    {
+        m_heldWeapon->CheckSprinting(true);
+    }
+    else if (m_heightState != HEIGHT_STATE_JUMP)
+    {
+        m_heldWeapon->CheckSprinting(false);
+    }
+
+    m_heldWeapon->CheckPlayerPos(position);
+    m_heldWeapon->CheckPlayerTarget(target);
+
 	if (KeyboardController::GetInstance()->IsKeyReleased('R'))
 	{
-		if (primaryWeapon)
-		{
-			primaryWeapon->Reload();
-			//primaryWeapon->PrintSelf();
-		}
-		if (secondaryWeapon)
-		{
-			secondaryWeapon->Reload();
-			//secondaryWeapon->PrintSelf();
-		}
+		//if (primaryWeapon)
+		//{
+		//	primaryWeapon->Reload();
+		//	//primaryWeapon->PrintSelf();
+		//}
+		//if (secondaryWeapon)
+		//{
+		//	secondaryWeapon->Reload();
+		//	//secondaryWeapon->PrintSelf();
+		//}
+
+        if (m_heldWeapon)
+        {
+            m_heldWeapon->SetToReload();
+        }
 	}
-	if (primaryWeapon)
-		primaryWeapon->Update(dt);
-	if (secondaryWeapon)
-		secondaryWeapon->Update(dt);
+
+    if (m_heldWeapon)
+        m_heldWeapon->Update(dt);
+    
+	//if (primaryWeapon)
+	//	primaryWeapon->Update(dt);
+	//if (secondaryWeapon)
+	//	secondaryWeapon->Update(dt);
 
 	// if Mouse Buttons were activated, then act on them
 	if (MouseController::GetInstance()->IsButtonPressed(MouseController::LMB))
 	{
-		if (primaryWeapon)
-			primaryWeapon->Discharge(position, target, this);
+        m_heldWeapon->SetToFire();
+		//if (primaryWeapon)
+		//	primaryWeapon->Discharge(position, target, this);
 	}
-	else if (MouseController::GetInstance()->IsButtonPressed(MouseController::RMB))
-	{
-		if (secondaryWeapon)
-			secondaryWeapon->Discharge(position, target, this);
-	}
+	//else if (MouseController::GetInstance()->IsButtonPressed(MouseController::RMB))
+	//{
+	//	if (secondaryWeapon)
+	//		secondaryWeapon->Discharge(position, target, this);
+	//}
 
 	// If the user presses P key, then reset the view to default values
 	if (KeyboardController::GetInstance()->IsKeyDown('P'))
@@ -457,7 +497,17 @@ void CPlayerInfo::UpdatePlayerHeight(const double dt)
         UpdateJump(dt);
         break;
     }
-    position.y = m_eyeLevel + m_jumpHeight;
+    
+    // if the player is not jumping nor falling, then adjust his y position
+    if (m_heightState != HEIGHT_STATE_JUMP)
+    {
+        // update y position to the terrain height
+        position.y = m_pTerrain->GetTerrainHeight(position) + m_eyeLevel;
+    }
+    else
+    {
+        position.y = m_eyeLevel + m_jumpHeight;
+    }
 }
 
 
@@ -493,7 +543,7 @@ void CPlayerInfo::Jump()
 
 void CPlayerInfo::UpdateStandUp(const double dt)
 {
-    if (m_eyeLevel < 25.f)
+    if (m_eyeLevel < m_STAND_EYELEVEL)
     {
         m_eyeLevel += (float)(20.f * dt);
         m_eyeLevel = Math::Min(m_STAND_EYELEVEL, m_eyeLevel);
@@ -512,22 +562,29 @@ void CPlayerInfo::UpdateJump(const double dt)
     m_jumpSpeed += (float)(m_gravity * dt);
 
     // Update camera and target position
-
     m_jumpHeight += m_jumpSpeed * (float)dt;
 
     // Check if camera reached the ground
     float newHeight = position.y + m_jumpHeight;  //player would be in the ground already
     if (newHeight + 1.f <= position.y)
     {
-        // Camera landing on ground
-        position.y = newHeight;
+        //// Camera landing on ground
+        //position.y = newHeight;
 
         //when landing, reduce MoveVel (impact)
         //m_speed = Math::Max(0.f, m_speed - 20.f);
 
         // Reset values
+        if (m_eyeLevel == m_CROUCH_EYELEVEL)
+        {
+            m_heightState = HEIGHT_STATE_CROUCH;
+        }
+        else
+        {
+            m_heightState = HEIGHT_STATE_STANDING;
+        }
+        
         m_jumpSpeed = 0.f;
-        m_heightState = HEIGHT_STATE_STANDING;
         m_jumpHeight = 0.f;
     }
 }
@@ -551,14 +608,14 @@ void CPlayerInfo::Constrain(void)
 	if (position.z < minBoundary.z + 1.0f)
 		position.z = minBoundary.z + 1.0f;
 
-	// if the player is not jumping nor falling, then adjust his y position
-	if (m_heightState != HEIGHT_STATE_JUMP)
-	{
-		// if the y position is not equal to terrain height at that position, 
-		// then update y position to the terrain height
-		if (position.y != m_pTerrain->GetTerrainHeight(position))
-			position.y = m_pTerrain->GetTerrainHeight(position) + m_eyeLevel;
-	}
+	//// if the player is not jumping nor falling, then adjust his y position
+	//if (m_heightState != HEIGHT_STATE_JUMP)
+	//{
+	//	// if the y position is not equal to terrain height at that position, 
+	//	// then update y position to the terrain height
+	//	if (position.y != m_pTerrain->GetTerrainHeight(position))
+	//		position.y = m_pTerrain->GetTerrainHeight(position) + m_eyeLevel;
+	//}
 }
 
 void CPlayerInfo::AttachCamera(FPSCamera* _cameraPtr)
@@ -569,4 +626,25 @@ void CPlayerInfo::AttachCamera(FPSCamera* _cameraPtr)
 void CPlayerInfo::DetachCamera()
 {
 	attachedCamera = nullptr;
+}
+
+// Render
+void CPlayerInfo::RenderWeapon()
+{
+    Vector3 view = (target - position).Normalized();
+
+    MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
+    modelStack.PushMatrix();
+    // Reset the model stack
+    modelStack.LoadIdentity();
+
+    modelStack.Translate(m_heldWeapon->GetPosition().x, m_heldWeapon->GetPosition().y, m_heldWeapon->GetPosition().z);
+    modelStack.Translate(position.x + view.x, position.y + view.y, position.z + view.z);
+    modelStack.Rotate(m_heldWeapon->GetWeaponAngle() - 85.f + Math::RadianToDegree(atan2(view.x, view.z)), 0, 1, 0);    //rotate left/right
+    modelStack.Rotate(90.f - Math::RadianToDegree(acos(view.Dot(Vector3(0, 1, 0)))), 0, 0, 1);      //rotate up/down
+    modelStack.Translate(1.6f, -0.6f, 0.6f);
+
+    m_heldWeapon->Render();
+
+    modelStack.PopMatrix();
 }
