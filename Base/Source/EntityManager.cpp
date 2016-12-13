@@ -361,20 +361,20 @@ bool EntityManager::CheckForCollision(void)
 												thatMinAABB, thatMaxAABB,
 												hitPosition) == true)
 					{
-						(*colliderThis)->SetIsDone(true);
-						(*colliderThat)->SetIsDone(true);
+						//(*colliderThis)->SetIsDone(true);
+						//(*colliderThat)->SetIsDone(true);
 
 
-						// Remove from Scene Graph
-						if (CSceneGraph::GetInstance()->DeleteNode((*colliderThis)) == true)
-						{
-							cout << "*** This Entity removed ***" << endl;
-						}
-						// Remove from Scene Graph
-						if (CSceneGraph::GetInstance()->DeleteNode((*colliderThat)) == true)
-						{
-							cout << "*** That Entity removed ***" << endl;
-						}
+						//// Remove from Scene Graph
+						//if (CSceneGraph::GetInstance()->DeleteNode((*colliderThis)) == true)
+						//{
+						//	cout << "*** This Entity removed ***" << endl;
+						//}
+						//// Remove from Scene Graph
+						//if (CSceneGraph::GetInstance()->DeleteNode((*colliderThat)) == true)
+						//{
+						//	cout << "*** That Entity removed ***" << endl;
+						//}
 
 					}
 				}
@@ -401,19 +401,19 @@ bool EntityManager::CheckForCollision(void)
 					{
 						if (CheckAABBCollision(thisEntity, thatEntity))
 						{
-							thisEntity->SetIsDone(true);
-							thatEntity->SetIsDone(true);
+							//thisEntity->SetIsDone(true);
+							//thatEntity->SetIsDone(true);
 
-                            // Remove from Scene Graph
-                            if (CSceneGraph::GetInstance()->DeleteNode((*colliderThis)) == true)
-                            {
-                                cout << "*** This Entity removed ***" << endl;
-                            }
-                            // Remove from Scene Graph
-                            if (CSceneGraph::GetInstance()->DeleteNode((*colliderThat)) == true)
-                            {
-                                cout << "*** That Entity removed ***" << endl;
-                            }
+       //                     // Remove from Scene Graph
+       //                     if (CSceneGraph::GetInstance()->DeleteNode((*colliderThis)) == true)
+       //                     {
+       //                         cout << "*** This Entity removed ***" << endl;
+       //                     }
+       //                     // Remove from Scene Graph
+       //                     if (CSceneGraph::GetInstance()->DeleteNode((*colliderThat)) == true)
+       //                     {
+       //                         cout << "*** That Entity removed ***" << endl;
+       //                     }
 						}
 					}
 				}

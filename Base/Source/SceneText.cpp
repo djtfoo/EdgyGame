@@ -235,7 +235,7 @@ void SceneText::Init()
 											 "SKYBOX_TOP", "SKYBOX_BOTTOM");
 
     // ----------- Spawn Buildings ----------- //
-    SpawnArena(Vector3(20, -2.5, 20));
+    SpawnArena(Vector3(10, -2.5, 10));
 
 	// Customise the ground entity
 	groundEntity->SetPosition(Vector3(0, -10, 0));
@@ -396,7 +396,7 @@ void SceneText::Exit()
 void SceneText::SpawnArena(Vector3 spawnPos)
 {
     // Base Block / Floor of the arena
-    GenericEntity* baseBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    GenericEntity* baseBlock = Create::Entity("high_res_cube", Vector3(0, 0, 0));
     baseBlock->SetCollider(true);
     baseBlock->SetScale(Vector3(10, 2, 10));
     baseBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
@@ -408,7 +408,7 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     baseNode->ApplyTranslate(spawnPos.x, spawnPos.y, spawnPos.x);
 
     // Left Wall - Btm
-    GenericEntity* leftWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    GenericEntity* leftWallBlock = Create::Entity("high_res_cube", Vector3(0, 0, 0));
     leftWallBlock->SetCollider(true);
     leftWallBlock->SetScale(Vector3(0.5, 1, 9));
     leftWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
@@ -417,7 +417,7 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     leftWallNode->ApplyTranslate(-4.75f, 1.5f, 0.f);
 
     // Left Wall - Top
-    leftWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    leftWallBlock = Create::Entity("high_res_cube", Vector3(0, 0, 0));
     leftWallBlock->SetCollider(true);
     leftWallBlock->SetScale(Vector3(0.5, 1, 9));
     leftWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
@@ -426,7 +426,7 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     leftWallNode->ApplyTranslate(-4.75f, 2.5f, 0.f);
 
     // Right Wall - Btm
-    GenericEntity* rightWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    GenericEntity* rightWallBlock = Create::Entity("high_res_cube", Vector3(0, 0, 0));
     rightWallBlock->SetCollider(true);
     rightWallBlock->SetScale(Vector3(0.5, 1, 9));
     rightWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
@@ -435,7 +435,7 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     rightWallNode->ApplyTranslate(4.75f, 1.5f, 0.f);
 
     // Right Wall - Top
-    rightWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    rightWallBlock = Create::Entity("high_res_cube", Vector3(0, 0, 0));
     rightWallBlock->SetCollider(true);
     rightWallBlock->SetScale(Vector3(0.5, 1, 9));
     rightWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
@@ -444,7 +444,7 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     rightWallNode->ApplyTranslate(4.75f, 2.5f, 0.f);
 
     // Back Wall - Btm
-    GenericEntity* backWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    GenericEntity* backWallBlock = Create::Entity("high_res_cube", Vector3(0, 0, 0));
     backWallBlock->SetCollider(true);
     backWallBlock->SetScale(Vector3(0.5, 1, 9));
     backWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
@@ -454,7 +454,7 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     backWallNode->ApplyRotate(90, 0, 1, 0);
 
     // Back Wall - Top
-    backWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    backWallBlock = Create::Entity("high_res_cube", Vector3(0, 0, 0));
     backWallBlock->SetCollider(true);
     backWallBlock->SetScale(Vector3(0.5, 1, 9));
     backWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
@@ -464,7 +464,7 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     backWallNode->ApplyRotate(90, 0, 1, 0);
 
     // Front Left Wall - Btm
-    GenericEntity* frontLeftWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    GenericEntity* frontLeftWallBlock = Create::Entity("high_res_cube", Vector3(0, 0, 0));
     frontLeftWallBlock->SetCollider(true);
     frontLeftWallBlock->SetScale(Vector3(0.5, 1, 3));
     frontLeftWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
@@ -474,7 +474,7 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     frontLeftWallNode->ApplyRotate(90, 0, 1, 0);
 
     // Front Left Wall - Top
-    frontLeftWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    frontLeftWallBlock = Create::Entity("high_res_cube", Vector3(0, 0, 0));
     frontLeftWallBlock->SetCollider(true);
     frontLeftWallBlock->SetScale(Vector3(0.5, 1, 3));
     frontLeftWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
@@ -484,7 +484,7 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     frontLeftWallNode->ApplyRotate(90, 0, 1, 0);
 
     // Front Right Wall - Btm
-    GenericEntity* frontRightWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    GenericEntity* frontRightWallBlock = Create::Entity("high_res_cube", Vector3(0, 0, 0));
     frontRightWallBlock->SetCollider(true);
     frontRightWallBlock->SetScale(Vector3(0.5, 1, 3));
     frontRightWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
@@ -494,7 +494,7 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     frontRightWallNode->ApplyRotate(90, 0, 1, 0);
 
     // Front Right Wall - Top
-    frontRightWallBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    frontRightWallBlock = Create::Entity("high_res_cube", Vector3(0, 0, 0));
     frontRightWallBlock->SetCollider(true);
     frontRightWallBlock->SetScale(Vector3(0.5, 1, 3));
     frontRightWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
@@ -504,7 +504,7 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     frontRightWallNode->ApplyRotate(90, 0, 1, 0);
 
     // First Step
-    GenericEntity* firstStepBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    GenericEntity* firstStepBlock = Create::Entity("high_res_cube", Vector3(0, 0, 0));
     firstStepBlock->SetCollider(true);
     firstStepBlock->SetScale(Vector3(3, 1, 2));
     firstStepBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
@@ -513,7 +513,7 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     firstStepNode->ApplyTranslate(0.f, -0.5f, 6.f);
 
     // Second Step
-    GenericEntity* secondStepBlock = Create::Asset("high_res_cube", Vector3(0, 0, 0));
+    GenericEntity* secondStepBlock = Create::Entity("high_res_cube", Vector3(0, 0, 0));
     secondStepBlock->SetCollider(true);
     secondStepBlock->SetScale(Vector3(3, 1, 1));
     secondStepBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
