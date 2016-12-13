@@ -11,6 +11,7 @@
 #include "GenericEntity.h"
 #include "SceneGraph/UpdateTransformation.h"
 #include "Enemy/Enemy.h"
+#include "BalloonBlock\GenericBalloon.h"
 
 class ShaderProgram;
 class SceneManager;
@@ -44,6 +45,7 @@ private:
 
     // Fucntions to spawn buildings
     void SpawnArena(Vector3 spawnPos); 
+    void SpawnTunnel(Vector3 spawnPos); 
 };
 
 #endif

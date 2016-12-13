@@ -37,6 +37,9 @@
     <Filter Include="Header Files\Enemy">
       <UniqueIdentifier>{7b773420-0fc9-4cd3-8d35-6331a48ad0a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="BalloonBlock">
+      <UniqueIdentifier>{64931859-4205-490c-83ae-58f9617ee862}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -129,6 +132,9 @@
     <ClCompile Include="Source\WeaponInfo\NeedleGun.cpp">
       <Filter>WeaponInfo</Filter>
     </ClCompile>
+    <ClCompile Include="Source\BalloonBlock\GenericBalloon.cpp">
+      <Filter>BalloonBlock</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -217,6 +223,9 @@
     </ClInclude>
     <ClInclude Include="Source\WeaponInfo\NeedleGun.h">
       <Filter>WeaponInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\BalloonBlock\GenericBalloon.h">
+      <Filter>BalloonBlock</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
