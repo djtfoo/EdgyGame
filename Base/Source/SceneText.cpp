@@ -129,8 +129,9 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GenerateQuad("quad", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("quad")->textureID = LoadTGA("Image//calibri.tga");
 	MeshBuilder::GetInstance()->GenerateText("text", 16, 16);
-	MeshBuilder::GetInstance()->GetMesh("text")->textureID = LoadTGA("Image//calibri.tga");
+	MeshBuilder::GetInstance()->GetMesh("text")->textureID = LoadTGA("Image//Font_Impact.tga");
 	MeshBuilder::GetInstance()->GetMesh("text")->material.kAmbient.Set(1, 0, 0);
+    MeshBuilder::GetInstance()->GetMesh("text")->LoadFontData("Image//FontData_Impact.csv");
 	MeshBuilder::GetInstance()->GenerateRing("ring", Color(1, 0, 1), 36, 1, 0.5f);
 	MeshBuilder::GetInstance()->GenerateSphere("lightball", Color(1, 1, 1), 18, 36, 1.f);
 	MeshBuilder::GetInstance()->GenerateSphere("sphere", Color(1, 0, 0), 18, 36, 0.5f);
@@ -159,8 +160,19 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GenerateRay("laser", 10.0f);
 	MeshBuilder::GetInstance()->GenerateQuad("GRIDMESH", Color(1, 1, 1), 10.f);
 
+    // ------------ WEAPONS ------------ //
     MeshBuilder::GetInstance()->GenerateOBJ("NeedleGun", "OBJ//needle gun.obj");
     MeshBuilder::GetInstance()->GetMesh("NeedleGun")->textureID = LoadTGA("Image//needle gun.tga");
+    MeshBuilder::GetInstance()->GenerateOBJ("Needle", "OBJ//needle.obj");
+    MeshBuilder::GetInstance()->GetMesh("Needle")->textureID = LoadTGA("Image//needle.tga");
+
+    // ------------ ENVIRONMENT ------------ //
+    MeshBuilder::GetInstance()->GenerateQuad("wall", Color(1, 1, 1), 1.f, 8);
+    MeshBuilder::GetInstance()->GetMesh("wall")->textureID = LoadTGA("Image//wall.tga");
+    MeshBuilder::GetInstance()->GenerateQuad("ceiling", Color(1, 1, 1), 1.f, 2);
+    MeshBuilder::GetInstance()->GetMesh("ceiling")->textureID = LoadTGA("Image//ceiling.tga");
+    MeshBuilder::GetInstance()->GenerateQuad("carpet", Color(1, 1, 1), 1.f, 4);
+    MeshBuilder::GetInstance()->GetMesh("carpet")->textureID = LoadTGA("Image//ground_carpet.tga");
 
 	// Set up the Spatial Partition and pass it to the EntityManager to manage
 	CSpatialPartition::GetInstance()->Init(100, 100, 10, 10);
@@ -226,13 +238,15 @@ void SceneText::Init()
     theEnemy = new CEnemy();
     theEnemy->Init();
 
-	groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
+	//groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
+    groundEntity = Create::Ground("carpet", "carpet");
+
 //	Create::Text3DObject("text", Vector3(0.0f, 0.0f, 0.0f), "DM2210", Vector3(10.0f, 10.0f, 10.0f), Color(0, 1, 1));
 	Create::Sprite2DObject("crosshair", Vector3(0.0f, 0.0f, 0.0f), Vector3(10.0f, 10.0f, 10.0f));
 
-	SkyBoxEntity* theSkyBox = Create::SkyBox("SKYBOX_FRONT", "SKYBOX_BACK",
-											 "SKYBOX_LEFT", "SKYBOX_RIGHT",
-											 "SKYBOX_TOP", "SKYBOX_BOTTOM");
+	SkyBoxEntity* theSkyBox = Create::SkyBox("wall", "wall",
+											 "wall", "wall",
+											 "ceiling", "carpet");
 
     // ----------- Spawn Buildings ----------- //
     SpawnArena(Vector3(10, -2.5, 10));

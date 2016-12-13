@@ -97,15 +97,26 @@ void RenderHelper::RenderText(Mesh* _mesh, const std::string& _text, Color _colo
 	GraphicsManager::GetInstance()->UpdateTexture(0, _mesh->textureID);
 	currProg->UpdateInt("colorTexture", 0);
 
+    float translationOffset = 0.f;  // stores font width of each character
 	for (unsigned i = 0; i < _text.length(); ++i)
 	{
 		Mtx44 characterSpacing, MVP;
 		//characterSpacing.SetToTranslation((i+0.5f) * 1.0f, 0, 0); // 1.0f is the spacing of each character, you may change this value
-		characterSpacing.SetToTranslation((float)(1 + (int)i), 0.0f, 0.0f); // 1.0f is the spacing of each character, you may change this value
-		MVP = GraphicsManager::GetInstance()->GetProjectionMatrix() * GraphicsManager::GetInstance()->GetViewMatrix() * GraphicsManager::GetInstance()->GetModelStack().Top() * characterSpacing;
+		//characterSpacing.SetToTranslation((float)(1 + (int)i), 0.0f, 0.0f); // 1.0f is the spacing of each character, you may change this value
+        characterSpacing.SetToTranslation(translationOffset + 0.5f, 0.f, 0); //1.0f is the spacing of each character, you may change this value
+        MVP = GraphicsManager::GetInstance()->GetProjectionMatrix() * GraphicsManager::GetInstance()->GetViewMatrix() * GraphicsManager::GetInstance()->GetModelStack().Top() * characterSpacing;
 		currProg->UpdateMatrix44("MVP", &MVP.a[0]);
 
 		_mesh->Render((unsigned)_text[i] * 6, 6);
+
+        float offsetIncrease = 0.f;
+        if (_mesh->fontSize[_text[i]] == 0) {   // there's no font data
+            offsetIncrease = 1.f;
+        }
+        else {
+            offsetIncrease = (float)(_mesh->fontSize[_text[i]] / 64.f) + 1.f;
+        }
+        translationOffset += offsetIncrease;
 	}
 
 	GraphicsManager::GetInstance()->UnbindTexture(0);

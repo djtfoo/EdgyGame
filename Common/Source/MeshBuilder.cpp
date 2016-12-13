@@ -136,7 +136,7 @@ Then generate the VBO/IBO and store them in Mesh object
 \return Pointer to mesh storing VBO/IBO of quad
 */
 /******************************************************************************/
-Mesh* MeshBuilder::GenerateQuad(const std::string &meshName, Color color, float length)
+Mesh* MeshBuilder::GenerateQuad(const std::string &meshName, Color color, float length, int texCount)
 {
 	Vertex v;
 	std::vector<Vertex> vertex_buffer_data;
@@ -150,17 +150,17 @@ Mesh* MeshBuilder::GenerateQuad(const std::string &meshName, Color color, float 
 	v.pos.Set(0.5f * length,-0.5f * length,0);
 	v.color = color;
 	v.normal.Set(0, 0, 1);
-	v.texCoord.Set(1.0f, 0);
+    v.texCoord.Set(1.0f * texCount, 0);
 	vertex_buffer_data.push_back(v);
 	v.pos.Set(0.5f * length, 0.5f * length,0);
 	v.color = color;
 	v.normal.Set(0, 0, 1);
-	v.texCoord.Set(1.0f, 1.0f);
+    v.texCoord.Set(1.0f * texCount, 1.0f * texCount);
 	vertex_buffer_data.push_back(v);
 	v.pos.Set(-0.5f * length, 0.5f * length,0);
 	v.color = color;
 	v.normal.Set(0, 0, 1);
-	v.texCoord.Set(0, 1.0f);
+    v.texCoord.Set(0, 1.0f * texCount);
 	vertex_buffer_data.push_back(v);
 	
 	index_buffer_data.push_back(3);

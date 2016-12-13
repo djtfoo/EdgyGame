@@ -59,3 +59,8 @@ bool EntityBase::GetIsLaser(void) const
 {
 	return bLaser;
 }
+
+string EntityBase::GetName() const
+{
+    return name;
+}

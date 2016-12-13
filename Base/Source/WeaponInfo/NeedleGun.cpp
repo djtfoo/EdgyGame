@@ -44,16 +44,16 @@ void CNeedleGun::Discharge(Vector3 position, Vector3 target, CPlayerInfo* _sourc
         if (magRounds > 0)
         {
             Vector3 _direction = (target - position).Normalized();
-            // Create a laser with a laser mesh. The length is 10.0f, mesh is also set at 10.0f
-            CLaser* aLaser = Create::Laser("laser",
+            // Create a laser with a needle mesh. The length is 10.0f, mesh is also set at 10.0f
+            CLaser* needle = Create::Laser("Needle",
                 position,
                 _direction,
                 10.0f,
                 2.0f,
                 100.0f,
                 _source);
-            aLaser->SetIsLaser(true);
-            aLaser->SetCollider(false);
+            needle->SetIsLaser(true);
+            needle->SetCollider(false);
             //aLaser->SetCollider(true);
             //aLaser->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
             bFire = false;

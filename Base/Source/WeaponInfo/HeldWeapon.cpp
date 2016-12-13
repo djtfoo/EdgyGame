@@ -1,6 +1,7 @@
 #include "HeldWeapon.h"
 #include "MeshBuilder.h"
 #include "NeedleGun.h"
+#include "LaserBlaster.h"
 
 #include "RenderHelper.h"
 
@@ -44,6 +45,9 @@ void HeldWeapon::Init()
     weaponList[0] = new CNeedleGun();
     weaponList[0]->Init();
 
+    weaponList[1] = new CLaserBlaster();
+    weaponList[1]->Init();
+
     SetWeaponType(WEAPON_NEEDLEGUN);
 }
 
@@ -63,9 +67,6 @@ void HeldWeapon::Update(const double dt)
     if (b_sprinting && wa_action == WA_NIL) {
         wa_action = WA_SPRINT;
     }
-
-    // ACCESS PLAYER CLASS.
-    //CheckSprinting();
 
     Mtx44 rotation;
     WeaponRecoilMovement(dt);
@@ -93,11 +94,11 @@ void HeldWeapon::Update(const double dt)
         break;
 
     case WA_RELOAD:
-        ReloadWeapon(dt);
+        ReloadWeaponMovement(dt);
         break;
 
     case WA_CHANGEWEAPON:
-        ChangeWeapon(dt);
+        ChangeWeaponMovement(dt);
         break;
 
     case WA_NOAMMO:
@@ -143,15 +144,22 @@ Mesh* HeldWeapon::GetMesh()
 // Setters
 void HeldWeapon::SetWeaponType(WEAPON_TYPE type)
 {
-    weapon_type = type;
-
-    // change currently held weapon
-    curr_weapon = weaponList[type];
-    switch (type)
+    if (wa_action == WA_NIL)
     {
-    case WEAPON_NEEDLEGUN:
-        m_mesh = MeshBuilder::GetInstance()->GetMesh("NeedleGun");
-        break;
+        weapon_type = type;
+
+        // change currently held weapon
+        curr_weapon = weaponList[type];
+
+        switch (type)
+        {
+        case WEAPON_NEEDLEGUN:
+            m_mesh = MeshBuilder::GetInstance()->GetMesh("NeedleGun");
+            break;
+        case WEAPON_KNIFE:
+            m_mesh = MeshBuilder::GetInstance()->GetMesh("cube");
+            break;
+        }
     }
 }
 
@@ -243,7 +251,7 @@ void HeldWeapon::WeaponAction()
     }
 }
 
-void HeldWeapon::ChangeWeapon(const double dt)
+void HeldWeapon::ChangeWeaponMovement(const double dt)
 {
     weaponPos.y += 5.f * dt;
     if (weaponPos.y > 0.1f) {
@@ -256,7 +264,7 @@ static int animation_direction = 1;
 static const float ROTSPEED = 200.f;
 static const float TRANSSPEED = 2.f;
 
-void HeldWeapon::ReloadWeapon(const double dt)
+void HeldWeapon::ReloadWeaponMovement(const double dt)
 {
     weaponPos.y -= TRANSSPEED * dt * animation_direction;
     weaponAngle += ROTSPEED * dt * animation_direction;
@@ -348,17 +356,26 @@ void HeldWeapon::WeaponRecoilMovement(const double dt)
 // Set Weapon States
 void HeldWeapon::SetToFire()
 {
-    SetWeaponAction(WA_FIRE);
+    if (wa_action == WA_NIL)
+    {
+        SetWeaponAction(WA_FIRE);
+    }
 }
 
 void HeldWeapon::SetToReload()
 {
-    SetWeaponAction(WA_RELOAD);
+    if (wa_action == WA_NIL)
+    {
+        SetWeaponAction(WA_RELOAD);
+    }
 }
 
 void HeldWeapon::SetToChangeWeapon()
 {
-    SetWeaponAction(WA_CHANGEWEAPON);
+    if (wa_action == WA_NIL)
+    {
+        SetWeaponAction(WA_CHANGEWEAPON);
+    }
 }
 
 void HeldWeapon::SetToNoAmmo()

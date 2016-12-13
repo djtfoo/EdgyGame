@@ -135,9 +135,6 @@
     <ClCompile Include="Source\BalloonBlock\GenericBalloon.cpp">
       <Filter>BalloonBlock</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Projectile\Needle.cpp">
-      <Filter>Projectile</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -229,9 +226,6 @@
     </ClInclude>
     <ClInclude Include="Source\BalloonBlock\GenericBalloon.h">
       <Filter>BalloonBlock</Filter>
-    </ClInclude>
-    <ClInclude Include="Source\Projectile\Needle.h">
-      <Filter>Projectile</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -445,8 +445,21 @@ void CPlayerInfo::Update(double dt)
         }
 	}
 
+    for (int i = 0; i < HeldWeapon::WEAPON_TOTAL; ++i)
+    {
+        if (KeyboardController::GetInstance()->IsKeyReleased('1' + i) && m_heldWeapon->GetWeaponType() != i)
+        {
+            m_heldWeapon->SetWeaponType(static_cast<HeldWeapon::WEAPON_TYPE>(i));
+            m_heldWeapon->SetToChangeWeapon();
+            break;
+        }
+    }
+
     if (m_heldWeapon)
+    {
         m_heldWeapon->Update(dt);
+    }
+        
     
 	//if (primaryWeapon)
 	//	primaryWeapon->Update(dt);

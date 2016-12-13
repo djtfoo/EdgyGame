@@ -11,6 +11,7 @@ public:
     enum WEAPON_TYPE
     {
         WEAPON_NEEDLEGUN,
+        WEAPON_KNIFE,
         WEAPON_TOTAL
     };
 
@@ -85,8 +86,8 @@ private:
     // Player Actions
     void WeaponAction();
 
-    void ChangeWeapon(const double dt);     //animation for changing weapon
-    void ReloadWeapon(const double dt);
+    void ChangeWeaponMovement(const double dt);     //animation for changing weapon
+    void ReloadWeaponMovement(const double dt);
     void WeaponSprintMovement(const double dt);
     void WeaponRecoilMovement(const double dt);
 };
