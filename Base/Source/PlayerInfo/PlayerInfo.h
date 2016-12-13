@@ -3,6 +3,7 @@
 #include "../FPSCamera.h"
 #include "../GroundEntity.h"
 #include "../WeaponInfo/WeaponInfo.h"
+#include "../WeaponInfo/HeldWeapon.h"
 
 class CPlayerInfo
 {
@@ -74,6 +75,8 @@ public:
 	Vector3 GetUp(void) const;
 	// Get the terrain for the player info
 	GroundEntity* GetTerrain(void);
+    // Get HeldWeapon
+    HeldWeapon* GetHeldWeapon();
 
 	// Update
 	void Update(double dt = 0.0333f);
@@ -84,6 +87,9 @@ public:
 	// Handling Camera
 	void AttachCamera(FPSCamera* _cameraPtr);
 	void DetachCamera(void);
+
+    // Render
+    void RenderWeapon();
 
 private:
 	Vector3 defaultPosition, defaultTarget, defaultUp;
@@ -97,8 +103,8 @@ private:
     
     Vector3 m_prevVelocity;
 
-    const float m_STAND_EYELEVEL = 2.5f;
-    const float m_CROUCH_EYELEVEL = 1.f;
+    const float m_STAND_EYELEVEL = 2.f;
+    const float m_CROUCH_EYELEVEL = 0.5f;
 
     float m_eyeLevel;
     float m_speed;
@@ -120,6 +126,9 @@ private:
 
     double m_dSpeed;
 
-	CWeaponInfo* primaryWeapon;
-	CWeaponInfo* secondaryWeapon;
+	//CWeaponInfo* primaryWeapon;
+	//CWeaponInfo* secondaryWeapon;
+
+    // class to handle weapon 3D model
+    HeldWeapon* m_heldWeapon;   // shift CWeaponInfo weapons here
 };
