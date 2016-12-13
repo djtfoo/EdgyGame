@@ -6,7 +6,7 @@
 
 GenericEntity::GenericEntity(Mesh* _modelMesh, string name)
 	: modelMesh(_modelMesh)
-    , EntityBase("GenericEntity")
+    , EntityBase(name)
 {
 }
 

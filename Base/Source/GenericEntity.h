@@ -11,7 +11,7 @@ class Mesh;
 class GenericEntity : public EntityBase, public CCollider, public CLevelOfDetails
 {
 public:
-	GenericEntity(Mesh* _modelMesh, string name = "");
+	GenericEntity(Mesh* _modelMesh, string name = "GenericEntity");
 	virtual ~GenericEntity();
 
 	virtual void Update(double _dt);

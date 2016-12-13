@@ -11,7 +11,7 @@ class CProjectile : public EntityBase, public CCollider
 public:
 	//CProjectile(void);
 	//CProjectile(Mesh* _modelMesh);
-    CProjectile(Mesh* _modelMesh, string name = "");
+    CProjectile(Mesh* _modelMesh, string name = "Projectile");
 	~CProjectile(void);
 public:
 	// Activate the projectile. true == active, false == inactive

@@ -6,7 +6,7 @@ EntityBase::EntityBase(string name)
 	, isDone(false)
 	, m_bCollider(false)
 	, bLaser(false)
-    , name("EntityBase")
+    , name(name)
 {
 }
 

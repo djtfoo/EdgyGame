@@ -34,7 +34,7 @@ CProjectile::CProjectile(Mesh* _modelMesh, string name)
 	, m_fLifetime(-1)
 	, m_fSpeed(10.0f)
 	, theSource(NULL)
-    , EntityBase("Projectile")
+    , EntityBase(name)
 {
 }
 

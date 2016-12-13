@@ -566,7 +566,7 @@ void CPlayerInfo::UpdateJump(const double dt)
 
     // Check if camera reached the ground
     float newHeight = position.y + m_jumpHeight;  //player would be in the ground already
-    if (newHeight + 1.f <= position.y)
+    if (newHeight + 1.5f <= position.y)
     {
         //// Camera landing on ground
         //position.y = newHeight;

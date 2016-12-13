@@ -10,7 +10,8 @@ HeldWeapon::HeldWeapon()
     wa_action = WA_NIL;
     action_change = false;
 
-    weaponPos.SetZero();
+    //weaponPos.SetZero();
+    weaponPos.Set(0.3f, 0.f, 0.f);
     weaponAngle = 0.f;
     recoilRotation.SetToIdentity();
 
@@ -220,7 +221,7 @@ void HeldWeapon::WeaponAction()
 
     case WA_CHANGEWEAPON:
 
-        weaponPos.Set(0.f, -1.f, 0.f);
+        weaponPos.Set(0.3f, -1.f, 0.f);
 
         //switch (weapon_type)
         //{
@@ -264,11 +265,11 @@ void HeldWeapon::ReloadWeapon(const double dt)
         if (weaponPos.y < -0.4f) {
             weaponPos.y = -0.4f;
         }
-        if (weaponAngle > 80.f) {
-            weaponAngle = 80.f;
+        if (weaponAngle > 70.f) {
+            weaponAngle = 70.f;
         }
 
-        if (weaponPos.y <= -0.4f && weaponAngle >= 80.f) {
+        if (weaponPos.y <= -0.4f && weaponAngle >= 70.f) {
             weaponTimeElapsed += dt;
             // Start sound effect here
             if (weaponTimeElapsed >= 0.8) {
@@ -314,8 +315,8 @@ void HeldWeapon::WeaponSprintMovement(const double dt)
         if (weaponPos.y < -0.4f) {
             weaponPos.y = -0.4f;
         }
-        if (weaponAngle > 80.f) {
-            weaponAngle = 80.f;
+        if (weaponAngle > 70.f) {
+            weaponAngle = 70.f;
         }
 
     }
