@@ -87,6 +87,9 @@ CSceneNode* CSceneNode::AddChild(EntityBase* theEntity)
 		aNewNode->SetParent(this);
 		// Assign an ID to this node
 		aNewNode->SetID(CSceneGraph::GetInstance()->GenerateID());
+
+        theEntity->SetInSceneGraph(true);
+
 		// Add to vector list
 		this->theChildren.push_back(aNewNode);
 		// Return this new scene node

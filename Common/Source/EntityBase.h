@@ -17,6 +17,7 @@ public:
 	virtual void RenderUI();
 
 	inline void SetPosition(const Vector3& _value){ position = _value; };
+    inline void SetPosition(float x, float y, float z) { position.x = x; position.y = y; position.z = z; };
 	inline Vector3 GetPosition(){ return position; };
 
 	inline void SetScale(const Vector3& _value){ scale = _value; };
@@ -34,15 +35,8 @@ public:
 	// Get the flag, bLaser
 	virtual bool GetIsLaser(void) const;
 
-    // Resolution to Render (for LOD)
-    //enum RESOLUTION_RENDER
-    //{
-    //    RES_ALL,
-    //    RES_HIGHMID,
-    //    RES_LOW
-    //};
-    //RESOLUTION_RENDER GetResolutionToRender();
-    //void SetResolutionRender(RESOLUTION_RENDER res);
+    bool GetIsInSceneGraph();   // Check if this entity is inside SceneGraph
+    void SetInSceneGraph(const bool b_isInGraph);
 
     string GetName() const;
 
@@ -56,7 +50,7 @@ protected:
 	bool m_bCollider;
 	bool bLaser;
 
-    //RESOLUTION_RENDER m_resRender;
+    bool m_bIsInSceneGraph;
 };
 
 #endif // ENTITY_BASE_H

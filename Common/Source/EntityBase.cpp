@@ -6,6 +6,7 @@ EntityBase::EntityBase(string name)
 	, isDone(false)
 	, m_bCollider(false)
 	, bLaser(false)
+    , m_bIsInSceneGraph(false)
     , name(name)
 {
 }
@@ -65,12 +66,12 @@ string EntityBase::GetName() const
     return name;
 }
 
-//EntityBase::RESOLUTION_RENDER EntityBase::GetResolutionToRender()
-//{
-//    return m_resRender;
-//}
-//
-//void EntityBase::SetResolutionRender(RESOLUTION_RENDER res)
-//{
-//    m_resRender = res;
-//}
+bool EntityBase::GetIsInSceneGraph()
+{
+    return m_bIsInSceneGraph;
+}
+
+void EntityBase::SetInSceneGraph(const bool b_isInGraph)
+{
+    m_bIsInSceneGraph = b_isInGraph;
+}

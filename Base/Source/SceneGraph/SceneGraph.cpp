@@ -27,7 +27,7 @@ void CSceneGraph::Destroy()
 	Singleton<CSceneGraph>::Destroy();
 }
 
-CSceneNode* CSceneGraph::GetRoot() 
+CSceneNode* CSceneGraph::GetRoot()
 { 
 	return theRoot; 
 }
@@ -36,6 +36,7 @@ CSceneNode* CSceneGraph::GetRoot()
 CSceneNode* CSceneGraph::AddNode(EntityBase* theEntity)
 {
 	CSceneNode* aNewSceneNode = theRoot->AddChild(theEntity);
+    theEntity->SetInSceneGraph(true);
 //	aNewSceneNode->SetID(this->GenerateID());
 	return aNewSceneNode;
 }

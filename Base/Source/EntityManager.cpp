@@ -54,7 +54,8 @@ void EntityManager::Render()
 	end = entityList.end();
 	for (it = entityList.begin(); it != end; ++it)
 	{
-		(*it)->Render();
+        if (!(*it)->GetIsInSceneGraph())
+		    (*it)->Render();
 	}
 
 	// Render the Scene Graph
@@ -358,29 +359,54 @@ bool EntityManager::CheckForCollision(void)
 
 					// Get the minAABB and maxAABB for (*colliderThat)
 					CCollider *thatCollider = dynamic_cast<CCollider*>(*colliderThat);
-					Vector3 thatMinAABB = (*colliderThat)->GetPosition() + thatCollider->GetMinAABB();
-					Vector3 thatMaxAABB = (*colliderThat)->GetPosition() + thatCollider->GetMaxAABB();
+
+                    //Vector3 thatMinAABB = (*colliderThat)->GetPosition() + thatCollider->GetMinAABB();
+                    //Vector3 thatMaxAABB = (*colliderThat)->GetPosition() + thatCollider->GetMaxAABB();
+                    Vector3 thatMinAABB, thatMaxAABB;
+
+                    if ((*colliderThat)->GetIsInSceneGraph()) {
+                        Mtx44 transformMtx;
+                        transformMtx.SetToIdentity();
+                        CSceneNode* node = CSceneGraph::GetInstance()->GetNode(*colliderThat);
+                        if (node->GetParent() != NULL) {
+                            transformMtx = node->GetParent()->GetTransform() * node->GetTransform();
+                        }
+                        else {
+                            transformMtx = node->GetTransform();
+                        }
+                        
+                        thatMinAABB = transformMtx * ((*colliderThat)->GetPosition() + thatCollider->GetMinAABB());
+                        thatMaxAABB = transformMtx * ((*colliderThat)->GetPosition() + thatCollider->GetMaxAABB());
+                    }
+                    else {
+                        thatMinAABB = (*colliderThat)->GetPosition() + thatCollider->GetMinAABB();
+                        thatMaxAABB = (*colliderThat)->GetPosition() + thatCollider->GetMaxAABB();
+                    }
+
+                    std::cout << thatMinAABB.x << " | " << thatMinAABB.y << " | " << thatMaxAABB.x << " | " << thatMaxAABB.y << std::endl;
 
 					if (CheckLineSegmentPlane(	thisEntity->GetPosition(), 
 												thisEntity->GetPosition() - thisEntity->GetDirection() * thisEntity->GetLength(),
 												thatMinAABB, thatMaxAABB,
 												hitPosition) == true)
 					{
-						//(*colliderThis)->SetIsDone(true);
-						//(*colliderThat)->SetIsDone(true);
+						(*colliderThis)->SetIsDone(true);
+						(*colliderThat)->SetIsDone(true);
 
+                        std::cout << "COLLISION" << std::endl;
 
-						//// Remove from Scene Graph
-						//if (CSceneGraph::GetInstance()->DeleteNode((*colliderThis)) == true)
-						//{
-						//	cout << "*** This Entity removed ***" << endl;
-						//}
-						//// Remove from Scene Graph
-						//if (CSceneGraph::GetInstance()->DeleteNode((*colliderThat)) == true)
-						//{
-						//	cout << "*** That Entity removed ***" << endl;
-						//}
+						// Remove from Scene Graph
+						if (CSceneGraph::GetInstance()->DeleteNode((*colliderThis)) == true)
+						{
+							cout << "*** This Entity removed ***" << endl;
+						}
+						// Remove from Scene Graph
+						if (CSceneGraph::GetInstance()->DeleteNode((*colliderThat)) == true)
+						{
+							cout << "*** That Entity removed ***" << endl;
+						}
 
+                        break;
 					}
 				}
 			}

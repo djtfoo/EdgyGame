@@ -82,7 +82,7 @@ void HeldWeapon::Update(const double dt)
     case WA_FIRE:
         weaponTimeElapsed += dt;
 
-        if (curr_weapon->GetMagRound() == 0) {  // empty
+        if (curr_weapon->GetMagRound() == 0 && curr_weapon->GetTotalRound() > 0) {  // empty
             wa_action = WA_RELOAD;
             action_change = true;
             weaponTimeElapsed = 0.0;

@@ -158,7 +158,7 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GetMesh("SKYBOX_TOP")->textureID = LoadTGA("Image//SkyBox//skybox_top.tga");
 	MeshBuilder::GetInstance()->GetMesh("SKYBOX_BOTTOM")->textureID = LoadTGA("Image//SkyBox//skybox_bottom.tga");
 	MeshBuilder::GetInstance()->GenerateRay("laser", 10.0f);
-	MeshBuilder::GetInstance()->GenerateQuad("GRIDMESH", Color(1, 1, 1), 10.f);
+	MeshBuilder::GetInstance()->GenerateQuad("GRIDMESH", Color(1, 1, 1), 1.f);
 
     // ------------ WEAPONS ------------ //
     MeshBuilder::GetInstance()->GenerateOBJ("NeedleGun", "OBJ//needle gun.obj");
@@ -250,7 +250,7 @@ void SceneText::Init()
 
     // ----------- Spawn Buildings ----------- //
     SpawnArena(Vector3(10, -2.5, 10));
-    SpawnTunnel(Vector3(-10, -2.5, -10));
+    //SpawnTunnel(Vector3(-10, -2.5, -10));
 
 	// Customise the ground entity
 	groundEntity->SetPosition(Vector3(0, -10, 0));
@@ -381,6 +381,7 @@ void SceneText::Render()
 	GraphicsManager::GetInstance()->AttachCamera(&camera);
 	EntityManager::GetInstance()->Render();
     playerInfo->RenderWeapon();
+    CSpatialPartition::GetInstance()->RenderSingleGrid(playerInfo->GetPos());
 
 	// Setup 2D pipeline then render 2D
 	int halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2;
@@ -410,16 +411,18 @@ void SceneText::Exit()
 
 void SceneText::SpawnArena(Vector3 spawnPos)
 {
+    Vector3 scale(5, 3, 5);
+
     // ----------- LOW RES ----------- //
     GenericBalloon* lowResStructure = Create::Balloon("low_res_cube", Vector3(0, 0, 0));
-    lowResStructure->SetCollider(true);
+    lowResStructure->SetCollider(false);
     lowResStructure->SetScale(Vector3(10, 2, 10));
-    lowResStructure->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
     lowResStructure->InitLOD("", "", "low_res_cube");
+    lowResStructure->SetPosition(spawnPos);
     // Add to SceneGraph
     CSceneNode* lowResNode = CSceneGraph::GetInstance()->AddNode(lowResStructure);
-    lowResNode->SetScale(5, 3, 5);
-    lowResNode->ApplyTranslate(spawnPos.x, spawnPos.y, spawnPos.x);
+    lowResNode->SetScale(scale.x, scale.y, scale.z);
+    //lowResNode->ApplyTranslate(spawnPos.x, spawnPos.y, spawnPos.x);
 
 
     // ----------- INDIVIDUAL PARTS ----------- //
@@ -427,27 +430,31 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     GenericBalloon* baseBlock = Create::Balloon("high_res_cube", Vector3(0, 0, 0));
     baseBlock->SetCollider(true);
     baseBlock->SetScale(Vector3(10, 2, 10));
-    baseBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
+    baseBlock->SetAABB(Vector3(5, 1, 5), Vector3(-5, -1, -5));
     baseBlock->InitLOD("high_res_cube", "med_res_cube", "");
+    baseBlock->SetPosition(spawnPos);
     CSceneNode* baseNode = lowResNode->AddChild(baseBlock);
-
+    
     // Left Wall - Btm
     GenericBalloon* leftWallBlock = Create::Balloon("high_res_cube", Vector3(0, 0, 0));
     leftWallBlock->SetCollider(true);
     leftWallBlock->SetScale(Vector3(0.5, 1, 9));
-    leftWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
+    leftWallBlock->SetAABB(Vector3(0.25f, 0.5f, 4.5f), Vector3(-0.25f, -0.5f, -4.5f));
     leftWallBlock->InitLOD("high_res_cube", "med_res_cube", "");
+    leftWallBlock->SetPosition(spawnPos);
     CSceneNode* leftWallNode = lowResNode->AddChild(leftWallBlock);
-    leftWallNode->ApplyTranslate(-4.75f, 1.5f, 0.f);
+    leftWallNode->ApplyTranslate(-4.5f, 1.5f, 0.f);
 
+    /*
     // Left Wall - Top
     leftWallBlock = Create::Balloon("high_res_cube", Vector3(0, 0, 0));
     leftWallBlock->SetCollider(true);
     leftWallBlock->SetScale(Vector3(0.5, 1, 9));
     leftWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
     leftWallBlock->InitLOD("high_res_cube", "med_res_cube", "");
-    leftWallNode = lowResNode->AddChild(leftWallBlock);
-    leftWallNode->ApplyTranslate(-4.75f, 2.5f, 0.f);
+    leftWallBlock->SetPosition(spawnPos + Vector3(-4.75f, 2.5f, 0.f));
+    CSceneNode* leftWallNode2 = lowResNode->AddChild(leftWallBlock);
+    leftWallNode2->ApplyTranslate(-4.75f, 2.5f, 0.f);
 
     // Right Wall - Btm
     GenericBalloon* rightWallBlock = Create::Balloon("high_res_cube", Vector3(0, 0, 0));
@@ -455,6 +462,7 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     rightWallBlock->SetScale(Vector3(0.5, 1, 9));
     rightWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
     rightWallBlock->InitLOD("high_res_cube", "med_res_cube", "");
+    rightWallBlock->SetPosition(spawnPos + Vector3(4.75f, 1.5f, 0.f));
     CSceneNode* rightWallNode = lowResNode->AddChild(rightWallBlock);
     rightWallNode->ApplyTranslate(4.75f, 1.5f, 0.f);
 
@@ -464,8 +472,9 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     rightWallBlock->SetScale(Vector3(0.5, 1, 9));
     rightWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
     rightWallBlock->InitLOD("high_res_cube", "med_res_cube", "");
-    rightWallNode = lowResNode->AddChild(rightWallBlock);
-    rightWallNode->ApplyTranslate(4.75f, 2.5f, 0.f);
+    rightWallBlock->SetPosition(spawnPos + Vector3(4.75f, 2.5f, 0.f));
+    CSceneNode* rightWallNode2 = lowResNode->AddChild(rightWallBlock);
+    rightWallNode2->ApplyTranslate(4.75f, 2.5f, 0.f);
 
     // Back Wall - Btm
     GenericBalloon* backWallBlock = Create::Balloon("high_res_cube", Vector3(0, 0, 0));
@@ -473,6 +482,7 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     backWallBlock->SetScale(Vector3(0.5, 1, 9));
     backWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
     backWallBlock->InitLOD("high_res_cube", "med_res_cube", "");
+    backWallBlock->SetPosition(spawnPos + Vector3(0.f, 1.5f, -4.75f));
     CSceneNode* backWallNode = lowResNode->AddChild(backWallBlock);
     backWallNode->ApplyTranslate(0.f, 1.5f, -4.75f);
     backWallNode->ApplyRotate(90, 0, 1, 0);
@@ -483,9 +493,10 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     backWallBlock->SetScale(Vector3(0.5, 1, 9));
     backWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
     backWallBlock->InitLOD("high_res_cube", "med_res_cube", "");
-    backWallNode = lowResNode->AddChild(backWallBlock);
-    backWallNode->ApplyTranslate(0.f, 2.5f, -4.75f);
-    backWallNode->ApplyRotate(90, 0, 1, 0);
+    backWallBlock->SetPosition(spawnPos + Vector3(0.f, 2.5f, -4.75f));
+    CSceneNode* backWallNode2 = lowResNode->AddChild(backWallBlock);
+    backWallNode2->ApplyTranslate(0.f, 2.5f, -4.75f);
+    backWallNode2->ApplyRotate(90, 0, 1, 0);
 
     // Front Left Wall - Btm
     GenericBalloon* frontLeftWallBlock = Create::Balloon("high_res_cube", Vector3(0, 0, 0));
@@ -493,6 +504,7 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     frontLeftWallBlock->SetScale(Vector3(0.5, 1, 3));
     frontLeftWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
     frontLeftWallBlock->InitLOD("high_res_cube", "med_res_cube", "");
+    frontLeftWallBlock->SetPosition(spawnPos + Vector3(-3.f, 1.5f, 4.75f));
     CSceneNode* frontLeftWallNode = lowResNode->AddChild(frontLeftWallBlock);
     frontLeftWallNode->ApplyTranslate(-3.f, 1.5f, 4.75f);
     frontLeftWallNode->ApplyRotate(90, 0, 1, 0);
@@ -503,9 +515,10 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     frontLeftWallBlock->SetScale(Vector3(0.5, 1, 3));
     frontLeftWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
     frontLeftWallBlock->InitLOD("high_res_cube", "med_res_cube", "");
-    frontLeftWallNode = lowResNode->AddChild(frontLeftWallBlock);
-    frontLeftWallNode->ApplyTranslate(-3.f, 2.5f, 4.75f);
-    frontLeftWallNode->ApplyRotate(90, 0, 1, 0);
+    frontLeftWallBlock->SetPosition(spawnPos + Vector3(-3.f, 2.5f, 4.75f));
+    CSceneNode* frontLeftWallNode2 = lowResNode->AddChild(frontLeftWallBlock);
+    frontLeftWallNode2->ApplyTranslate(-3.f, 2.5f, 4.75f);
+    frontLeftWallNode2->ApplyRotate(90, 0, 1, 0);
 
     // Front Right Wall - Btm
     GenericBalloon* frontRightWallBlock = Create::Balloon("high_res_cube", Vector3(0, 0, 0));
@@ -513,6 +526,7 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     frontRightWallBlock->SetScale(Vector3(0.5, 1, 3));
     frontRightWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
     frontRightWallBlock->InitLOD("high_res_cube", "med_res_cube", "");
+    frontRightWallBlock->SetPosition(spawnPos + Vector3(3.f, 1.5f, 4.75f));
     CSceneNode* frontRightWallNode = lowResNode->AddChild(frontRightWallBlock);
     frontRightWallNode->ApplyTranslate(3.f, 1.5f, 4.75f);
     frontRightWallNode->ApplyRotate(90, 0, 1, 0);
@@ -523,9 +537,10 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     frontRightWallBlock->SetScale(Vector3(0.5, 1, 3));
     frontRightWallBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
     frontRightWallBlock->InitLOD("high_res_cube", "med_res_cube", "");
-    frontRightWallNode = lowResNode->AddChild(frontRightWallBlock);
-    frontRightWallNode->ApplyTranslate(3.f, 2.5f, 4.75f);
-    frontRightWallNode->ApplyRotate(90, 0, 1, 0);
+    frontRightWallBlock->SetPosition(spawnPos + Vector3(3.f, 2.5f, 4.75f));
+    CSceneNode* frontRightWallNode2 = lowResNode->AddChild(frontRightWallBlock);
+    frontRightWallNode2->ApplyTranslate(3.f, 2.5f, 4.75f);
+    frontRightWallNode2->ApplyRotate(90, 0, 1, 0);
 
     // First Step
     GenericBalloon* firstStepBlock = Create::Balloon("high_res_cube", Vector3(0, 0, 0));
@@ -533,6 +548,7 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     firstStepBlock->SetScale(Vector3(3, 1, 2));
     firstStepBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
     firstStepBlock->InitLOD("high_res_cube", "med_res_cube", "");
+    firstStepBlock->SetPosition(spawnPos + Vector3(0.f, -0.5f, 6.f));
     CSceneNode* firstStepNode = lowResNode->AddChild(firstStepBlock);
     firstStepNode->ApplyTranslate(0.f, -0.5f, 6.f);
 
@@ -542,8 +558,11 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     secondStepBlock->SetScale(Vector3(3, 1, 1));
     secondStepBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
     secondStepBlock->InitLOD("high_res_cube", "med_res_cube", "");
+    secondStepBlock->SetPosition(spawnPos + Vector3(0.f, 0.5f, 5.5f));
     CSceneNode* secondStepNode = lowResNode->AddChild(secondStepBlock);
     secondStepNode->ApplyTranslate(0.f, 0.5f, 5.5f);
+
+    */
 }
 
 void SceneText::SpawnTunnel(Vector3 spawnPos)

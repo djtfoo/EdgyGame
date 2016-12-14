@@ -62,6 +62,7 @@ public:
 	void Update(void);
 	// Render the spatial partition
 	void Render(Vector3* theCameraPosition = NULL);
+    void RenderSingleGrid(Vector3 position);
 
 	// Get xSize of the entire spatial partition
 	int GetxSize(void) const;

@@ -188,6 +188,32 @@ void CSpatialPartition::Render(Vector3* theCameraPosition)
 	modelStack.PopMatrix();
 }
 
+void CSpatialPartition::RenderSingleGrid(Vector3 position)
+{
+    // Get the indices of the object's position
+    int xIndex = (((int)position.x - (-xSize >> 1)) / (xSize / xNumOfGrid));
+    int zIndex = (((int)position.z - (-zSize >> 1)) / (zSize / zNumOfGrid));
+
+    // If outside of grid, don't render
+    if (((xIndex < 0) && (xIndex >= xNumOfGrid)) && ((zIndex < 0) && (zIndex >= zNumOfGrid)))
+        return;
+
+    MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
+
+    modelStack.PushMatrix();
+    modelStack.Translate(0.0f, yOffset, 0.0f);
+            modelStack.PushMatrix();
+            modelStack.Translate(xGridSize*xIndex - (xSize >> 1), 0.0f, zGridSize*zIndex - (zSize >> 1));
+            modelStack.PushMatrix();
+            modelStack.Scale(xGridSize, 1.0f, zGridSize);
+            modelStack.Rotate(-90, 1, 0, 0);
+            theGrid[xIndex*zNumOfGrid + zIndex].Render();
+            modelStack.PopMatrix();
+            modelStack.PopMatrix();
+
+    modelStack.PopMatrix();
+}
+
 /********************************************************************************
  Get xSize of the entire spatial partition
 ********************************************************************************/
