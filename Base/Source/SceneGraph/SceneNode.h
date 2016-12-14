@@ -58,10 +58,16 @@ public:
 	// PrintSelf for debug purposes
 	void PrintSelf(const int numTabs = 0);
 
+    // Get whether it's a low-res to render (for LOD)
+    bool GetIsLowResRender() const;
+    void SetLowResRender(bool b_lowRes);
+
 protected:
 	int			ID;
 	EntityBase* theEntity;
 	CSceneNode* theParent;
 
 	vector<CSceneNode*> theChildren;
+
+    bool b_isLowResRender;
 };

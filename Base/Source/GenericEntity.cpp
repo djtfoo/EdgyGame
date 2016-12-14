@@ -27,8 +27,12 @@ void GenericEntity::Render()
 	modelStack.Scale(scale.x, scale.y, scale.z);
 	if (GetLODStatus()==true)
 	{
-		if (theDetailLevel != NO_DETAILS)
-			RenderHelper::RenderMesh(GetLODMesh());
+        if (theDetailLevel != NO_DETAILS)
+        {
+            Mesh* meshToRender = GetLODMesh();
+            if (meshToRender != nullptr)
+                RenderHelper::RenderMesh(GetLODMesh());
+        }
 	}
 	else
 		RenderHelper::RenderMesh(modelMesh);

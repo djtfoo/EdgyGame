@@ -34,6 +34,16 @@ public:
 	// Get the flag, bLaser
 	virtual bool GetIsLaser(void) const;
 
+    // Resolution to Render (for LOD)
+    //enum RESOLUTION_RENDER
+    //{
+    //    RES_ALL,
+    //    RES_HIGHMID,
+    //    RES_LOW
+    //};
+    //RESOLUTION_RENDER GetResolutionToRender();
+    //void SetResolutionRender(RESOLUTION_RENDER res);
+
     string GetName() const;
 
 protected:
@@ -45,6 +55,8 @@ protected:
 	bool isDone;
 	bool m_bCollider;
 	bool bLaser;
+
+    //RESOLUTION_RENDER m_resRender;
 };
 
 #endif // ENTITY_BASE_H

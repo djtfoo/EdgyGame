@@ -11,8 +11,8 @@ HeldWeapon::HeldWeapon()
     wa_action = WA_NIL;
     action_change = false;
 
-    //weaponPos.SetZero();
-    weaponPos.Set(0.3f, 0.f, 0.f);
+    weaponPos.SetZero();
+    //weaponPos.Set(0.3f, 0.f, 0.f);
     weaponAngle = 0.f;
     recoilRotation.SetToIdentity();
 
@@ -203,7 +203,7 @@ void HeldWeapon::WeaponAction()
         //}
 
 
-        if (curr_weapon->GetMaxTotalRound() == 0) {
+        if (curr_weapon->GetMaxTotalRound() == 0 && curr_weapon->GetTotalRound() > 0) {
             wa_action = WA_NOAMMO;
         }
         else if (curr_weapon->GetMagRound() == curr_weapon->GetMaxMagRound()) {
@@ -229,7 +229,7 @@ void HeldWeapon::WeaponAction()
 
     case WA_CHANGEWEAPON:
 
-        weaponPos.Set(0.3f, -1.f, 0.f);
+        weaponPos.Set(0.f, -1.f, 0.f);
 
         //switch (weapon_type)
         //{

@@ -9,6 +9,7 @@ CSceneNode::CSceneNode(void)
 	: ID(-1)
 	, theEntity(NULL)
 	, theParent(NULL)
+    , b_isLowResRender(false)
 {
 }
 
@@ -425,4 +426,14 @@ void CSceneNode::PrintSelf(const int numTabs)
 			it++;
 		}
 	}
+}
+
+bool CSceneNode::GetIsLowResRender() const
+{
+    return b_isLowResRender;
+}
+
+void CSceneNode::SetLowResRender(bool b_lowRes)
+{
+    b_isLowResRender = b_lowRes;
 }

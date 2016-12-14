@@ -240,7 +240,7 @@ void CPlayerInfo::Update(double dt)
     {
         Jump();
     }
-    if (KeyboardController::GetInstance()->IsKeyDown(VK_SHIFT) && m_heightState != HEIGHT_STATE_CROUCH)
+    if (KeyboardController::GetInstance()->IsKeyDown(VK_SHIFT) && m_heightState == HEIGHT_STATE_STANDING)
     {
         if (m_movementState != MOVEMENT_STATE_IDLE) {
             m_movementState = MOVEMENT_STATE_RUN;
@@ -606,20 +606,20 @@ void CPlayerInfo::UpdateJump(const double dt)
 void CPlayerInfo::Constrain(void)
 {
 	// Constrain player within the boundary
-	if (position.x > maxBoundary.x - 1.0f)
-		position.x = maxBoundary.x - 1.0f;
+	if (position.x > maxBoundary.x - 5.0f)
+		position.x = maxBoundary.x - 5.0f;
 	//if (position.y > maxBoundary.y - 1.0f)// Returns true if the player is on ground
     bool isOnGround(void);
     bool IsJumping();
 	//	position.y = maxBoundary.y - 1.0f;
-	if (position.z > maxBoundary.z - 1.0f)
-		position.z = maxBoundary.z - 1.0f;
-	if (position.x < minBoundary.x + 1.0f)
-		position.x = minBoundary.x + 1.0f;
+	if (position.z > maxBoundary.z - 5.0f)
+		position.z = maxBoundary.z - 5.0f;
+	if (position.x < minBoundary.x + 5.0f)
+		position.x = minBoundary.x + 5.0f;
 	//if (position.y < minBoundary.y + 1.0f)
 	//	position.y = minBoundary.y + 1.0f;
-	if (position.z < minBoundary.z + 1.0f)
-		position.z = minBoundary.z + 1.0f;
+	if (position.z < minBoundary.z + 5.0f)
+		position.z = minBoundary.z + 5.0f;
 
 	//// if the player is not jumping nor falling, then adjust his y position
 	//if (m_heightState != HEIGHT_STATE_JUMP)

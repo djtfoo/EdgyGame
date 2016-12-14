@@ -64,3 +64,13 @@ string EntityBase::GetName() const
 {
     return name;
 }
+
+//EntityBase::RESOLUTION_RENDER EntityBase::GetResolutionToRender()
+//{
+//    return m_resRender;
+//}
+//
+//void EntityBase::SetResolutionRender(RESOLUTION_RENDER res)
+//{
+//    m_resRender = res;
+//}

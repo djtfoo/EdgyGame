@@ -13,6 +13,11 @@ Mesh::Mesh(const std::string &meshName)
 	glGenBuffers(1, &vertexBuffer);
 	glGenBuffers(1, &indexBuffer);
 	textureID = 0;
+
+    for (int i = 0; i < 256; ++i)
+    {
+        fontSize[i] = 0;
+    }
 }
 
 Mesh::~Mesh()
