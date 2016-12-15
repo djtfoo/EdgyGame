@@ -145,6 +145,11 @@ Mesh* HeldWeapon::GetMesh()
     return m_mesh;
 }
 
+CWeaponInfo* HeldWeapon::GetCurrentWeapon()
+{
+    return curr_weapon;
+}
+
 // Setters
 void HeldWeapon::SetWeaponType(WEAPON_TYPE type)
 {

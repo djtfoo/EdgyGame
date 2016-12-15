@@ -104,6 +104,10 @@ public:
     // Render
     void RenderWeapon();
 
+    // Diamond pickup
+    int GetDiamondsLeftToCollect();
+    void SetDiamondsLeftToCollect(int num);
+
 private:
 	Vector3 defaultPosition, defaultTarget, defaultUp;
 	Vector3 position, target, up;
@@ -144,4 +148,6 @@ private:
 
     // class to handle weapon 3D model
     HeldWeapon* m_heldWeapon;   // shift CWeaponInfo weapons here
+
+    int m_diamondsLeftToCollect;
 };

@@ -13,6 +13,7 @@
 #include "Enemy/Enemy.h"
 #include "BalloonBlock\GenericBalloon.h"
 #include "SceneGraph\SceneGraph.h"
+#include "SpriteEntity.h"
 
 class ShaderProgram;
 class SceneManager;
@@ -36,7 +37,8 @@ private:
 	CPlayerInfo* playerInfo;
 	GroundEntity* groundEntity;
 	FPSCamera camera;
-	TextEntity* textObj[3];
+	TextEntity* textObj[7];
+    SpriteEntity* HUDObj[3];
 	Light* lights[2];
 
 	GenericEntity* theCube;
@@ -55,6 +57,8 @@ private:
     void SpawnWall(Vector3 spawnPos, float rotate, CSceneNode* baseEntity = NULL);
 	void SpawnTower(Vector3 spawnPos, CSceneNode* baseEntity);
 
+    void SpawnDiamond(const Vector3& spawnPos);
+    void SpawnAmmo(const Vector3& spawnPos);
 };
 
 #endif

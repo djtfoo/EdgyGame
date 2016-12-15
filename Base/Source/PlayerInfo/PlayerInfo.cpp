@@ -41,6 +41,8 @@ CPlayerInfo::CPlayerInfo(void)
     m_heightState = HEIGHT_STATE_STANDING;
 
     b_setToJump = false;
+
+    m_diamondsLeftToCollect = 3;
 }
 
 CPlayerInfo::~CPlayerInfo(void)
@@ -760,4 +762,15 @@ float CPlayerInfo::GetMovementSpeed()
 void CPlayerInfo::SetMovementSpeed(float mSpeed)
 {
     m_speed = mSpeed;
+}
+
+// Diamond pickup
+int CPlayerInfo::GetDiamondsLeftToCollect()
+{
+    return m_diamondsLeftToCollect;
+}
+
+void CPlayerInfo::SetDiamondsLeftToCollect(int num)
+{
+    m_diamondsLeftToCollect = num;
 }

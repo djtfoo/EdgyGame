@@ -38,6 +38,7 @@ public:
     WEAPON_TYPE GetWeaponType();
     WEAPON_ACTION GetWeaponAction();
     Mesh* GetMesh();
+    CWeaponInfo* GetCurrentWeapon();
 
     // Setters
     void SetWeaponType(WEAPON_TYPE type);

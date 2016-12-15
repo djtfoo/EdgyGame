@@ -40,6 +40,9 @@
     <Filter Include="BalloonBlock">
       <UniqueIdentifier>{64931859-4205-490c-83ae-58f9617ee862}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Pickup">
+      <UniqueIdentifier>{71f34415-dfbd-4980-9b45-fa4febf44f07}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -135,6 +138,9 @@
     <ClCompile Include="Source\BalloonBlock\GenericBalloon.cpp">
       <Filter>BalloonBlock</Filter>
     </ClCompile>
+    <ClCompile Include="Source\Pickup\Pickup.cpp">
+      <Filter>Pickup</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Application.h">
@@ -226,6 +232,9 @@
     </ClInclude>
     <ClInclude Include="Source\BalloonBlock\GenericBalloon.h">
       <Filter>BalloonBlock</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Pickup\Pickup.h">
+      <Filter>Pickup</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

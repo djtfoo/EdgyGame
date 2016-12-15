@@ -460,3 +460,8 @@ void CSceneNode::PrintSelf(const int numTabs)
 		}
 	}
 }
+
+vector<CSceneNode*> CSceneNode::GetChildrenList()
+{
+    return theChildren;
+}

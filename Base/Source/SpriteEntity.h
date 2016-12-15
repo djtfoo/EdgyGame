@@ -31,6 +31,8 @@ public:
 	inline void SetScale(const Vector3& _value){ scale = _value; };
 	inline Vector3 GetScale(){ return scale; };
 
+    inline Mesh* GetMesh() { return modelMesh; }
+
 	inline void SetTextRenderMode(SPRITE_RENDERMODE _mode){ mode = _mode; };
 
 private:
@@ -43,6 +45,7 @@ private:
 namespace Create
 {
 	SpriteEntity* Sprite2DObject(const std::string& _meshName, const Vector3& _position, const Vector3& _scale = Vector3(1.0f,1.0f,1.0f));
+    SpriteEntity* Sprite2DObjectOutsideEntityManager(const std::string& _meshName, const Vector3& _position, const Vector3& _scale = Vector3(1.0f, 1.0f, 1.0f));
 	SpriteEntity* Sprite3DObject(const std::string& _meshName, const Vector3& _position, const Vector3& _scale = Vector3(1.0f, 1.0f, 1.0f));
 };
 

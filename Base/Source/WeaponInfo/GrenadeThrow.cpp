@@ -23,7 +23,7 @@ void CGrenadeThrow::Init(void)
 	// The current total number of rounds currently carried by this player
 	totalRounds = 2;
 	// The max total number of rounds currently carried by this player
-	maxTotalRounds = 2;
+	maxTotalRounds = 3;
 
 	// The time between shots
 	timeBetweenShots = 1.0;

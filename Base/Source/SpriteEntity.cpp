@@ -49,6 +49,20 @@ void SpriteEntity::RenderUI()
 
 SpriteEntity* Create::Sprite2DObject(const std::string& _meshName, const Vector3& _position, const Vector3& _scale)
 {
+    Mesh* modelMesh = MeshBuilder::GetInstance()->GetMesh(_meshName);
+    if (modelMesh == nullptr)
+        return nullptr;
+
+    SpriteEntity* result = new SpriteEntity(modelMesh);
+    result->SetPosition(_position);
+    result->SetScale(_scale);
+    result->SetTextRenderMode(SpriteEntity::MODE_2D);
+    EntityManager::GetInstance()->AddEntity(result);
+    return result;
+}
+
+SpriteEntity* Create::Sprite2DObjectOutsideEntityManager(const std::string& _meshName, const Vector3& _position, const Vector3& _scale)
+{
 	Mesh* modelMesh = MeshBuilder::GetInstance()->GetMesh(_meshName);
 	if (modelMesh == nullptr)
 		return nullptr;
@@ -57,7 +71,7 @@ SpriteEntity* Create::Sprite2DObject(const std::string& _meshName, const Vector3
 	result->SetPosition(_position);
 	result->SetScale(_scale);
 	result->SetTextRenderMode(SpriteEntity::MODE_2D);
-	EntityManager::GetInstance()->AddEntity(result);
+	//EntityManager::GetInstance()->AddEntity(result);
 	return result;
 }
 

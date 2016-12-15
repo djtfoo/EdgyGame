@@ -40,7 +40,11 @@ void GenericBalloon::Update(double dt)
         break;
     case GenericBalloon::DEFLATED:
         this->SetIsDone(true);
-
+        // Remove from Scene Graph
+        if (CSceneGraph::GetInstance()->DeleteNode(this) == true)
+        {
+            cout << "*** That Entity removed ***" << endl;
+        }
         break;
     default:
         break;
@@ -57,7 +61,7 @@ void GenericBalloon::Deflate(double dt)
         m_state = DEFLATED;
 
     // Move the balloon object down, as deflate
-    this->position.y -= (float)dt;
+    this->position.y -= 0.5f * (float)dt;
     this->position.x += Math::RandFloatMinMax(-1, 1) * (float)dt;
     this->position.z += Math::RandFloatMinMax(-1, 1) * (float)dt;
 }

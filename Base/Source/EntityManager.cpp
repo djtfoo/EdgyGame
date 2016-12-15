@@ -354,7 +354,8 @@ bool EntityManager::CheckLineSegmentPlane(	Vector3 line_start, Vector3 line_end,
 	return false;
 }
 
-// Check for Player Collision
+// Check for Player Collision - Advanced version
+/*
 bool EntityManager::CheckPlayerCollision(const double dt, const Vector3& point, CPlayerInfo* player)
 {
     std::vector<EntityBase*> objectsInGrid = theSpatialPartition->GetObjects(point, 1.f);
@@ -365,7 +366,7 @@ bool EntityManager::CheckPlayerCollision(const double dt, const Vector3& point, 
     for (colliderThis = objectsInGrid.begin(); colliderThis != colliderThisEnd; ++colliderThis)
     {
         // Check if this entity is a Balloon type
-        if ((*colliderThis)->GetName() == "GenericBalloon" && (*colliderThis)->HasCollider())
+        if (((*colliderThis)->GetIsInSceneGraph() || (*colliderThis)->GetIsLowResRender()) && (*colliderThis)->HasCollider())
         {
             CCollider *thisCollider = dynamic_cast<CCollider*>(*colliderThis);
 
@@ -400,25 +401,194 @@ bool EntityManager::CheckPlayerCollision(const double dt, const Vector3& point, 
             //}
             if (CheckPointToAABB(point, minAABB, maxAABB)) {
 
-                // INSERT COLLISION RESPONSE HERE
-                if (player->GetHeightState() == CPlayerInfo::HEIGHT_STATE_JUMP)
+                if ((*colliderThis)->GetName() == "GenericBalloon")
                 {
-                    float VelocityLoss = Math::Max(1.5f, player->GetJumpSpeed() / 2.f);
-                    
-                    player->SetJumpSpeed(-player->GetJumpSpeed() - VelocityLoss);
-                    if (player->GetJumpSpeed() > 0.f)
-                        return false;
-                    else
-                        return true;
-                }
-                //else if (player->GetMovementState() == CPlayerInfo::MOVEMENT_STATE_RUN && point.y <= Math::EPSILON)
-                //{
-                //    float force_pushback = 5000.f;
-                //    player->SetMovementSpeed(player->GetMovementSpeed() + force_pushback * (float)(dt));
-                //    std::cout << player->GetMovementSpeed();
-                //    return false;
-                //}
+                    CSceneNode* theNode = CSceneGraph::GetInstance()->GetNode(*colliderThis);
+                    std::vector<CSceneNode*> children = theNode->GetChildrenList();
+                    for (std::vector<CSceneNode*>::iterator it = children.begin(); it < children.end(); ++it)
+                    {
+                        CSceneNode* childNode = *it;
+                        EntityBase* entity = childNode->GetEntity();
 
+                        CCollider *collider = dynamic_cast<CCollider*>(entity);
+
+                        Vector3 minAABB2, maxAABB2;
+
+                        if (entity->GetIsInSceneGraph()) {
+                            Mtx44 transformMtx;
+                            transformMtx.SetToIdentity();
+                            if (childNode->GetParent() != NULL) {
+                                transformMtx = childNode->GetParent()->GetTransform() * childNode->GetTransform();
+                            }
+                            else {
+                                transformMtx = childNode->GetTransform();
+                            }
+
+                            minAABB2 = transformMtx * (entity->GetPosition() + collider->GetMinAABB());
+                            maxAABB2 = transformMtx * (entity->GetPosition() + collider->GetMaxAABB());
+                        }
+                        else {
+                            minAABB2 = entity->GetPosition() + collider->GetMinAABB();
+                            maxAABB2 = entity->GetPosition() + collider->GetMaxAABB();
+                        }
+
+                        if (CheckPointToAABB(point, minAABB2, maxAABB2)) {
+                            // INSERT COLLISION RESPONSE HERE
+
+                            std::cout << "HEY";
+
+                            if (player->GetHeightState() == CPlayerInfo::HEIGHT_STATE_JUMP)
+                            {
+                                float VelocityLoss = Math::Max(1.5f, player->GetJumpSpeed() / 2.f);
+
+                                player->SetJumpSpeed(-player->GetJumpSpeed() - VelocityLoss);
+                                if (player->GetJumpSpeed() > 0.f)
+                                    return false;   // don't obstruct player movement
+                                else
+                                    return true;    // obstruct player movement
+                            }
+                            //else if (player->GetMovementState() == CPlayerInfo::MOVEMENT_STATE_RUN && point.y <= Math::EPSILON)
+                            //{
+                            //    float force_pushback = 5000.f;
+                            //    player->SetMovementSpeed(player->GetMovementSpeed() + force_pushback * (float)(dt));
+                            //    std::cout << player->GetMovementSpeed();
+                            //    return false;
+                            //}
+                        }
+                    }
+
+                }
+                else if ((*colliderThis)->GetName() == "Diamond") {
+
+                    // COLLISION RESPONSE HERE
+                    (*colliderThis)->SetIsDone(true);
+                    player->SetDiamondsLeftToCollect(player->GetDiamondsLeftToCollect() - 1);
+
+                    // Remove from Spatial Partitioning
+                    if (theSpatialPartition->Remove(*colliderThis) == true)
+                    {
+                        cout << "*** REMOVED from Spatial Partitioning ***" << endl;
+                    }
+
+                    std::cout << "COLLISION" << std::endl;
+
+                    return false;   // don't obstruct player movement
+                }
+
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+*/
+
+// Check for Player Collision
+bool EntityManager::CheckPlayerCollision(const double dt, const Vector3& point, CPlayerInfo* player)
+{
+    std::vector<EntityBase*> objectsInGrid = theSpatialPartition->GetObjects(point, 1.f);
+
+    std::vector<EntityBase*>::iterator colliderThis, colliderThisEnd;
+    colliderThisEnd = objectsInGrid.end();
+
+    for (colliderThis = objectsInGrid.begin(); colliderThis != colliderThisEnd; ++colliderThis)
+    {
+        // Check if this entity is a Balloon type
+        if ((*colliderThis)->HasCollider())
+        {
+            CCollider *thisCollider = dynamic_cast<CCollider*>(*colliderThis);
+
+            Vector3 minAABB, maxAABB;
+
+            if ((*colliderThis)->GetIsInSceneGraph()) {
+                Mtx44 transformMtx;
+                transformMtx.SetToIdentity();
+                CSceneNode* node = CSceneGraph::GetInstance()->GetNode(*colliderThis);
+                if (node->GetParent() != NULL) {
+                    transformMtx = node->GetParent()->GetTransform() * node->GetTransform();
+                }
+                else {
+                    transformMtx = node->GetTransform();
+                }
+
+                minAABB = transformMtx * ((*colliderThis)->GetPosition() + thisCollider->GetMinAABB());
+                maxAABB = transformMtx * ((*colliderThis)->GetPosition() + thisCollider->GetMaxAABB());
+            }
+            else {
+                minAABB = (*colliderThis)->GetPosition() + thisCollider->GetMinAABB();
+                maxAABB = (*colliderThis)->GetPosition() + thisCollider->GetMaxAABB();
+            }
+
+            // Create AABB for player
+            //Vector3 playerMinAABB, playerMaxAABB;
+            //playerMinAABB = point + Vector3(-3, -1, -3);
+            //playerMaxAABB = point + Vector3(3, 2, 3);
+
+            //if (CheckOverlap(playerMinAABB, playerMaxAABB, minAABB, maxAABB)) {
+            //    return true;
+            //}
+            if (CheckPointToAABB(point, minAABB, maxAABB)) {
+
+                if ((*colliderThis)->GetName() == "GenericBalloon")
+                {
+                    // INSERT COLLISION RESPONSE HERE
+                    if (player->GetHeightState() == CPlayerInfo::HEIGHT_STATE_JUMP)
+                    {
+                        float VelocityLoss = Math::Max(1.5f, player->GetJumpSpeed() / 2.f);
+
+                        player->SetJumpSpeed(-player->GetJumpSpeed() - VelocityLoss);
+                        if (player->GetJumpSpeed() > 0.f)
+                            return false;   // don't obstruct player movement
+                        else
+                            return true;    // obstruct player movement
+                    }
+                    //else if (player->GetMovementState() == CPlayerInfo::MOVEMENT_STATE_RUN && point.y <= Math::EPSILON)
+                    //{
+                    //    float force_pushback = 5000.f;
+                    //    player->SetMovementSpeed(player->GetMovementSpeed() + force_pushback * (float)(dt));
+                    //    std::cout << player->GetMovementSpeed();
+                    //    return false;
+                    //}
+
+                }
+                else if ((*colliderThis)->GetName() == "Diamond") {
+                    
+                    // COLLISION RESPONSE HERE
+                    (*colliderThis)->SetIsDone(true);
+                    player->SetDiamondsLeftToCollect(player->GetDiamondsLeftToCollect() - 1);
+
+                    // Remove from Spatial Partitioning
+                    if (theSpatialPartition->Remove(*colliderThis) == true)
+                    {
+                        cout << "*** REMOVED from Spatial Partitioning ***" << endl;
+                    }
+
+                    std::cout << "COLLISION" << std::endl;
+
+                    return false;   // don't obstruct player movement
+                }
+                else if ((*colliderThis)->GetName() == "Ammo") {
+
+                    // COLLISION RESPONSE HERE
+                    if (player->GetHeldWeapon()->GetCurrentWeapon()->GetMaxTotalRound() > (player->GetHeldWeapon()->GetCurrentWeapon()->GetTotalRound() + player->GetHeldWeapon()->GetCurrentWeapon()->GetMagRound()))
+                    {
+                        player->GetHeldWeapon()->GetCurrentWeapon()->SetTotalRound(player->GetHeldWeapon()->GetCurrentWeapon()->GetMaxTotalRound() - 1);
+                        player->GetHeldWeapon()->GetCurrentWeapon()->SetMagRound(1);
+
+                        (*colliderThis)->SetIsDone(true);
+
+                        // Remove from Spatial Partitioning
+                        if (theSpatialPartition->Remove(*colliderThis) == true)
+                        {
+                            cout << "*** REMOVED from Spatial Partitioning ***" << endl;
+                        }
+
+                        std::cout << "COLLISION" << std::endl;
+                    }
+
+                    return false;   // don't obstruct player movement regardless
+                }
 
                 return true;
             }

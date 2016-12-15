@@ -23,9 +23,9 @@ void CNeedleGun::Init(void)
     // The maximum number of ammunition for this magazine for this weapon
     maxMagRounds = 1;
     // The current total number of rounds currently carried by this player
-    totalRounds = 10;
+    totalRounds = 19;
     // The max total number of rounds currently carried by this player
-    maxTotalRounds = 10;
+    maxTotalRounds = 20;
 
     // The time between shots
     timeBetweenShots = 0.5;

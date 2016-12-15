@@ -57,9 +57,11 @@ void CGrenade::Update(double dt)
             {
                 if (CSceneGraph::GetInstance()->DeleteNode(ExportList[i]) == true) {
                     cout << "*** This Entity removed ***" << endl;
-
                 }
             }
+
+            // Remove from Spatial Partitioning
+            CSpatialPartition::GetInstance()->Remove(ExportList[i]);
 
 			//if (CSceneGraph::GetInstance()->DeleteNode(ExportList[i]) == true)
 			//{

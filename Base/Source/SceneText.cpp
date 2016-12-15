@@ -14,6 +14,8 @@
 #include "ShaderProgram.h"
 #include "EntityManager.h"
 
+#include "Pickup/Pickup.h"
+
 #include "GenericEntity.h"
 #include "GroundEntity.h"
 #include "TextEntity.h"
@@ -22,6 +24,8 @@
 #include "SkyBox/SkyBoxEntity.h"
 #include "SceneGraph\SceneGraph.h"
 #include "SpatialPartition\SpatialPartition.h"
+
+#include "RenderHelper.h"
 
 #include <iostream>
 using namespace std;
@@ -250,6 +254,29 @@ void SceneText::Init()
     MeshBuilder::GetInstance()->GenerateOBJ("low_res_enemy_overall", "OBJ//Enemy///enemy_overall_low_res.obj");
     MeshBuilder::GetInstance()->GetMesh("low_res_enemy_overall")->textureID = LoadTGA("Image//Enemy//enemy_overall_low_res_UV.tga");
 
+    // ----------- Pickups ----------- //
+    MeshBuilder::GetInstance()->GenerateOBJ("high_res_diamond", "OBJ//diamond_high_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("high_res_diamond")->textureID = LoadTGA("Image//Diamond/diamond_high_res.tga");
+    MeshBuilder::GetInstance()->GenerateOBJ("med_res_diamond", "OBJ//diamond_med_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("med_res_diamond")->textureID = LoadTGA("Image//Diamond/diamond_med_res.tga");
+    MeshBuilder::GetInstance()->GenerateOBJ("low_res_diamond", "OBJ//diamond_low_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("low_res_diamond")->textureID = LoadTGA("Image//Diamond/diamond_low_res.tga");
+
+    MeshBuilder::GetInstance()->GenerateOBJ("high_res_ammo", "OBJ//cube_high_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("high_res_ammo")->textureID = LoadTGA("Image//ammo_high_res.tga");
+    MeshBuilder::GetInstance()->GenerateOBJ("med_res_ammo", "OBJ//cube_low_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("med_res_ammo")->textureID = LoadTGA("Image//ammo_med_res.tga");
+    MeshBuilder::GetInstance()->GenerateOBJ("low_res_ammo", "OBJ//cube_low_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("low_res_ammo")->textureID = LoadTGA("Image//ammo_low_res.tga");
+
+    // ----------- 2D HUD ----------- //
+    MeshBuilder::GetInstance()->GenerateQuad("HUD_needle", Color(1, 1, 1), 1.f);
+    MeshBuilder::GetInstance()->GetMesh("HUD_needle")->textureID = LoadTGA("Image//HUD/HUD_needle.tga");
+    MeshBuilder::GetInstance()->GenerateQuad("HUD_grenade", Color(1, 1, 1), 1.f);
+    MeshBuilder::GetInstance()->GetMesh("HUD_grenade")->textureID = LoadTGA("Image//HUD/HUD_grenade.tga");
+    MeshBuilder::GetInstance()->GenerateQuad("HUD_diamond", Color(1, 1, 1), 1.f);
+    MeshBuilder::GetInstance()->GetMesh("HUD_diamond")->textureID = LoadTGA("Image//HUD/HUD_diamond.tga");
+
 	// Create entities into the scene
 	Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
 	Create::Entity("lightball", Vector3(lights[0]->position.x, lights[0]->position.y, lights[0]->position.z)); // Lightball
@@ -315,6 +342,11 @@ void SceneText::Init()
 
 	//SpawnCastle(Vector3(-20, -0, 0));
 
+    // ----------- Spawn Pickups ----------- //
+    SpawnDiamond(Vector3(-50, 5, 20));
+    SpawnAmmo(Vector3(-50, 3, 30));
+    SpawnAmmo(Vector3(-50, 3, 40));
+
 	// Customise the ground entity
 	groundEntity->SetPosition(Vector3(0, 0, 0));
 	groundEntity->SetScale(Vector3(100.0f, 100.0f, 100.0f));
@@ -338,12 +370,20 @@ void SceneText::Init()
 	float halfWindowHeight = Application::GetInstance().GetWindowHeight() / 2.0f;
 	float fontSize = 25.0f;
 	float halfFontSize = fontSize / 2.0f;
-	for (int i = 0; i < 3; ++i)
-	{
-		textObj[i] = Create::Text2DObject("text", Vector3(-halfWindowWidth, -halfWindowHeight + fontSize*i + halfFontSize, 0.0f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f,1.0f,0.0f));
-	}
-	textObj[0]->SetText("INFLATABLE WORLD");
+    for (int i = 0; i < 7; ++i)
+    {
+        textObj[i] = Create::Text2DObject("text", Vector3(-halfWindowWidth + 0.5f * halfFontSize, halfWindowHeight - fontSize*i - halfFontSize, 0.0f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 1.0f, 0.0f));
+    }
+    textObj[0]->SetText("INFLATABLE WORLD");
 
+    textObj[3] = Create::Text2DObject("text", Vector3(0.5f * halfFontSize, halfWindowHeight - halfFontSize, 0.0f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 1.0f, 0.0f));
+    textObj[4] = Create::Text2DObject("text", Vector3(-halfWindowWidth + 3.f * fontSize, -halfWindowHeight + fontSize, 0.0f), "", Vector3(0.9f * fontSize, 0.9f * fontSize, 0.9f * fontSize), Color(0.0f, 1.0f, 0.0f));
+    textObj[5] = Create::Text2DObject("text", Vector3(-halfWindowWidth + 5.f * fontSize, -halfWindowHeight + fontSize, 0.0f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 1.0f, 0.0f));
+    textObj[6] = Create::Text2DObject("text", Vector3(0.5f* halfWindowWidth + 2.f * fontSize + 0.5f * halfFontSize, -halfWindowHeight + fontSize, 0.0f), "", Vector3(fontSize, fontSize, fontSize), Color(0.0f, 1.0f, 0.0f));
+
+    HUDObj[0] = Create::Sprite2DObjectOutsideEntityManager("HUD_needle", Vector3(-halfWindowWidth + 1.5f * fontSize, -halfWindowHeight + 1.5f * fontSize, 0.f), Vector3(50, 50, 50));
+    HUDObj[1] = Create::Sprite2DObjectOutsideEntityManager("HUD_grenade", Vector3(-halfWindowWidth + 1.5f *  fontSize, -halfWindowHeight + 1.5f * fontSize, 0.f), Vector3(50, 50, 50));
+    HUDObj[2] = Create::Sprite2DObject("HUD_diamond", Vector3(halfWindowWidth - 7.5f * fontSize, -halfWindowHeight + 1.5f * fontSize, 0.f), Vector3(50, 50, 50));
 
     playerInfo->GetHeldWeapon()->SetWeaponType(HeldWeapon::WEAPON_NEEDLEGUN);
 }
@@ -432,16 +472,35 @@ void SceneText::Update(double dt)
 
 	// Update the 2 text object values. NOTE: Can do this in their own class but i'm lazy to do it now :P
 	// Eg. FPSRenderEntity or inside RenderUI for LightEntity
-	std::ostringstream ss;
-	ss.precision(5);
-	float fps = (float)(1.f / dt);
-	ss << "FPS: " << fps;
-	textObj[1]->SetText(ss.str());
+    std::ostringstream ss;
+    ss.precision(5);
+    float fps = (float)(1.f / dt);
+    ss << "FPS: " << fps;
+    textObj[1]->SetText(ss.str());
 
-	std::ostringstream ss1;
-	ss1.precision(4);
-	ss1 << "Player:" << playerInfo->GetPos();
-	textObj[2]->SetText(ss1.str());
+    std::ostringstream ss1;
+    ss1 << "Player(" << (int)playerInfo->GetPos().x << "," << (int)playerInfo->GetPos().y << "," << (int)playerInfo->GetPos().z << ")";
+    textObj[2]->SetText(ss1.str());
+
+    // how many balloons destroyed
+    std::ostringstream ss2;
+    //ss2 << "Balloons Destroyed:" << 0;
+    textObj[3]->SetText(ss2.str());
+
+    // ammo left
+    std::ostringstream ss3;
+    ss3 << playerInfo->GetHeldWeapon()->GetCurrentWeapon()->GetTotalRound() + playerInfo->GetHeldWeapon()->GetCurrentWeapon()->GetMagRound();
+    textObj[4]->SetText(ss3.str());
+
+    // total max ammo that can be carried
+    std::ostringstream ss4;
+    ss4 << "/" << playerInfo->GetHeldWeapon()->GetCurrentWeapon()->GetMaxTotalRound();
+    textObj[5]->SetText(ss4.str());
+
+    // how many diamonds left
+    std::ostringstream ss5;
+    ss5 << playerInfo->GetDiamondsLeftToCollect() << " left";
+    textObj[6]->SetText(ss5.str());
 }
 
 void SceneText::Render()
@@ -463,6 +522,21 @@ void SceneText::Render()
 	GraphicsManager::GetInstance()->SetOrthographicProjection(-halfWindowWidth, halfWindowWidth, -halfWindowHeight, halfWindowHeight, -10, 10);
 	GraphicsManager::GetInstance()->DetachCamera();
 	EntityManager::GetInstance()->RenderUI();
+
+    // Render HUD objects
+    MS& modelStack = GraphicsManager::GetInstance()->GetModelStack();
+    modelStack.PushMatrix();
+    modelStack.Translate(HUDObj[0]->GetPosition().x, HUDObj[0]->GetPosition().y, HUDObj[0]->GetPosition().z);
+    modelStack.Scale(HUDObj[0]->GetScale().x, HUDObj[0]->GetScale().y, HUDObj[0]->GetScale().z);
+    if (playerInfo->GetHeldWeapon()->GetWeaponType() == HeldWeapon::WEAPON_NEEDLEGUN)
+    {
+        RenderHelper::RenderMesh(HUDObj[0]->GetMesh());
+    }
+    else if (playerInfo->GetHeldWeapon()->GetWeaponType() == HeldWeapon::WEAPON_GRENADE)
+    {
+        RenderHelper::RenderMesh(HUDObj[1]->GetMesh());
+    }
+    modelStack.PopMatrix();
 }
 
 void SceneText::Exit()
@@ -489,8 +563,8 @@ void SceneText::SpawnArena(Vector3 spawnPos)
 
     // ----------- LOW RES ----------- //
     GenericBalloon* lowResStructure = Create::Balloon("low_res_cube", Vector3(0, 0, 0));
-    lowResStructure->SetCollider(false);
-    lowResStructure->SetScale(Vector3(10, 5, 10));
+    lowResStructure->SetCollider(true);
+    lowResStructure->SetScale(Vector3(10, 5, 14));
     lowResStructure->InitLOD("", "", "low_res_cube");
     lowResStructure->SetPosition(spawnPos);
     lowResStructure->SetLowResRender(true);
@@ -1083,4 +1157,28 @@ void SceneText::SpawnWindmill(Vector3 spawnPos)
     bladesRotate->ApplyUpdate(1.0f, 0.0f, 0.0f, 1.0f);
     bladesRotate->SetSteps(-720, 720);
     bladesNode->SetUpdateTransformation(bladesRotate);
+}
+
+void SceneText::SpawnDiamond(const Vector3& spawnPos)
+{
+    // Base
+    CPickup* diamond = Create::Pickup("high_res_diamond", "Diamond", spawnPos);
+    diamond->SetCollider(true);
+    Vector3 scale(2.5f, 2.5f, 2.5f);
+    diamond->SetScale(scale);
+    diamond->SetPosition(spawnPos);
+    diamond->SetAABB(Vector3(2.5f, 2.5f, 2.5f), Vector3(-2.5f, -2.5f, -2.5f));
+    diamond->InitLOD("high_res_diamond", "med_res_diamond", "low_res_diamond");
+}
+
+void SceneText::SpawnAmmo(const Vector3& spawnPos)
+{
+    // Base
+    CPickup* ammo = Create::Pickup("high_res_ammo", "Ammo", spawnPos);
+    ammo->SetCollider(true);
+    Vector3 scale(2.5f, 2.5f, 2.5f);
+    ammo->SetScale(scale);
+    ammo->SetPosition(spawnPos);
+    ammo->SetAABB(Vector3(2.5f, 2.5f, 2.5f), Vector3(-2.5f, -2.5f, -2.5f));
+    ammo->InitLOD("high_res_ammo", "med_res_ammo", "low_res_ammo");
 }
