@@ -160,7 +160,7 @@ void HeldWeapon::SetWeaponType(WEAPON_TYPE type)
         case WEAPON_NEEDLEGUN:
             m_mesh = MeshBuilder::GetInstance()->GetMesh("NeedleGun");
             break;
-        case WEAPON_KNIFE:
+        case WEAPON_GRENADE:
             m_mesh = MeshBuilder::GetInstance()->GetMesh("Grenade");
             break;
         }
@@ -410,5 +410,6 @@ void HeldWeapon::CheckPlayerTarget(const Vector3& target)
 void HeldWeapon::Render()
 {
     //RenderHelper::RenderMesh(m_mesh);
-    RenderHelper::RenderMeshWithLight(m_mesh);
+    if (weapon_type != WEAPON_GRENADE || (weapon_type == WEAPON_GRENADE && curr_weapon->GetMagRound() > 0))
+        RenderHelper::RenderMeshWithLight(m_mesh);
 }

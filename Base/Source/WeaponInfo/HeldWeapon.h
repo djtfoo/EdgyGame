@@ -11,7 +11,7 @@ public:
     enum WEAPON_TYPE
     {
         WEAPON_NEEDLEGUN,
-        WEAPON_KNIFE,
+        WEAPON_GRENADE,
         WEAPON_TOTAL
     };
 

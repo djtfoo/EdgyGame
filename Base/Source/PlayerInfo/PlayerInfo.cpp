@@ -23,19 +23,24 @@ CPlayerInfo::CPlayerInfo(void)
 //	, m_dFallSpeed(0.0)
 //	, m_dFallAcceleration(-10.0)
 	: attachedCamera(NULL)
-    , m_dSpeed(40.0)
+    , m_dSpeed(80.0)
 	, m_pTerrain(NULL)
 //	, primaryWeapon(NULL)
 //	, secondaryWeapon(NULL)
+, m_STAND_EYELEVEL(3.f)
+, m_CROUCH_EYELEVEL(1.f)
+
 {
     m_eyeLevel = m_STAND_EYELEVEL;
     m_speed = 0.f;
-    m_jumpSpeed = 80.f;
+    m_jumpSpeed = 0.f;
     m_gravity = -100.f;
     m_jumpHeight = 0.f;
 
     m_movementState = MOVEMENT_STATE_IDLE;
     m_heightState = HEIGHT_STATE_STANDING;
+
+    b_setToJump = false;
 }
 
 CPlayerInfo::~CPlayerInfo(void)
@@ -302,32 +307,88 @@ void CPlayerInfo::Update(double dt)
         break;
     }
 
+    bool collisionX = false, collisionY = false, collisionZ = false;
+    if (!b_setToJump)
+    {
+        collisionY = EntityManager::GetInstance()->CheckPlayerCollision(dt, position + Vector3(0, -m_eyeLevel, 0), this);
+    }
+    else
+    {
+        b_setToJump = false;
+    }
 
-    UpdatePlayerHeight(dt);
+    if (m_heightState != HEIGHT_STATE_JUMP && (position.y - m_eyeLevel <= m_pTerrain->GetTerrainHeight(position))) {
+        collisionY = true;
+    }
 
-    if (m_heightState == HEIGHT_STATE_JUMP)
-        velocity.y = m_jumpSpeed;
+    m_jumpSpeed += (float)(m_gravity * dt);
+    velocity.y = m_jumpSpeed;
 
+    if (!collisionY || m_jumpSpeed > 0.f)
+    {
+        m_heightState = HEIGHT_STATE_JUMP;
+        position.y += velocity.y * (float)(dt);
+
+        // Check if camera reached the ground
+        if (position.y - m_eyeLevel + 1.f <= m_pTerrain->GetTerrainHeight(position))  //player would be in the ground already
+        {
+            // Camera landing on ground
+            position.y = m_pTerrain->GetTerrainHeight(position) + m_eyeLevel;
+
+            //when landing, reduce MoveVel (impact)
+            m_speed = Math::Max(0.f, m_speed - 5.f);
+
+            // Reset values
+            if (m_eyeLevel == m_CROUCH_EYELEVEL)
+            {
+                m_heightState = HEIGHT_STATE_CROUCH;
+            }
+            else
+            {
+                m_heightState = HEIGHT_STATE_STANDING;
+            }
+        }
+    }
+    else
+    {
+        if (m_heightState == HEIGHT_STATE_JUMP) {   // just landed
+
+            //when landing, reduce MoveVel (impact)
+            m_speed = Math::Max(0.f, m_speed - 5.f);
+
+            // Reset values
+            if (m_eyeLevel == m_CROUCH_EYELEVEL)
+            {
+                m_heightState = HEIGHT_STATE_CROUCH;
+            }
+            else
+            {
+                m_heightState = HEIGHT_STATE_STANDING;
+            }
+        }
+
+        m_jumpSpeed = 0.f;
+    }
+
+    // x and z collision
     if (m_speed > Math::EPSILON)
     {
-        bool collisionX = false, collisionY = false, collisionZ = false;
-        collisionX = EntityManager::GetInstance()->CheckPlayerCollision(position + Vector3(velocity.x, 0, 0));
-        collisionY = EntityManager::GetInstance()->CheckPlayerCollision(position + Vector3(0, velocity.y, 0));
-        collisionZ = EntityManager::GetInstance()->CheckPlayerCollision(position + Vector3(0, 0, velocity.z));
+        collisionX = EntityManager::GetInstance()->CheckPlayerCollision(dt, position + Vector3(5.f * velocity.x, 0, 0), this);
+        collisionZ = EntityManager::GetInstance()->CheckPlayerCollision(dt, position + Vector3(0, 0, 5.f * velocity.z), this);
 
         //position += velocity * m_speed * (float)(dt);
         if (!collisionX)
             position.x += velocity.x * m_speed * (float)(dt);
         if (!collisionZ)
             position.z += velocity.z * m_speed * (float)(dt);
-        //if (!collisionY)
-        //    position.y += velocity.y * (float)(dt);
-
-        // Constrain the position
-        Constrain();
-        // Update the target
-        target = position + viewVector;
     }
+
+    UpdatePlayerHeight(dt);
+
+    // Constrain the position
+    Constrain();
+    // Update the target
+    target = position + viewVector;
 
     //************************************
     // VIEW
@@ -495,22 +556,22 @@ void CPlayerInfo::UpdatePlayerHeight(const double dt)
         break;
 
     case HEIGHT_STATE_JUMP:
-        UpdateJump(dt);
+        //UpdateJump(dt);
         break;
     }
     
-    // if the player is not jumping nor falling, then adjust his y position
-    if (m_heightState != HEIGHT_STATE_JUMP)
-    {
-        // update y position to the terrain height
-        Vector3 view = (target - position).Normalized();
-        position.y = m_pTerrain->GetTerrainHeight(position) + m_eyeLevel;
-        target.y = position.y + view.y;
-    }
-    else
-    {
-        //position.y = m_pTerrain->GetTerrainHeight(position) + m_eyeLevel;// +m_jumpHeight;
-    }
+    //// if the player is not jumping nor falling, then adjust his y position
+    //if (m_heightState != HEIGHT_STATE_JUMP)
+    //{
+    //    // update y position to the terrain height
+    //    Vector3 view = (target - position).Normalized();
+    //    position.y = m_pTerrain->GetTerrainHeight(position) + m_eyeLevel;
+    //    target.y = position.y + view.y;
+    //}
+    //else
+    //{
+    //    //position.y = m_pTerrain->GetTerrainHeight(position) + m_eyeLevel;// +m_jumpHeight;
+    //}
 }
 
 
@@ -519,11 +580,6 @@ void CPlayerInfo::Crouch()
     if (m_heightState != HEIGHT_STATE_CROUCH && m_eyeLevel == m_STAND_EYELEVEL)
     {
         m_heightState = HEIGHT_STATE_CROUCH;
-    }
-
-    if (m_heightState == HEIGHT_STATE_CROUCH && m_eyeLevel == m_CROUCH_EYELEVEL)
-    {
-        m_heightState = HEIGHT_STATE_STANDING;
     }
 }
 
@@ -540,7 +596,9 @@ void CPlayerInfo::Jump()
     if (m_heightState != HEIGHT_STATE_JUMP) {
         m_heightState = HEIGHT_STATE_JUMP;
 
-        m_jumpSpeed = 80.f;    //dt not needed
+        m_jumpSpeed = 30.f;    //dt not needed
+
+        b_setToJump = true;
     }
 }
 
@@ -548,15 +606,28 @@ void CPlayerInfo::UpdateStandUp(const double dt)
 {
     if (m_eyeLevel < m_STAND_EYELEVEL)
     {
-        m_eyeLevel += (float)(20.f * dt);
-        m_eyeLevel = Math::Min(m_STAND_EYELEVEL, m_eyeLevel);
+        //float standChange = (float)(20.f * dt);
+        //m_eyeLevel += standChange;
+        //m_eyeLevel = Math::Min(m_STAND_EYELEVEL, m_eyeLevel);
+
+        float standChange = Math::Min(m_STAND_EYELEVEL - m_eyeLevel, (float)(20.f * dt));
+        m_eyeLevel += standChange;
+        position.y += standChange;
     }
 }
 
 void CPlayerInfo::UpdateCrouch(const double dt)
 {
-    m_eyeLevel -= (float)(20.f * dt);
-    m_eyeLevel = Math::Max(m_CROUCH_EYELEVEL, m_eyeLevel);
+    if (m_eyeLevel > m_CROUCH_EYELEVEL)
+    {
+        //float crouchChange = (float)(20.f * dt);
+        //m_eyeLevel -= crouchChange;
+        //m_eyeLevel = Math::Max(m_CROUCH_EYELEVEL, m_eyeLevel);
+
+        float crouchChange = Math::Min(m_eyeLevel - m_CROUCH_EYELEVEL, (float)(20.f * dt));
+        m_eyeLevel -= crouchChange;
+        position.y -= crouchChange;
+    }
 }
 
 void CPlayerInfo::UpdateJump(const double dt)
@@ -649,4 +720,44 @@ void CPlayerInfo::RenderWeapon()
     m_heldWeapon->Render();
 
     modelStack.PopMatrix();
+}
+
+CPlayerInfo::MOVEMENT_STATE CPlayerInfo::GetMovementState()
+{
+    return m_movementState;
+}
+
+void CPlayerInfo::SetMovementState(MOVEMENT_STATE state)
+{
+    m_movementState = state;
+}
+
+CPlayerInfo::HEIGHT_STATE CPlayerInfo::GetHeightState()
+{
+    return m_heightState;
+}
+
+void CPlayerInfo::SetHeightState(HEIGHT_STATE state)
+{
+    m_heightState = state;
+}
+
+float CPlayerInfo::GetJumpSpeed()
+{
+    return m_jumpSpeed;
+}
+
+void CPlayerInfo::SetJumpSpeed(float jumpSpeed)
+{
+    m_jumpSpeed = jumpSpeed;
+}
+
+float CPlayerInfo::GetMovementSpeed()
+{
+    return m_speed;
+}
+
+void CPlayerInfo::SetMovementSpeed(float mSpeed)
+{
+    m_speed = mSpeed;
 }

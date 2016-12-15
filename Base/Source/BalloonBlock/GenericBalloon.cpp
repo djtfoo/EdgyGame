@@ -2,6 +2,7 @@
 
 #include "MeshBuilder.h"
 #include "../EntityManager.h"
+#include "../SceneGraph/SceneGraph.h"
 
 GenericBalloon::GenericBalloon(Mesh* _modelMesh)
     : GenericEntity(_modelMesh, "GenericBalloon")
@@ -26,6 +27,13 @@ void GenericBalloon::Update(double dt)
         break;
     case GenericBalloon::DEFLATED:
         this->SetIsDone(true);
+
+        // Remove from Scene Graph
+        if (CSceneGraph::GetInstance()->DeleteNode(this) == true)
+        {
+        	cout << "*** That Entity removed ***" << endl;
+        }
+
         break;
     default:
         break;
@@ -34,9 +42,11 @@ void GenericBalloon::Update(double dt)
 
 void GenericBalloon::Deflate(double dt)
 {
-    this->scale.y -= 10 * dt;
+    this->scale.x -= (float)dt;
+    this->scale.y -= (float)dt;
+    this->scale.z -= (float)dt;
 
-    if (scale.y < 0.1)
+    if (scale.x < 0.01f || scale.y < 0.01f || scale.z < 0.01f)
         m_state = DEFLATED;
 }
 

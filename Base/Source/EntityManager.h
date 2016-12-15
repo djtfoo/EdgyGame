@@ -5,6 +5,7 @@
 #include <list>
 #include "Vector3.h"
 #include "SpatialPartition\SpatialPartition.h"
+#include "PlayerInfo\PlayerInfo.h"
 
 class EntityBase;
 
@@ -23,7 +24,7 @@ public:
 	void SetSpatialPartition(CSpatialPartition* theSpatialPartition);
     CSpatialPartition* GetSpartialPartition();
 
-    bool CheckPlayerCollision(const Vector3& point);
+    bool CheckPlayerCollision(const double dt, const Vector3& point, CPlayerInfo* player);
 
 private:
 	EntityManager();
