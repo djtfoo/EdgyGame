@@ -33,7 +33,6 @@ CGrenade::~CGrenade(void)
 {
 	m_pTerrain = NULL; // Don't delete this as the terrain is deleted in CPlayerInfo
 	modelMesh = NULL;
-	theSource = NULL;
 }
 
 // Update the status of this projectile
@@ -54,10 +53,18 @@ void CGrenade::Update(double dt)
 		for (int i = 0; i < ExportList.size(); ++i)
 		{
 			// Remove from Scene Graph
-			if (CSceneGraph::GetInstance()->DeleteNode(ExportList[i]) == true)
-			{
-				cout << "*** This Entity removed ***" << endl;
-			}
+            if (ExportList[i]->GetIsLowResRender())
+            {
+                if (CSceneGraph::GetInstance()->DeleteNode(ExportList[i]) == true) {
+                    cout << "*** This Entity removed ***" << endl;
+
+                }
+            }
+
+			//if (CSceneGraph::GetInstance()->DeleteNode(ExportList[i]) == true)
+			//{
+			//	cout << "*** This Entity removed ***" << endl;
+			//}
 
 
 		}
@@ -95,7 +102,7 @@ CGrenade* Create::Grenade(	const std::string& _meshName,
 							const Vector3& _direction, 
 							const float m_fLifetime, 
 							const float m_fSpeed,
-							CPlayerInfo* _source)
+							GroundEntity* _ground)
 {
 	Mesh* modelMesh = MeshBuilder::GetInstance()->GetMesh(_meshName);
 	if (modelMesh == nullptr)
@@ -105,8 +112,8 @@ CGrenade* Create::Grenade(	const std::string& _meshName,
 	result->Set(_position, _direction, m_fLifetime, m_fSpeed);
 	result->SetStatus(true);
 	result->SetCollider(true);
-	result->SetSource(_source);
-	result->SetTerrain(_source->GetTerrain());
+	result->SetGround(_ground);
+	result->SetTerrain(_ground);
 	EntityManager::GetInstance()->AddEntity(result, true);
 	return result;
 }

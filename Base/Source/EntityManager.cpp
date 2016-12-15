@@ -163,7 +163,7 @@ EntityManager::~EntityManager()
 
 // Check for overlap
 bool EntityManager::CheckOverlap(Vector3 thisMinAABB, Vector3 thisMaxAABB, Vector3 thatMinAABB, Vector3 thatMaxAABB)
-{	
+{
 	// Check if this object is overlapping that object
 	/*
 	if (((thatMinAABB.x >= thisMinAABB.x) && (thatMinAABB.x <= thisMaxAABB.x) &&
@@ -229,6 +229,17 @@ bool EntityManager::CheckOverlap(Vector3 thisMinAABB, Vector3 thisMaxAABB, Vecto
 		return true;
 
 	return false;
+}
+
+bool EntityManager::CheckPointToAABB(const Vector3& point, const Vector3& minAABB, const Vector3& maxAABB)
+{
+    // Check if point is within the AABB bounding box
+    if ((point >= minAABB) && (point <= maxAABB))
+    {
+        return true;
+    }
+    
+    return false;
 }
 
 // Check if this entity's bounding sphere collided with that entity's bounding sphere 
@@ -329,6 +340,59 @@ bool EntityManager::CheckLineSegmentPlane(	Vector3 line_start, Vector3 line_end,
 	return false;
 }
 
+// Check for Player Collision
+bool EntityManager::CheckPlayerCollision(const Vector3& point)
+{
+    std::list<EntityBase*>::iterator colliderThis, colliderThisEnd;
+    colliderThisEnd = entityList.end();
+
+    for (colliderThis = entityList.begin(); colliderThis != colliderThisEnd; ++colliderThis)
+    {
+        // Check if this entity is a Balloon type
+        if ((*colliderThis)->GetName() == "GenericBalloon" && (*colliderThis)->HasCollider())
+        {
+            CCollider *thisCollider = dynamic_cast<CCollider*>(*colliderThis);
+
+            Vector3 minAABB, maxAABB;
+
+            if ((*colliderThis)->GetIsInSceneGraph()) {
+                Mtx44 transformMtx;
+                transformMtx.SetToIdentity();
+                CSceneNode* node = CSceneGraph::GetInstance()->GetNode(*colliderThis);
+                if (node->GetParent() != NULL) {
+                    transformMtx = node->GetParent()->GetTransform() * node->GetTransform();
+                }
+                else {
+                    transformMtx = node->GetTransform();
+                }
+
+                minAABB = transformMtx * ((*colliderThis)->GetPosition() + thisCollider->GetMinAABB());
+                maxAABB = transformMtx * ((*colliderThis)->GetPosition() + thisCollider->GetMaxAABB());
+            }
+            else {
+                minAABB = (*colliderThis)->GetPosition() + thisCollider->GetMinAABB();
+                maxAABB = (*colliderThis)->GetPosition() + thisCollider->GetMaxAABB();
+            }
+
+            // Create AABB for player
+            Vector3 playerMinAABB, playerMaxAABB;
+            playerMinAABB = point + Vector3(-5, -100, -5);
+            playerMaxAABB = point + Vector3(5, 100, 5);
+
+            //std::cout << minAABB << " | " << maxAABB << std::endl;
+
+            if (CheckOverlap(playerMinAABB, playerMaxAABB, minAABB, maxAABB)) {
+                return true;
+            }
+            //if (CheckPointToAABB(point, minAABB, maxAABB)) {
+            //    return true;
+            //}
+        }
+    }
+
+    return false;
+}
+
 // Check if any Collider is colliding with another Collider
 bool EntityManager::CheckForCollision(void)
 {
@@ -383,7 +447,7 @@ bool EntityManager::CheckForCollision(void)
                         thatMaxAABB = (*colliderThat)->GetPosition() + thatCollider->GetMaxAABB();
                     }
 
-                    std::cout << thatMinAABB.x << " | " << thatMinAABB.y << " | " << thatMaxAABB.x << " | " << thatMaxAABB.y << std::endl;
+                    //std::cout << thatMinAABB.x << " | " << thatMinAABB.y << " | " << thatMinAABB.z << " | " << thatMaxAABB.x << " | " << thatMaxAABB.y << " | " << thatMaxAABB.z << std::endl;
 
 					if (CheckLineSegmentPlane(	thisEntity->GetPosition(), 
 												thisEntity->GetPosition() - thisEntity->GetDirection() * thisEntity->GetLength(),
@@ -405,6 +469,7 @@ bool EntityManager::CheckForCollision(void)
 						{
 							cout << "*** That Entity removed ***" << endl;
 						}
+
 
                         break;
 					}

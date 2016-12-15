@@ -2,6 +2,7 @@
 #include "MeshBuilder.h"
 #include "NeedleGun.h"
 #include "LaserBlaster.h"
+#include "../WeaponInfo/GrenadeThrow.h"
 
 #include "RenderHelper.h"
 
@@ -45,7 +46,10 @@ void HeldWeapon::Init()
     weaponList[0] = new CNeedleGun();
     weaponList[0]->Init();
 
-    weaponList[1] = new CLaserBlaster();
+    //weaponList[1] = new CLaserBlaster();
+    //weaponList[1]->Init();
+
+    weaponList[1] = new CGrenadeThrow();
     weaponList[1]->Init();
 
     SetWeaponType(WEAPON_NEEDLEGUN);

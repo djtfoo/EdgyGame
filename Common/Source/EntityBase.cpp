@@ -7,6 +7,7 @@ EntityBase::EntityBase(string name)
 	, m_bCollider(false)
 	, bLaser(false)
     , m_bIsInSceneGraph(false)
+    , b_isLowResRender(false)
     , name(name)
 {
 }
@@ -74,4 +75,14 @@ bool EntityBase::GetIsInSceneGraph()
 void EntityBase::SetInSceneGraph(const bool b_isInGraph)
 {
     m_bIsInSceneGraph = b_isInGraph;
+}
+
+bool EntityBase::GetIsLowResRender() const
+{
+    return b_isLowResRender;
+}
+
+void EntityBase::SetLowResRender(bool b_lowRes)
+{
+    b_isLowResRender = b_lowRes;
 }

@@ -36,7 +36,7 @@ void CLaserBlaster::Init(void)
 }
 
 // Discharge this weapon
-void CLaserBlaster::Discharge(Vector3 position, Vector3 target, CPlayerInfo* _source)
+void CLaserBlaster::Discharge(Vector3 position, Vector3 target, GroundEntity* _ground)
 {
 	if (bFire)
 	{
@@ -51,7 +51,7 @@ void CLaserBlaster::Discharge(Vector3 position, Vector3 target, CPlayerInfo* _so
 											10.0f,
 											2.0f,
 											100.0f,
-											_source);
+											_ground);
 			aLaser->SetIsLaser(true);
 			aLaser->SetCollider(false);
 			//aLaser->SetCollider(true);

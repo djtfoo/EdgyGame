@@ -5,9 +5,7 @@
 #include "KeyboardController.h"
 #include "Mtx44.h"
 #include "../Projectile/Projectile.h"
-#include "../WeaponInfo/Pistol.h"
-#include "../WeaponInfo/LaserBlaster.h"
-#include "../WeaponInfo/GrenadeThrow.h"
+#include "../EntityManager.h"
 
 #include "GraphicsManager.h"
 #include "MatrixStack.h"
@@ -32,7 +30,7 @@ CPlayerInfo::CPlayerInfo(void)
 {
     m_eyeLevel = m_STAND_EYELEVEL;
     m_speed = 0.f;
-    m_jumpSpeed = 0.f;
+    m_jumpSpeed = 30.f;
     m_gravity = -100.f;
     m_jumpHeight = 0.f;
 
@@ -78,15 +76,6 @@ void CPlayerInfo::Init(void)
 	maxBoundary.Set(1,1,1);
 	minBoundary.Set(-1, -1, -1);
 
-	// Set the pistol as the primary weapon
-	//primaryWeapon = new CPistol();
-	//primaryWeapon->Init();
-	//// Set the laser blaster as the secondary weapon
-	////secondaryWeapon = new CLaserBlaster();
-	////secondaryWeapon->Init();
-	//secondaryWeapon = new CGrenadeThrow();
-	//secondaryWeapon->Init();
-    
     m_heldWeapon = new HeldWeapon();
     m_heldWeapon->Init();
 }
@@ -137,7 +126,6 @@ void CPlayerInfo::Reset(void)
 
     m_eyeLevel = m_STAND_EYELEVEL;
     m_speed = 0.f;
-    m_jumpSpeed = 0.f;
     m_gravity = -100.f;
     m_jumpHeight = 0.f;
 
@@ -314,13 +302,32 @@ void CPlayerInfo::Update(double dt)
         break;
     }
 
-    position += velocity * m_speed * (float)(dt);
+
     UpdatePlayerHeight(dt);
 
-    // Constrain the position
-    Constrain();
-    // Update the target
-    target = position + viewVector;
+    if (m_heightState == HEIGHT_STATE_JUMP)
+        velocity.y = m_jumpSpeed;
+
+    if (m_speed > Math::EPSILON)
+    {
+        bool collisionX = false, collisionY = false, collisionZ = false;
+        collisionX = EntityManager::GetInstance()->CheckPlayerCollision(position + Vector3(velocity.x, 0, 0));
+        collisionY = EntityManager::GetInstance()->CheckPlayerCollision(position + Vector3(0, velocity.y, 0));
+        collisionZ = EntityManager::GetInstance()->CheckPlayerCollision(position + Vector3(0, 0, velocity.z));
+
+        //position += velocity * m_speed * (float)(dt);
+        if (!collisionX)
+            position.x += velocity.x * m_speed * (float)(dt);
+        if (!collisionZ)
+            position.z += velocity.z * m_speed * (float)(dt);
+        if (!collisionY)
+            position.y += velocity.y * (float)(dt);
+
+        // Constrain the position
+        Constrain();
+        // Update the target
+        target = position + viewVector;
+    }
 
     //************************************
     // VIEW
@@ -459,8 +466,7 @@ void CPlayerInfo::Update(double dt)
     {
         m_heldWeapon->Update(dt);
     }
-        
-    
+
 	//if (primaryWeapon)
 	//	primaryWeapon->Update(dt);
 	//if (secondaryWeapon)
@@ -519,7 +525,7 @@ void CPlayerInfo::UpdatePlayerHeight(const double dt)
     }
     else
     {
-        position.y = m_eyeLevel + m_jumpHeight;
+        //position.y = m_pTerrain->GetTerrainHeight(position) + m_eyeLevel;// +m_jumpHeight;
     }
 }
 
@@ -578,14 +584,14 @@ void CPlayerInfo::UpdateJump(const double dt)
     m_jumpHeight += m_jumpSpeed * (float)dt;
 
     // Check if camera reached the ground
-    float newHeight = position.y + m_jumpHeight;  //player would be in the ground already
-    if (newHeight + 1.5f <= position.y)
+    float newHeight = m_pTerrain->GetTerrainHeight(position) + m_jumpHeight;  //player would be in the ground already
+    if (newHeight + 1.f <= m_pTerrain->GetTerrainHeight(position))
     {
         //// Camera landing on ground
         //position.y = newHeight;
 
         //when landing, reduce MoveVel (impact)
-        //m_speed = Math::Max(0.f, m_speed - 20.f);
+        m_speed = Math::Max(0.f, m_speed - 5.f);
 
         // Reset values
         if (m_eyeLevel == m_CROUCH_EYELEVEL)
@@ -597,7 +603,6 @@ void CPlayerInfo::UpdateJump(const double dt)
             m_heightState = HEIGHT_STATE_STANDING;
         }
         
-        m_jumpSpeed = 0.f;
         m_jumpHeight = 0.f;
     }
 }

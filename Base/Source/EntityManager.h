@@ -23,12 +23,18 @@ public:
 	void SetSpatialPartition(CSpatialPartition* theSpatialPartition);
     CSpatialPartition* GetSpartialPartition();
 
+    bool CheckPlayerCollision(const Vector3& point);
+
 private:
 	EntityManager();
 	virtual ~EntityManager();
 
 	// Check for overlap
 	bool CheckOverlap(Vector3 thisMinAABB, Vector3 thisMaxAABB, Vector3 thatMinAABB, Vector3 thatMaxAABB);
+
+    // Check for point to AABB
+    bool CheckPointToAABB(const Vector3& point, const Vector3& minAABB, const Vector3& maxAABB);
+
 	// Check if this entity's bounding sphere collided with that entity's bounding sphere 
 	bool CheckSphereCollision(EntityBase *ThisEntity, EntityBase *ThatEntity);
 	// Check if this entity collided with another entity, but both must have collider

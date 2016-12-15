@@ -30,7 +30,6 @@ CLaser::CLaser(Mesh* _modelMesh)
 CLaser::~CLaser(void)
 {
 	modelMesh = NULL;
-	theSource = NULL;
 }
 
 // Set the length of the laser
@@ -120,7 +119,7 @@ CLaser* Create::Laser(const std::string& _meshName,
 								const float m_fLength, 
 								const float m_fLifetime, 
 								const float m_fSpeed,
-								CPlayerInfo* _source)
+								GroundEntity* _ground)
 {
 	Mesh* modelMesh = MeshBuilder::GetInstance()->GetMesh(_meshName);
 	if (modelMesh == nullptr)
@@ -131,7 +130,7 @@ CLaser* Create::Laser(const std::string& _meshName,
 	result->SetLength(m_fLength);
 	result->SetStatus(true);
 	result->SetCollider(true);
-	result->SetSource(_source);
+	result->SetGround(_ground);
 	EntityManager::GetInstance()->AddEntity(result);
 
 	Vector3 base = Vector3(1.0f, 0.0f, 0.0f);

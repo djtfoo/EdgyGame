@@ -36,7 +36,7 @@ void CNeedleGun::Init(void)
 }
 
 // Discharge this weapon
-void CNeedleGun::Discharge(Vector3 position, Vector3 target, CPlayerInfo* _source)
+void CNeedleGun::Discharge(Vector3 position, Vector3 target, GroundEntity* _ground)
 {
     if (bFire)
     {
@@ -51,7 +51,7 @@ void CNeedleGun::Discharge(Vector3 position, Vector3 target, CPlayerInfo* _sourc
                 10.0f,
                 2.0f,
                 100.0f,
-                _source);
+                _ground);
             needle->SetIsLaser(true);
             needle->SetCollider(false);
             //aLaser->SetCollider(true);

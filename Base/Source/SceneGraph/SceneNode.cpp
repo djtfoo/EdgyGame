@@ -9,7 +9,6 @@ CSceneNode::CSceneNode(void)
 	: ID(-1)
 	, theEntity(NULL)
 	, theParent(NULL)
-    , b_isLowResRender(false)
 {
 }
 
@@ -119,6 +118,7 @@ bool CSceneNode::DeleteChild(EntityBase* theEntity)
 				it = theChildren.erase(it);
 			}
 		}
+
 		return true;	// return true to say that this Node contains theEntity
 	}
 	else
@@ -321,7 +321,7 @@ int CSceneNode::GetNumOfChild(void)
 }
 
 // Update the Scene Graph
-void CSceneNode::Update(void)
+bool CSceneNode::Update(void)
 {
 	// Update the Transformation between this node and its children
 	if (theUpdateTransformation)
@@ -355,8 +355,38 @@ void CSceneNode::Update(void)
 	std::vector<CSceneNode*>::iterator it;
 	for (it = theChildren.begin(); it != theChildren.end(); ++it)
 	{
-		(*it)->Update();
+        if ((*it)->Update())
+        {
+            break;
+        }
 	}
+
+    if (GetEntity())
+    {
+        bool hasChildren = false;
+        if (GetEntity()->GetIsLowResRender()) {
+
+            for (it = theChildren.begin(); it != theChildren.end(); ++it)
+            {
+
+                if ((*it)->GetEntity())
+                {
+                    hasChildren = true;
+                    break;
+                }
+            }
+
+            if (!hasChildren)
+            {
+                GetEntity()->SetIsDone(true);
+                CSceneGraph::GetInstance()->DeleteNode(this->GetEntity());
+                //delete (*it);
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 // Render the Scene Graph
 void CSceneNode::Render(void)
@@ -429,14 +459,4 @@ void CSceneNode::PrintSelf(const int numTabs)
 			it++;
 		}
 	}
-}
-
-bool CSceneNode::GetIsLowResRender() const
-{
-    return b_isLowResRender;
-}
-
-void CSceneNode::SetLowResRender(bool b_lowRes)
-{
-    b_isLowResRender = b_lowRes;
 }

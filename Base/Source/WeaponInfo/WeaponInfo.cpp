@@ -137,7 +137,7 @@ void CWeaponInfo::Update(const double dt)
 }
 
 // Discharge this weapon
-void CWeaponInfo::Discharge(Vector3 position, Vector3 target, CPlayerInfo* _source)
+void CWeaponInfo::Discharge(Vector3 position, Vector3 target, GroundEntity* _ground)
 {
 	if (bFire)
 	{
@@ -151,7 +151,7 @@ void CWeaponInfo::Discharge(Vector3 position, Vector3 target, CPlayerInfo* _sour
 															(target - position).Normalized(), 
 															2.0f, 
 															10.0f,
-															_source);
+															_ground);
 			aProjectile->SetCollider(true);
 			aProjectile->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
 			bFire = false;
