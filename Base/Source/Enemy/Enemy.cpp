@@ -18,6 +18,9 @@ CEnemy::~CEnemy()
 
 void CEnemy::Init()
 {
+    // Set Waypoints
+    m_CurrWaypointIdx = 0;
+
     // Set the default values
     defaultPosition.Set(0.f, 0.f, 10.f);
     defaultTarget.SetZero();
@@ -32,7 +35,7 @@ void CEnemy::Init()
     SetBoundary(this->m_pTerrain->GetMaxBoundary(), this->m_pTerrain->GetMinBoundary());
 
     // Set speed
-    m_dSpeed = 1.0;
+    m_dSpeed = 2.5;
 
 	// ----------- Set up Low Res Model ----------- //
 	// Add to Scene Graph, and set self to low res texture
@@ -147,6 +150,14 @@ void CEnemy::SetTerrain(GroundEntity* terrain)
     SetBoundary(m_pTerrain->GetMaxBoundary(), m_pTerrain->GetMinBoundary());
 }
 
+void CEnemy::SetWaypoints(vector<Vector3>waypoints)
+{
+    m_WaypointList = waypoints;
+    m_MaxWaypoints = m_WaypointList.size();
+
+    position = m_WaypointList[0] + Vector3(0, 0.5, 0);
+}
+
 Vector3 CEnemy::GetPos() const
 {
     return position;
@@ -169,36 +180,99 @@ GroundEntity* CEnemy::GetTerrain()
 
 void CEnemy::Update(double dt)
 {
+    // Update index
+    if ((target - position).LengthSquared() < 1)
+    {
+        ++m_CurrWaypointIdx;
+        if (m_CurrWaypointIdx == m_MaxWaypoints - 1)
+        {
+            m_CurrWaypointIdx = 0;
+        }
+    }
+
+    // Update target
+    target = m_WaypointList[m_CurrWaypointIdx];
+
     Vector3 view = (target - position).Normalized();
     position += view * (float)(m_dSpeed) * (float)(dt);
 
     Constrain();
 
-    UpdateBodyParts();
+    UpdateBodyParts(dt);
 
     //if (position.z > 400.f || position.z < -400.f)
     //    target.z = position.z * -1;
 }
 
-void CEnemy::UpdateBodyParts()
+void CEnemy::UpdateBodyParts(double dt)
 {
     if (!m_Head->IsDone())
+    {
         m_Head->SetPosition(this->position);
+        m_Head->Update(dt);
+
+        //if (m_Head->IsParentDeflate(m_Head))
+        //{
+        //    // Make Object fly away
+        //    Vector3 dir = Vector3(0, 1, 0) * dt;
+        //    m_Head->SetPosition(this->position + dir);
+        //}
+    }
 
     if (!m_Body->IsDone())
+    {
         m_Body->SetPosition(this->position);
+        m_Body->Update(dt);
+    }
 
     if (!m_LeftArm->IsDone())
+    {
         m_LeftArm->SetPosition(this->position);
+        m_LeftArm->Update(dt);
 
+        //if (m_LeftArm->IsParentDeflate(m_LeftArm))
+        //{
+        //    // Make Object fly away
+        //    Vector3 dir = Vector3(-1, 0.5, 0) * dt;
+        //    m_LeftArm->SetPosition(this->position + dir);
+        //}
+    }
     if (!m_RightArm->IsDone())
+    {
         m_RightArm->SetPosition(this->position);
+        m_RightArm->Update(dt);
 
+        //if (m_RightArm->IsParentDeflate(m_RightArm))
+        //{
+        //    // Make Object fly away
+        //    Vector3 dir = Vector3(1, 0.5, 0) * dt;
+        //    m_RightArm->SetPosition(this->position + dir);
+        //}
+    }
     if (!m_LeftLeg->IsDone())
+    {
         m_LeftLeg->SetPosition(this->position);
+        m_LeftLeg->Update(dt);
 
+        //if (m_LeftLeg->IsParentDeflate(m_LeftLeg))
+        //{
+        //    // Make Object fly away
+        //    Vector3 dir = Vector3(-1, -0.5, 0) * dt;
+        //    m_LeftLeg->SetPosition(this->position + dir);
+        //}
+    }
     if (!m_RightLeg->IsDone())
+    {
         m_RightLeg->SetPosition(this->position);
+        m_RightLeg->Update(dt);
+
+        //if (m_RightLeg->IsParentDeflate(m_RightLeg))
+        //{
+        //    // Make Object fly away
+        //    Vector3 dir = Vector3(1, -0.5, 0) * dt;
+        //    m_RightLeg->SetPosition(this->position + dir);
+        //}
+    }
 }
 
 void CEnemy::Constrain()

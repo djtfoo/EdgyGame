@@ -290,8 +290,8 @@ void SceneText::Init()
 											 "ceiling", "carpet");
 
     // ----------- Spawn Buildings ----------- //
-    SpawnArena(Vector3(10, -0, 10));
-    SpawnTunnel(Vector3(-10, -0, -10));
+    SpawnArena(Vector3(10, 1, 10));
+    SpawnTunnel(Vector3(-10, 0, -10));
 	//SpawnCastle(Vector3(-20, -0, 0));
 
 	// Customise the ground entity
@@ -304,6 +304,13 @@ void SceneText::Init()
 	theEnemy = new CEnemy();
     theEnemy->SetTerrain(groundEntity);
 	theEnemy->Init();
+
+    vector<Vector3>waypoints;
+    waypoints.push_back(Vector3(0, 5, 0));
+    waypoints.push_back(Vector3(5, 5, 5));
+    waypoints.push_back(Vector3(-8, 5, 4));
+    waypoints.push_back(Vector3(7, 5, -8));
+    theEnemy->SetWaypoints(waypoints);
 
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;

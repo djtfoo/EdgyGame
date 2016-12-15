@@ -16,6 +16,7 @@ public:
     GenericBalloon(Mesh* _modelMesh);
     virtual ~GenericBalloon();
 
+    virtual void Init();
     virtual void Update(double _dt);
 
     enum BALLOON_STATE
@@ -31,6 +32,9 @@ public:
     void SetState(const BALLOON_STATE &state);
     BALLOON_STATE GetState();
 
+    // Check if parent is deflating
+    bool IsParentDeflate(GenericEntity* thisNode);
+
 private:
 
     BALLOON_TYPES m_type;
@@ -40,6 +44,8 @@ private:
 
     // Deflating
     void Deflate(double dt);
+
+
 };
 
 namespace Create

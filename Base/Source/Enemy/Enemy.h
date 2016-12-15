@@ -23,18 +23,23 @@ protected:
 	GenericEntity* m_LeftLeg;
 	GenericEntity* m_RightLeg;
 
+    vector<Vector3> m_WaypointList;
+    int m_CurrWaypointIdx;
+    int m_MaxWaypoints;
+
 public:
     CEnemy();
     virtual ~CEnemy();
 
     void Init();
+    void SetWaypoints(vector<Vector3> waypoints);
     void Reset();
 
     void Update(double dt = 0.0333f);
     void Constrain();   // constrain position within the borders
     void Render();
 
-    void UpdateBodyParts();
+    void UpdateBodyParts(double dt);
 
     // Setters
     void SetPos(const Vector3& pos);
