@@ -143,6 +143,8 @@ void SceneText::Init()
 	MeshBuilder::GetInstance()->GetMesh("GRASS_DARKGREEN")->textureID = LoadTGA("Image//grass_darkgreen.tga");
 	MeshBuilder::GetInstance()->GenerateQuad("GEO_GRASS_LIGHTGREEN", Color(1, 1, 1), 1.f);
 	MeshBuilder::GetInstance()->GetMesh("GEO_GRASS_LIGHTGREEN")->textureID = LoadTGA("Image//grass_lightgreen.tga");
+    MeshBuilder::GetInstance()->GenerateQuad("floor", Color(1, 1, 1), 1.f);
+    MeshBuilder::GetInstance()->GetMesh("floor")->textureID = LoadTGA("Image//floor.tga");
 	MeshBuilder::GetInstance()->GenerateCube("cubeSG", Color(1.0f, 0.64f, 0.0f), 1.0f);
 
 	MeshBuilder::GetInstance()->GenerateQuad("SKYBOX_FRONT", Color(1, 1, 1), 1.f);
@@ -165,6 +167,8 @@ void SceneText::Init()
     MeshBuilder::GetInstance()->GetMesh("NeedleGun")->textureID = LoadTGA("Image//needle gun.tga");
     MeshBuilder::GetInstance()->GenerateOBJ("Needle", "OBJ//needle.obj");
     MeshBuilder::GetInstance()->GetMesh("Needle")->textureID = LoadTGA("Image//needle.tga");
+	MeshBuilder::GetInstance()->GenerateOBJ("Grenade", "OBJ//grenade.obj");
+	MeshBuilder::GetInstance()->GetMesh("Grenade")->textureID = LoadTGA("Image//grenade_UV.tga");
 
     // ------------ ENVIRONMENT ------------ //
     MeshBuilder::GetInstance()->GenerateQuad("wall", Color(1, 1, 1), 1.f, 8);
@@ -173,6 +177,23 @@ void SceneText::Init()
     MeshBuilder::GetInstance()->GetMesh("ceiling")->textureID = LoadTGA("Image//ceiling.tga");
     MeshBuilder::GetInstance()->GenerateQuad("carpet", Color(1, 1, 1), 1.f, 4);
     MeshBuilder::GetInstance()->GetMesh("carpet")->textureID = LoadTGA("Image//ground_carpet.tga");
+
+    MeshBuilder::GetInstance()->GenerateOBJ("high_res_lamppost", "OBJ//lamppost_high_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("high_res_lamppost")->textureID = LoadTGA("Image//Buildings//lamppost_high_res_UV.tga");
+    MeshBuilder::GetInstance()->GenerateOBJ("med_res_lamppost", "OBJ//lamppost_med_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("med_res_lamppost")->textureID = LoadTGA("Image//Buildings//lamppost_med_res_UV.tga");
+    MeshBuilder::GetInstance()->GenerateOBJ("low_res_lamppost", "OBJ//lamppost_low_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("low_res_lamppost")->textureID = LoadTGA("Image//Buildings//lamppost_low_res_UV.tga");
+
+    MeshBuilder::GetInstance()->GenerateOBJ("high_res_tower", "OBJ//tower_high_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("high_res_tower")->textureID = LoadTGA("Image//Buildings//tower_high_res_UV.tga");
+    MeshBuilder::GetInstance()->GenerateOBJ("med_res_tower", "OBJ//tower_low_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("med_res_tower")->textureID = LoadTGA("Image//Buildings//tower_low_res_UV.tga");
+    MeshBuilder::GetInstance()->GenerateOBJ("low_res_tower", "OBJ//tower_low_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("low_res_tower")->textureID = LoadTGA("Image//Buildings//tower_low_res_UV.tga");
+
+    MeshBuilder::GetInstance()->GenerateOBJ("castle_wall", "OBJ//wall3.obj");
+    MeshBuilder::GetInstance()->GetMesh("castle_wall")->textureID = LoadTGA("Image//Buildings//wall_UV.tga");
 
 	// Set up the Spatial Partition and pass it to the EntityManager to manage
 	CSpatialPartition::GetInstance()->Init(100, 100, 10, 10);
@@ -234,9 +255,7 @@ void SceneText::Init()
 	aRotateMtx->SetSteps(-120, 60);
 	grandchildNode->SetUpdateTransformation(aRotateMtx);
 	
-    // Create a new CEnemy
-    theEnemy = new CEnemy();
-    theEnemy->Init();
+
 
 	//groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
     groundEntity = Create::Ground("carpet", "carpet");
@@ -250,14 +269,19 @@ void SceneText::Init()
 
     // ----------- Spawn Buildings ----------- //
     SpawnArena(Vector3(10, -2.5, 10));
-    //SpawnTunnel(Vector3(-10, -2.5, -10));
+    SpawnTunnel(Vector3(-10, -2.5, -10));
+	SpawnCastle(Vector3(-20, -10, 0));
 
 	// Customise the ground entity
 	groundEntity->SetPosition(Vector3(0, -10, 0));
 	groundEntity->SetScale(Vector3(100.0f, 100.0f, 100.0f));
 	groundEntity->SetGrids(Vector3(10.0f, 1.0f, 10.0f));
 	playerInfo->SetTerrain(groundEntity);
-    theEnemy->SetTerrain(groundEntity);
+
+	// Create a new CEnemy
+	//theEnemy = new CEnemy();
+	//theEnemy->Init();
+	//theEnemy->SetTerrain(groundEntity);
 
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
@@ -571,7 +595,7 @@ void SceneText::SpawnTunnel(Vector3 spawnPos)
     // Tunnel Structure Low Res
     GenericBalloon* lowResTunnel = Create::Balloon("low_res_cube", Vector3(0, 0, 0));
     lowResTunnel->SetCollider(false);
-    lowResTunnel->SetScale(Vector3(4, 5, 12));
+    lowResTunnel->SetScale(Vector3(4, 11, 12));
     lowResTunnel->InitLOD("", "", "low_res_cube");
     // Add to Scene Graph
     CSceneNode* lowResNode = CSceneGraph::GetInstance()->AddNode(lowResTunnel);
@@ -689,4 +713,140 @@ void SceneText::SpawnTunnel(Vector3 spawnPos)
     ladderBackWallBlock->InitLOD("high_res_cube", "med_res_cube", "");
     CSceneNode* ladderBackWallNode = lowResNode->AddChild(ladderBackWallBlock);
     ladderBackWallNode->ApplyTranslate(0, 3, -5);
+}
+
+void SceneText::SpawnLamp(Vector3 spawnPos, CSceneNode* baseEntity)
+{
+    // Base
+    GenericEntity* baseBlock = Create::Entity("high_res_lamppost", Vector3(0, 0, 0));
+    baseBlock->SetCollider(true);
+    baseBlock->SetScale(Vector3(5, 5, 5));
+    baseBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
+    baseBlock->InitLOD("high_res_lamppost", "med_res_lamppost", "low_res_lamppost");
+
+	CSceneNode* LampNode = baseEntity->AddChild(baseBlock);
+	LampNode->ApplyTranslate(spawnPos.x, spawnPos.y, spawnPos.z);
+}
+
+void SceneText::SpawnTower(Vector3 spawnPos, CSceneNode* baseEntity)
+{
+    // Base
+    GenericEntity* baseBlock = Create::Entity("high_res_tower", Vector3(0, 0, 0));
+    baseBlock->SetCollider(true);
+    baseBlock->SetScale(Vector3(5, 5, 5));
+    baseBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
+    baseBlock->InitLOD("high_res_tower", "high_res_tower", "low_res_tower");
+
+	CSceneNode* TowerNode = baseEntity->AddChild(baseBlock);
+	TowerNode->ApplyTranslate(spawnPos.x, spawnPos.y, spawnPos.z);
+}
+
+void SceneText::SpawnWall(Vector3 spawnPos, float rotate, CSceneNode* baseEntity)
+{
+    // Base
+    GenericEntity* baseBlock = Create::Entity("castle_wall", Vector3(0, 0, 0));
+    baseBlock->SetCollider(true);
+    baseBlock->SetScale(Vector3(5, 5, 5));
+    baseBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
+    baseBlock->InitLOD("castle_wall", "castle_wall", "castle_wall");
+
+	CSceneNode* WallNode = baseEntity->AddChild(baseBlock);
+	WallNode->ApplyTranslate(spawnPos.x, spawnPos.y, spawnPos.z);
+	WallNode->ApplyRotate(rotate, 0, 1, 0);
+}
+
+void SceneText::SpawnCastle(Vector3 spawnPos)
+{
+	// ----------- LOW RES ----------- //
+	// Castle Structure Low Res
+	GenericEntity* lowResCastle = Create::Entity("low_res_cube", Vector3(0, 0, 0));
+	lowResCastle->SetCollider(false);
+	lowResCastle->SetScale(Vector3(5, 5, 5));
+	lowResCastle->InitLOD("", "", "low_res_cube");
+
+	// Add to Scene Graph
+	CSceneNode* lowResNode = CSceneGraph::GetInstance()->AddNode(lowResCastle);
+	lowResNode->SetLowResRender(true);
+	lowResNode->ApplyTranslate(spawnPos.x, spawnPos.y, spawnPos.x);
+
+	// ----------- INDIVIDUAL PARTS ----------- //
+	float offset = 5;
+
+	//// Front Wall - Right
+	//SpawnTower(Vector3(5, 0, 0) * offset, lowResNode);
+	//SpawnWall(Vector3(8, 0, 0) * offset, 0, lowResNode);
+	//SpawnWall(Vector3(13, 0, 0) * offset, 0, lowResNode);
+	//
+	//// Front - Right Connector
+	//SpawnTower(Vector3(16, 0, 0) * offset, lowResNode);
+
+	//// Front Wall - Left
+	//SpawnTower(Vector3(-6, 0, 0) * offset, lowResNode);
+	//SpawnWall(Vector3(-9, 0, 0) * offset, 0, lowResNode);
+	//SpawnWall(Vector3(-14, 0, 0) * offset, 0, lowResNode);
+	//
+	//// Front - Left Connector
+	//SpawnTower(Vector3(-17, 0, 0) * offset, lowResNode);
+
+	//// Left Wall
+	//SpawnWall(Vector3(-17, 0, -23) * offset, -90, lowResNode);
+	//SpawnWall(Vector3(-17, 0, -18) * offset, -90, lowResNode);
+	//SpawnWall(Vector3(-17, 0, -13) * offset, -90, lowResNode);
+	//SpawnWall(Vector3(-17, 0, -8) * offset, -90, lowResNode);
+	//SpawnWall(Vector3(-17, 0, -3) * offset, -90, lowResNode);
+
+	//// Left - Back Connector
+	//SpawnTower(Vector3(-17, 0, -13) * offset, lowResNode);
+
+	//// Back Wall
+	//SpawnWall(Vector3(-14, 0, -13) * offset, 180, lowResNode);
+	//SpawnWall(Vector3(-9, 0, -13) * offset, 180, lowResNode);
+	//SpawnTower(Vector3(-6, 0, -13) * offset, lowResNode);
+	//SpawnWall(Vector3(-3, 0, -13) * offset, 180, lowResNode);
+	//SpawnWall(Vector3(2, 0, -13) * offset, 180, lowResNode);
+	//SpawnTower(Vector3(5, 0, -13) * offset, lowResNode);
+	//SpawnWall(Vector3(8, 0, -13) * offset, 180, lowResNode);
+	//SpawnWall(Vector3(13, 0, -13) * offset, 180, lowResNode);
+
+	//// Back - Right Connector
+	//SpawnTower(Vector3(16, 0, -13) * offset, lowResNode);
+
+	//// Right Wall
+	//SpawnWall(Vector3(16, 0, -23) * offset, 90, lowResNode);
+	//SpawnWall(Vector3(16, 0, -18) * offset, 90, lowResNode);
+	//SpawnWall(Vector3(16, 0, -13) * offset, 90, lowResNode);
+	//SpawnWall(Vector3(16, 0, -8) * offset, 90, lowResNode);
+	//SpawnWall(Vector3(16, 0, -3) * offset, 90, lowResNode);
+
+
+	// Front Wall - Right
+	SpawnTower(Vector3(4, 0, 0) * offset, lowResNode);
+	SpawnWall(Vector3(9.5, 0, 0) * offset, 0, lowResNode);
+
+	// Front - Right Connector
+	SpawnTower(Vector3(15, 0, 0) * offset, lowResNode);
+
+	// Right Wall
+	SpawnWall(Vector3(15, 0, -5.5) * offset, 90, lowResNode);
+
+	// Right - Back Connector
+	SpawnTower(Vector3(15, 0, -10.5) * offset, lowResNode);
+
+	// Front Wall - Left
+	SpawnTower(Vector3(-5, 0, 0) * offset, lowResNode);
+	SpawnWall(Vector3(-10.5, 0, 0) * offset, 0, lowResNode);
+
+	// Front - Left Connector
+	SpawnTower(Vector3(-16, 0, 0) * offset, lowResNode);
+
+	// Left Wall
+	SpawnWall(Vector3(-16, 0, -5.5) * offset, 90, lowResNode);
+
+	// Left - Back Connector
+	SpawnTower(Vector3(-16, 0, -10.5) * offset, lowResNode);
+
+	// Back Wall
+	SpawnWall(Vector3(9.5, 0, -10.5) * offset, 180, lowResNode);
+	SpawnWall(Vector3(-0.5, 0, -10.5) * offset, 180, lowResNode);
+	SpawnWall(Vector3(-10.5, 0, -10.5) * offset, 180, lowResNode);
 }

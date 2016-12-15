@@ -3,6 +3,8 @@
 #include "GraphicsManager.h"
 #include "RenderHelper.h"
 
+#include "../SceneGraph/SceneGraph.h"
+
 CEnemy::CEnemy()
 : GenericEntity(NULL)
 , defaultPosition(0.f, 0.f, 0.f), defaultTarget(0.f, 0.f, 0.f), defaultUp(0.f, 0.f, 0.f)
@@ -35,8 +37,13 @@ void CEnemy::Init()
     // Set speed
     m_dSpeed = 1.0;
 
+	// ----------- Set up Low Res Model ----------- //
+	// Add to Scene Graph, and set self to low res texture
+	CSceneNode* lowResNode = CSceneGraph::GetInstance()->AddNode(this);
+	lowResNode->SetLowResRender(true);
+
     // Initialise LOD meshes
-    InitLOD("cube", "sphere", "cubeSG");
+    InitLOD("", "", "cube");
 
     // Initialise collider
     this->SetCollider(true);
@@ -44,6 +51,10 @@ void CEnemy::Init()
 
     // Add to EntityManager
     EntityManager::GetInstance()->AddEntity(this, true);
+
+	// --------- Set up individual Models --------- // 
+
+
 }
 
 void CEnemy::Reset()

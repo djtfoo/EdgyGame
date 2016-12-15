@@ -157,7 +157,7 @@ void HeldWeapon::SetWeaponType(WEAPON_TYPE type)
             m_mesh = MeshBuilder::GetInstance()->GetMesh("NeedleGun");
             break;
         case WEAPON_KNIFE:
-            m_mesh = MeshBuilder::GetInstance()->GetMesh("cube");
+            m_mesh = MeshBuilder::GetInstance()->GetMesh("Grenade");
             break;
         }
     }

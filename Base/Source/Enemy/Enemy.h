@@ -14,6 +14,13 @@ protected:
     double m_dSpeed;
     double m_dAcceleration;
 
+	GenericEntity* m_Head;
+	GenericEntity* m_Body;
+	GenericEntity* m_LeftArm;
+	GenericEntity* m_RightArm;
+	GenericEntity* m_LeftLeg;
+	GenericEntity* m_RightLeg;
+
 public:
     CEnemy();
     virtual ~CEnemy();

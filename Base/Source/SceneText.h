@@ -12,6 +12,7 @@
 #include "SceneGraph/UpdateTransformation.h"
 #include "Enemy/Enemy.h"
 #include "BalloonBlock\GenericBalloon.h"
+#include "SceneGraph\SceneGraph.h"
 
 class ShaderProgram;
 class SceneManager;
@@ -46,6 +47,12 @@ private:
     // Fucntions to spawn buildings
     void SpawnArena(Vector3 spawnPos); 
     void SpawnTunnel(Vector3 spawnPos); 
+    
+	void SpawnCastle(Vector3 spawnPos);
+	void SpawnLamp(Vector3 spawnPos, CSceneNode* baseEntity);
+	void SpawnWall(Vector3 spawnPos, float rotate, CSceneNode* baseEntity);
+	void SpawnTower(Vector3 spawnPos, CSceneNode* baseEntity);
+
 };
 
 #endif
