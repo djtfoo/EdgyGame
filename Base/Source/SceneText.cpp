@@ -210,6 +210,30 @@ void SceneText::Init()
     MeshBuilder::GetInstance()->GenerateOBJ("low_res_cube", "OBJ//cube_low_res.obj");
     MeshBuilder::GetInstance()->GetMesh("low_res_cube")->textureID = LoadTGA("Image//Cube//cube_low_res_UV.tga");
 
+    // ----------- Enemy ----------- //
+    MeshBuilder::GetInstance()->GenerateOBJ("high_res_enemy_head", "OBJ//Enemy///enemy_head_high_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("high_res_enemy_head")->textureID = LoadTGA("Image//Enemy//enemy_head_high_res_UV.tga");
+    MeshBuilder::GetInstance()->GenerateOBJ("low_res_enemy_head", "OBJ//Enemy///enemy_head_low_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("low_res_enemy_head")->textureID = LoadTGA("Image//Enemy//enemy_head_low_res_UV.tga");
+
+    MeshBuilder::GetInstance()->GenerateOBJ("high_res_enemy_body", "OBJ//Enemy///enemy_body_high_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("high_res_enemy_body")->textureID = LoadTGA("Image//Enemy//enemy_body_high_res_UV.tga");
+    MeshBuilder::GetInstance()->GenerateOBJ("low_res_enemy_body", "OBJ//Enemy///enemy_body_low_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("low_res_enemy_body")->textureID = LoadTGA("Image//Enemy//enemy_body_low_res_UV.tga");
+
+    MeshBuilder::GetInstance()->GenerateOBJ("high_res_enemy_arm", "OBJ//Enemy///enemy_arm_high_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("high_res_enemy_arm")->textureID = LoadTGA("Image//Enemy//enemy_arm_high_res_UV.tga");
+    MeshBuilder::GetInstance()->GenerateOBJ("low_res_enemy_arm", "OBJ//Enemy///enemy_arm_low_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("low_res_enemy_arm")->textureID = LoadTGA("Image//Enemy//enemy_arm_low_res_UV.tga");
+
+    MeshBuilder::GetInstance()->GenerateOBJ("high_res_enemy_leg", "OBJ//Enemy///enemy_leg_high_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("high_res_enemy_leg")->textureID = LoadTGA("Image//Enemy//enemy_leg_high_res_UV.tga");
+    MeshBuilder::GetInstance()->GenerateOBJ("low_res_enemy_leg", "OBJ//Enemy///enemy_leg_low_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("low_res_enemy_leg")->textureID = LoadTGA("Image//Enemy//enemy_leg_low_res_UV.tga");
+
+    MeshBuilder::GetInstance()->GenerateOBJ("low_res_enemy_overall", "OBJ//Enemy///enemy_overall_low_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("low_res_enemy_overall")->textureID = LoadTGA("Image//Enemy//enemy_overall_low_res_UV.tga");
+
 	// Create entities into the scene
 	Create::Entity("reference", Vector3(0.0f, 0.0f, 0.0f)); // Reference
 	Create::Entity("lightball", Vector3(lights[0]->position.x, lights[0]->position.y, lights[0]->position.z)); // Lightball
@@ -268,7 +292,7 @@ void SceneText::Init()
     // ----------- Spawn Buildings ----------- //
     SpawnArena(Vector3(10, -0, 10));
     SpawnTunnel(Vector3(-10, -0, -10));
-	SpawnCastle(Vector3(-20, -0, 0));
+	//SpawnCastle(Vector3(-20, -0, 0));
 
 	// Customise the ground entity
 	groundEntity->SetPosition(Vector3(0, 0, 0));
@@ -277,9 +301,9 @@ void SceneText::Init()
 	playerInfo->SetTerrain(groundEntity);
 
 	// Create a new CEnemy
-	//theEnemy = new CEnemy();
-	//theEnemy->Init();
-	//theEnemy->SetTerrain(groundEntity);
+	theEnemy = new CEnemy();
+    theEnemy->SetTerrain(groundEntity);
+	theEnemy->Init();
 
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
@@ -743,11 +767,11 @@ void SceneText::SpawnTower(Vector3 spawnPos, CSceneNode* baseEntity)
     GenericEntity* baseBlock = Create::Entity("high_res_tower", Vector3(0, 0, 0));
     baseBlock->SetCollider(true);
     baseBlock->SetScale(Vector3(5, 5, 5));
+    baseBlock->SetPosition(spawnPos);
     baseBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
     baseBlock->InitLOD("high_res_tower", "high_res_tower", "low_res_tower");
 
 	CSceneNode* TowerNode = baseEntity->AddChild(baseBlock);
-	TowerNode->ApplyTranslate(spawnPos.x, spawnPos.y, spawnPos.z);
 }
 
 void SceneText::SpawnWall(Vector3 spawnPos, float rotate, CSceneNode* baseEntity)
@@ -756,11 +780,11 @@ void SceneText::SpawnWall(Vector3 spawnPos, float rotate, CSceneNode* baseEntity
     GenericEntity* baseBlock = Create::Entity("castle_wall", Vector3(0, 0, 0));
     baseBlock->SetCollider(true);
     baseBlock->SetScale(Vector3(5, 5, 5));
+    baseBlock->SetPosition(spawnPos);
     baseBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
     baseBlock->InitLOD("castle_wall", "castle_wall", "castle_wall");
 
 	CSceneNode* WallNode = baseEntity->AddChild(baseBlock);
-	WallNode->ApplyTranslate(spawnPos.x, spawnPos.y, spawnPos.z);
 	WallNode->ApplyRotate(rotate, 0, 1, 0);
 }
 
@@ -771,12 +795,12 @@ void SceneText::SpawnCastle(Vector3 spawnPos)
 	GenericEntity* lowResCastle = Create::Entity("low_res_cube", Vector3(0, 0, 0));
 	lowResCastle->SetCollider(false);
 	lowResCastle->SetScale(Vector3(5, 5, 5));
+    lowResCastle->SetPosition(spawnPos);
 	lowResCastle->InitLOD("", "", "low_res_cube");
 
 	// Add to Scene Graph
 	CSceneNode* lowResNode = CSceneGraph::GetInstance()->AddNode(lowResCastle);
     lowResCastle->SetLowResRender(true);
-	lowResNode->ApplyTranslate(spawnPos.x, spawnPos.y, spawnPos.x);
 
 	// ----------- INDIVIDUAL PARTS ----------- //
 	float offset = 5;

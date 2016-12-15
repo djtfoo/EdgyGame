@@ -2,6 +2,8 @@
 
 #include "../GenericEntity.h"
 #include "../GroundEntity.h"
+#include "../SceneGraph/SceneGraph.h"
+#include "../BalloonBlock/GenericBalloon.h"
 
 class CEnemy : public GenericEntity
 {
@@ -31,6 +33,8 @@ public:
     void Update(double dt = 0.0333f);
     void Constrain();   // constrain position within the borders
     void Render();
+
+    void UpdateBodyParts();
 
     // Setters
     void SetPos(const Vector3& pos);
