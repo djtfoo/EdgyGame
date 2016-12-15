@@ -130,6 +130,11 @@ Mtx44 CTransform::GetTransform(void)
 void CTransform::SetUpdateTransformation(CUpdateTransformation* theUpdateTransformation)
 {
 	this->theUpdateTransformation = theUpdateTransformation;
+
+    //Mtx44 newMtx = theUpdateTransformation->GetUpdateTransformation() * Mtx;
+
+    //this->theUpdateTransformation = new CUpdateTransformation();
+    //this->theUpdateTransformation->Update_Mtx = newMtx;
 }
 
 // Get the update transformation matrix

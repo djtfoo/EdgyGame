@@ -82,7 +82,13 @@ void CEnemy::Init()
     m_LeftArm->InitLOD("high_res_enemy_arm", "low_res_enemy_arm", "");
     m_LeftArm->SetPosition(this->position);
     CSceneNode* EnemyarmNode = EnemyBodyNode->AddChild(m_LeftArm);
-    EnemyarmNode->ApplyTranslate(-1.5f, 0.3f, 0);
+    EnemyarmNode->ApplyTranslate(1.5f, 0.3f, 0);
+
+    //CUpdateTransformation* baseMtx = new CUpdateTransformation();
+    //baseMtx->ApplyUpdate(1.0f, 1.0f, 0.0f, 0.0f);
+    //baseMtx->SetSteps(-60, 60);
+    //EnemyarmNode->ApplyTransform(baseMtx->GetUpdateTransformation());
+    //EnemyarmNode->SetUpdateTransformation(baseMtx);
 
     // R-Arm
     m_RightArm = Create::Balloon("high_res_enemy_arm", Vector3(0, 0, 0));
@@ -92,7 +98,14 @@ void CEnemy::Init()
     m_RightArm->InitLOD("high_res_enemy_arm", "low_res_enemy_arm", "");
     m_RightArm->SetPosition(this->position);
     EnemyarmNode = EnemyBodyNode->AddChild(m_RightArm);
-    EnemyarmNode->ApplyTranslate(1.5f, 0.3f, 0);
+    EnemyarmNode->ApplyTranslate(-1.5f, 0.3f, 0);
+
+    //baseMtx = new CUpdateTransformation();
+    //baseMtx->ApplyUpdate(1.0f, 1.0f, 0.0f, 0.0f);
+    //baseMtx->SetSteps(-60, 60);
+    //EnemyarmNode->ApplyTransform(baseMtx->GetUpdateTransformation());
+    //EnemyarmNode->SetUpdateTransformation(baseMtx);
+
 
     // L-Leg
     m_LeftLeg = Create::Balloon("high_res_enemy_leg", Vector3(0, 0, 0));
@@ -184,7 +197,7 @@ void CEnemy::Update(double dt)
     if ((target - position).LengthSquared() < 1)
     {
         ++m_CurrWaypointIdx;
-        if (m_CurrWaypointIdx == m_MaxWaypoints - 1)
+        if (m_CurrWaypointIdx >= m_MaxWaypoints)
         {
             m_CurrWaypointIdx = 0;
         }

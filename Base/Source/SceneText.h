@@ -47,10 +47,12 @@ private:
     // Fucntions to spawn buildings
     void SpawnArena(Vector3 spawnPos); 
     void SpawnTunnel(Vector3 spawnPos); 
-    
+    void SpawnJumpCourse(Vector3 spawnPos);
+    void SpawnWindmill(Vector3 spawnPos);
+
 	void SpawnCastle(Vector3 spawnPos);
 	void SpawnLamp(Vector3 spawnPos, CSceneNode* baseEntity);
-	void SpawnWall(Vector3 spawnPos, float rotate, CSceneNode* baseEntity);
+    void SpawnWall(Vector3 spawnPos, float rotate, CSceneNode* baseEntity = NULL);
 	void SpawnTower(Vector3 spawnPos, CSceneNode* baseEntity);
 
 };

@@ -5,11 +5,12 @@ class CUpdateTransformation
 {
 protected:
 	int curSteps, deltaSteps, minSteps, maxSteps;
-	Mtx44 Update_Mtx, Update_Mtx_REVERSED;
 
 public:
 	CUpdateTransformation();
 	virtual ~CUpdateTransformation();
+
+    Mtx44 Update_Mtx, Update_Mtx_REVERSED;
 
 	// Reset the transformation matrix to identity matrix
 	void Reset(void);

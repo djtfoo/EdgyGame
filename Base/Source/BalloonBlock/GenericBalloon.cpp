@@ -41,12 +41,6 @@ void GenericBalloon::Update(double dt)
     case GenericBalloon::DEFLATED:
         this->SetIsDone(true);
 
-        // Remove from Scene Graph
-        if (CSceneGraph::GetInstance()->DeleteNode(this) == true)
-        {
-        	cout << "*** That Entity removed ***" << endl;
-        }
-
         break;
     default:
         break;
