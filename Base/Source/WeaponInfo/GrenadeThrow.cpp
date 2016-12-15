@@ -46,7 +46,7 @@ void CGrenadeThrow::Discharge(Vector3 position, Vector3 target, GroundEntity* _g
 			CProjectile* aProjectile = Create::Grenade("Grenade",
 														position,
 														(target - position).Normalized(),
-														7.0f,
+														5.0f,
 														8.0f,
 														_ground);
 			aProjectile->SetCollider(true);

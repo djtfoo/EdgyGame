@@ -241,10 +241,15 @@ bool EntityManager::CheckOverlap(Vector3 thisMinAABB, Vector3 thisMaxAABB, Vecto
 bool EntityManager::CheckPointToAABB(const Vector3& point, const Vector3& minAABB, const Vector3& maxAABB)
 {
     // Check if point is within the AABB bounding box
-    if ((point >= minAABB) && (point <= maxAABB))
-    {
+    //if ((point >= minAABB) && (point <= maxAABB))
+    //{
+    //    return true;
+    //}
+
+    if (point.x >= minAABB.x && point.x <= maxAABB.x &&
+        point.y >= minAABB.y && point.y <= maxAABB.y &&
+        point.z >= minAABB.z && point.z <= maxAABB.z)
         return true;
-    }
     
     return false;
 }
@@ -382,18 +387,18 @@ bool EntityManager::CheckPlayerCollision(const Vector3& point)
             }
 
             // Create AABB for player
-            Vector3 playerMinAABB, playerMaxAABB;
-            playerMinAABB = point + Vector3(-3, -1, -3);
-            playerMaxAABB = point + Vector3(3, 2, 3);
+            //Vector3 playerMinAABB, playerMaxAABB;
+            //playerMinAABB = point + Vector3(-3, -1, -3);
+            //playerMaxAABB = point + Vector3(3, 2, 3);
 
-            //std::cout << minAABB << " | " << maxAABB << std::endl;
-
-            if (CheckOverlap(playerMinAABB, playerMaxAABB, minAABB, maxAABB)) {
-                return true;
-            }
-            //if (CheckPointToAABB(point, minAABB, maxAABB)) {
+            //if (CheckOverlap(playerMinAABB, playerMaxAABB, minAABB, maxAABB)) {
             //    return true;
             //}
+            if (CheckPointToAABB(point, minAABB, maxAABB)) {
+
+                // INSERT COLLISION RESPONSE HERE
+                return true;
+            }
         }
     }
 
