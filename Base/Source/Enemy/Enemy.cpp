@@ -40,7 +40,7 @@ void CEnemy::Init()
 	// ----------- Set up Low Res Model ----------- //
 	// Add to Scene Graph, and set self to low res texture
 	CSceneNode* lowResNode = CSceneGraph::GetInstance()->AddNode(this);
-	lowResNode->SetLowResRender(true);
+    this->SetLowResRender(true);
 
     // Initialise LOD meshes
     InitLOD("", "", "cube");

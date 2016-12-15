@@ -254,34 +254,6 @@ void SceneText::Init()
 	//aRotateMtx->ApplyUpdate(1.0f, 0.0f, 0.0f, 1.0f);
 	//aRotateMtx->SetSteps(-120, 60);
 	//grandchildNode->SetUpdateTransformation(aRotateMtx);
-	
-	CSceneNode* anotherNode = theNode->AddChild(anotherCube);
-	if (anotherNode == NULL)
-	{
-		cout << "EntityManager::AddEntity: Unable to add to scene graph!" << endl;
-	}
-	
-	GenericEntity* baseCube = Create::Asset("cube", Vector3(0.0f, 0.0f, 0.0f));
-	CSceneNode* baseNode = CSceneGraph::GetInstance()->AddNode(baseCube);
-
-	CUpdateTransformation* baseMtx = new CUpdateTransformation();
-	baseMtx->ApplyUpdate(1.0f, 0.0f, 0.0f, 1.0f);
-	baseMtx->SetSteps(-60, 60);
-	baseNode->SetUpdateTransformation(baseMtx);
-
-	GenericEntity* childCube = Create::Asset("cubeSG", Vector3(0.0f, 0.0f, 0.0f));
-	CSceneNode* childNode = baseNode->AddChild(childCube);
-	childNode->ApplyTranslate(0.0f, 2.0f, 0.0f);
-
-	GenericEntity* grandchildCube = Create::Asset("cubeSG", Vector3(0.0f, 0.0f, 0.0f));
-	CSceneNode* grandchildNode = childNode->AddChild(grandchildCube);
-	grandchildNode->ApplyTranslate(0.0f, 0.0f, 1.0f);
-	CUpdateTransformation* aRotateMtx = new CUpdateTransformation();
-	aRotateMtx->ApplyUpdate(1.0f, 0.0f, 0.0f, 1.0f);
-	aRotateMtx->SetSteps(-120, 60);
-	grandchildNode->SetUpdateTransformation(aRotateMtx);
-	
-
 
 	//groundEntity = Create::Ground("GRASS_DARKGREEN", "GEO_GRASS_LIGHTGREEN");
     groundEntity = Create::Ground("carpet", "carpet");
@@ -294,9 +266,9 @@ void SceneText::Init()
 											 "ceiling", "carpet");
 
     // ----------- Spawn Buildings ----------- //
-    SpawnArena(Vector3(10, -2.5, 10));
-    SpawnTunnel(Vector3(-10, -2.5, -10));
-	SpawnCastle(Vector3(-20, -10, 0));
+    SpawnArena(Vector3(10, -0, 10));
+    SpawnTunnel(Vector3(-10, -0, -10));
+	SpawnCastle(Vector3(-20, -0, 0));
 
 	// Customise the ground entity
 	groundEntity->SetPosition(Vector3(0, 0, 0));
@@ -803,7 +775,7 @@ void SceneText::SpawnCastle(Vector3 spawnPos)
 
 	// Add to Scene Graph
 	CSceneNode* lowResNode = CSceneGraph::GetInstance()->AddNode(lowResCastle);
-	lowResNode->SetLowResRender(true);
+    lowResCastle->SetLowResRender(true);
 	lowResNode->ApplyTranslate(spawnPos.x, spawnPos.y, spawnPos.x);
 
 	// ----------- INDIVIDUAL PARTS ----------- //
