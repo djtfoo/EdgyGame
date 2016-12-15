@@ -30,7 +30,7 @@ CPlayerInfo::CPlayerInfo(void)
 {
     m_eyeLevel = m_STAND_EYELEVEL;
     m_speed = 0.f;
-    m_jumpSpeed = 30.f;
+    m_jumpSpeed = 80.f;
     m_gravity = -100.f;
     m_jumpHeight = 0.f;
 
@@ -175,7 +175,7 @@ void CPlayerInfo::Update(double dt)
     m_movementState = MOVEMENT_STATE_IDLE;
     velocity.SetZero(); // get the velocity every frame
 
-    Vector3 viewVector = (target - position).Normalize();
+    Vector3 viewVector = (target - position).Normalized();
     Vector3 movementView = viewVector;  // without y value
     movementView.y = 0.f;
     movementView.Normalize();
@@ -320,8 +320,8 @@ void CPlayerInfo::Update(double dt)
             position.x += velocity.x * m_speed * (float)(dt);
         if (!collisionZ)
             position.z += velocity.z * m_speed * (float)(dt);
-        if (!collisionY)
-            position.y += velocity.y * (float)(dt);
+        //if (!collisionY)
+        //    position.y += velocity.y * (float)(dt);
 
         // Constrain the position
         Constrain();
@@ -435,17 +435,6 @@ void CPlayerInfo::Update(double dt)
 
 	if (KeyboardController::GetInstance()->IsKeyReleased('R'))
 	{
-		//if (primaryWeapon)
-		//{
-		//	primaryWeapon->Reload();
-		//	//primaryWeapon->PrintSelf();
-		//}
-		//if (secondaryWeapon)
-		//{
-		//	secondaryWeapon->Reload();
-		//	//secondaryWeapon->PrintSelf();
-		//}
-
         if (m_heldWeapon)
         {
             m_heldWeapon->SetToReload();
@@ -476,14 +465,7 @@ void CPlayerInfo::Update(double dt)
 	if (MouseController::GetInstance()->IsButtonPressed(MouseController::LMB))
 	{
         m_heldWeapon->SetToFire();
-		//if (primaryWeapon)
-		//	primaryWeapon->Discharge(position, target, this);
 	}
-	//else if (MouseController::GetInstance()->IsButtonPressed(MouseController::RMB))
-	//{
-	//	if (secondaryWeapon)
-	//		secondaryWeapon->Discharge(position, target, this);
-	//}
 
 	// If the user presses P key, then reset the view to default values
 	if (KeyboardController::GetInstance()->IsKeyDown('P'))
@@ -521,7 +503,9 @@ void CPlayerInfo::UpdatePlayerHeight(const double dt)
     if (m_heightState != HEIGHT_STATE_JUMP)
     {
         // update y position to the terrain height
+        Vector3 view = (target - position).Normalized();
         position.y = m_pTerrain->GetTerrainHeight(position) + m_eyeLevel;
+        target.y = position.y + view.y;
     }
     else
     {
@@ -556,7 +540,7 @@ void CPlayerInfo::Jump()
     if (m_heightState != HEIGHT_STATE_JUMP) {
         m_heightState = HEIGHT_STATE_JUMP;
 
-        m_jumpSpeed = 30.f;    //dt not needed
+        m_jumpSpeed = 80.f;    //dt not needed
     }
 }
 

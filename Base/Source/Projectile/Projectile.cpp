@@ -166,7 +166,7 @@ void CProjectile::Render(void)
 	modelStack.PushMatrix();
 	modelStack.Translate(position.x, position.y, position.z);
 	//modelStack.Scale(scale.x, scale.y, scale.z);
-	RenderHelper::RenderMesh(modelMesh);
+	RenderHelper::RenderMeshWithLight(modelMesh);
 	modelStack.PopMatrix();
 }
 

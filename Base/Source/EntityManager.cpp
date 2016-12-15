@@ -164,71 +164,78 @@ EntityManager::~EntityManager()
 // Check for overlap
 bool EntityManager::CheckOverlap(Vector3 thisMinAABB, Vector3 thisMaxAABB, Vector3 thatMinAABB, Vector3 thatMaxAABB)
 {
-	// Check if this object is overlapping that object
-	/*
-	if (((thatMinAABB.x >= thisMinAABB.x) && (thatMinAABB.x <= thisMaxAABB.x) &&
-	(thatMinAABB.y >= thisMinAABB.y) && (thatMinAABB.y <= thisMaxAABB.y) &&
-	(thatMinAABB.z >= thisMinAABB.z) && (thatMinAABB.z <= thisMaxAABB.z))
-	||
-	((thatMaxAABB.x >= thisMinAABB.x) && (thatMaxAABB.x <= thisMaxAABB.x) &&
-	(thatMaxAABB.y >= thisMinAABB.y) && (thatMaxAABB.y <= thisMaxAABB.y) &&
-	(thatMaxAABB.z >= thisMinAABB.z) && (thatMaxAABB.z <= thisMaxAABB.z)))
-	*/
-	if (((thatMinAABB >= thisMinAABB) && (thatMinAABB <= thisMaxAABB))
-		||
-		((thatMaxAABB >= thisMinAABB) && (thatMaxAABB <= thisMaxAABB)))
-	{
-		return true;
-	}
+    return (thisMaxAABB.x > thatMinAABB.x &&
+        thisMinAABB.x < thatMaxAABB.x &&
+        thisMaxAABB.y > thatMinAABB.y &&
+        thisMinAABB.y < thatMaxAABB.y &&
+        thisMaxAABB.z > thatMinAABB.z &&
+        thisMinAABB.z < thatMaxAABB.z);
 
-	// Check if that object is overlapping this object
-	/*
-	if (((thisMinAABB.x >= thatMinAABB.x) && (thisMinAABB.x <= thatMaxAABB.x) &&
-	(thisMinAABB.y >= thatMinAABB.y) && (thisMinAABB.y <= thatMaxAABB.y) &&
-	(thisMinAABB.z >= thatMinAABB.z) && (thisMinAABB.z <= thatMaxAABB.z))
-	||
-	((thisMaxAABB.x >= thatMinAABB.x) && (thisMaxAABB.x <= thatMaxAABB.x) &&
-	(thisMaxAABB.y >= thatMinAABB.y) && (thisMaxAABB.y <= thatMaxAABB.y) &&
-	(thisMaxAABB.z >= thatMinAABB.z) && (thisMaxAABB.z <= thatMaxAABB.z)))
-	*/
-	if (((thisMinAABB >= thatMinAABB) && (thisMinAABB <= thatMaxAABB))
-		||
-		((thisMaxAABB >= thatMinAABB) && (thisMaxAABB <= thatMaxAABB)))
-	{
-		return true;
-	}
-
-	// Check if this object is within that object
-	/*
-	if (((thisMinAABB.x >= thatMinAABB.x) && (thisMaxAABB.x <= thatMaxAABB.x) &&
-	(thisMinAABB.y >= thatMinAABB.y) && (thisMaxAABB.y <= thatMaxAABB.y) &&
-	(thisMinAABB.z >= thatMinAABB.z) && (thisMaxAABB.z <= thatMaxAABB.z))
-	&&
-	((thisMaxAABB.x >= thatMinAABB.x) && (thisMaxAABB.x <= thatMaxAABB.x) &&
-	(thisMaxAABB.y >= thatMinAABB.y) && (thisMaxAABB.y <= thatMaxAABB.y) &&
-	(thisMaxAABB.z >= thatMinAABB.z) && (thisMaxAABB.z <= thatMaxAABB.z)))
-	*/
-	if (((thisMinAABB >= thatMinAABB) && (thisMaxAABB <= thatMaxAABB))
-		&&
-		((thisMaxAABB >= thatMinAABB) && (thisMaxAABB <= thatMaxAABB)))
-		return true;
-
-	// Check if that object is within this object
-	/*
-	if (((thatMinAABB.x >= thisMinAABB.x) && (thatMinAABB.x <= thisMaxAABB.x) &&
-	(thatMinAABB.y >= thisMinAABB.y) && (thatMinAABB.y <= thisMaxAABB.y) &&
-	(thatMinAABB.z >= thisMinAABB.z) && (thatMinAABB.z <= thisMaxAABB.z))
-	&&
-	((thatMaxAABB.x >= thisMinAABB.x) && (thatMaxAABB.x <= thisMaxAABB.x) &&
-	(thatMaxAABB.y >= thisMinAABB.y) && (thatMaxAABB.y <= thisMaxAABB.y) &&
-	(thatMaxAABB.z >= thisMinAABB.z) && (thatMaxAABB.z <= thisMaxAABB.z)))
-	*/
-	if (((thatMinAABB >= thisMinAABB) && (thatMinAABB <= thisMaxAABB))
-		&&
-		((thatMaxAABB >= thisMinAABB) && (thatMaxAABB <= thisMaxAABB)))
-		return true;
-
-	return false;
+	//// Check if this object is overlapping that object
+	///*
+	//if (((thatMinAABB.x >= thisMinAABB.x) && (thatMinAABB.x <= thisMaxAABB.x) &&
+	//(thatMinAABB.y >= thisMinAABB.y) && (thatMinAABB.y <= thisMaxAABB.y) &&
+	//(thatMinAABB.z >= thisMinAABB.z) && (thatMinAABB.z <= thisMaxAABB.z))
+	//||
+	//((thatMaxAABB.x >= thisMinAABB.x) && (thatMaxAABB.x <= thisMaxAABB.x) &&
+	//(thatMaxAABB.y >= thisMinAABB.y) && (thatMaxAABB.y <= thisMaxAABB.y) &&
+	//(thatMaxAABB.z >= thisMinAABB.z) && (thatMaxAABB.z <= thisMaxAABB.z)))
+	//*/
+	//if (((thatMinAABB >= thisMinAABB) && (thatMinAABB <= thisMaxAABB))
+	//	||
+	//	((thatMaxAABB >= thisMinAABB) && (thatMaxAABB <= thisMaxAABB)))
+	//{
+	//	return true;
+	//}
+    //
+	//// Check if that object is overlapping this object
+	///*
+	//if (((thisMinAABB.x >= thatMinAABB.x) && (thisMinAABB.x <= thatMaxAABB.x) &&
+	//(thisMinAABB.y >= thatMinAABB.y) && (thisMinAABB.y <= thatMaxAABB.y) &&
+	//(thisMinAABB.z >= thatMinAABB.z) && (thisMinAABB.z <= thatMaxAABB.z))
+	//||
+	//((thisMaxAABB.x >= thatMinAABB.x) && (thisMaxAABB.x <= thatMaxAABB.x) &&
+	//(thisMaxAABB.y >= thatMinAABB.y) && (thisMaxAABB.y <= thatMaxAABB.y) &&
+	//(thisMaxAABB.z >= thatMinAABB.z) && (thisMaxAABB.z <= thatMaxAABB.z)))
+	//*/
+	//if (((thisMinAABB >= thatMinAABB) && (thisMinAABB <= thatMaxAABB))
+	//	||
+	//	((thisMaxAABB >= thatMinAABB) && (thisMaxAABB <= thatMaxAABB)))
+	//{
+	//	return true;
+	//}
+    //
+	//// Check if this object is within that object
+	///*
+	//if (((thisMinAABB.x >= thatMinAABB.x) && (thisMaxAABB.x <= thatMaxAABB.x) &&
+	//(thisMinAABB.y >= thatMinAABB.y) && (thisMaxAABB.y <= thatMaxAABB.y) &&
+	//(thisMinAABB.z >= thatMinAABB.z) && (thisMaxAABB.z <= thatMaxAABB.z))
+	//&&
+	//((thisMaxAABB.x >= thatMinAABB.x) && (thisMaxAABB.x <= thatMaxAABB.x) &&
+	//(thisMaxAABB.y >= thatMinAABB.y) && (thisMaxAABB.y <= thatMaxAABB.y) &&
+	//(thisMaxAABB.z >= thatMinAABB.z) && (thisMaxAABB.z <= thatMaxAABB.z)))
+	//*/
+	//if (((thisMinAABB >= thatMinAABB) && (thisMaxAABB <= thatMaxAABB))
+	//	&&
+	//	((thisMaxAABB >= thatMinAABB) && (thisMaxAABB <= thatMaxAABB)))
+	//	return true;
+    //
+	//// Check if that object is within this object
+	///*
+	//if (((thatMinAABB.x >= thisMinAABB.x) && (thatMinAABB.x <= thisMaxAABB.x) &&
+	//(thatMinAABB.y >= thisMinAABB.y) && (thatMinAABB.y <= thisMaxAABB.y) &&
+	//(thatMinAABB.z >= thisMinAABB.z) && (thatMinAABB.z <= thisMaxAABB.z))
+	//&&
+	//((thatMaxAABB.x >= thisMinAABB.x) && (thatMaxAABB.x <= thisMaxAABB.x) &&
+	//(thatMaxAABB.y >= thisMinAABB.y) && (thatMaxAABB.y <= thisMaxAABB.y) &&
+	//(thatMaxAABB.z >= thisMinAABB.z) && (thatMaxAABB.z <= thisMaxAABB.z)))
+	//*/
+	//if (((thatMinAABB >= thisMinAABB) && (thatMinAABB <= thisMaxAABB))
+	//	&&
+	//	((thatMaxAABB >= thisMinAABB) && (thatMaxAABB <= thisMaxAABB)))
+	//	return true;
+    //
+	//return false;
 }
 
 bool EntityManager::CheckPointToAABB(const Vector3& point, const Vector3& minAABB, const Vector3& maxAABB)
@@ -376,8 +383,8 @@ bool EntityManager::CheckPlayerCollision(const Vector3& point)
 
             // Create AABB for player
             Vector3 playerMinAABB, playerMaxAABB;
-            playerMinAABB = point + Vector3(-5, -100, -5);
-            playerMaxAABB = point + Vector3(5, 100, 5);
+            playerMinAABB = point + Vector3(-3, -1, -3);
+            playerMaxAABB = point + Vector3(3, 2, 3);
 
             //std::cout << minAABB << " | " << maxAABB << std::endl;
 

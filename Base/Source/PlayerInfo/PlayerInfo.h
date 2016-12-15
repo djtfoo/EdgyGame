@@ -103,8 +103,8 @@ private:
     
     Vector3 m_prevVelocity;
 
-    const float m_STAND_EYELEVEL = 2.f;
-    const float m_CROUCH_EYELEVEL = 0.5f;
+    const float m_STAND_EYELEVEL = 5.f;
+    const float m_CROUCH_EYELEVEL = 2.5f;
 
     float m_eyeLevel;
     float m_speed;

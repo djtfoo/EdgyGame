@@ -72,7 +72,7 @@ void CGrenade::Update(double dt)
 	}
 
 	// Check if the Grenade is already on the ground
-	if (position.y >= m_pTerrain->GetTerrainHeight(position) - 10.0f + Math::EPSILON)
+	if (position.y >= m_pTerrain->GetTerrainHeight(position) + Math::EPSILON)
 	{
 		// Update Position
 		m_fElapsedTime += dt;
@@ -88,6 +88,10 @@ void CGrenade::Update(double dt)
 			return;
 		}
 	}
+    else
+    {
+        position.y = m_pTerrain->GetTerrainHeight(position) - Math::EPSILON;
+    }
 }
 
 // Set the terrain for the player info

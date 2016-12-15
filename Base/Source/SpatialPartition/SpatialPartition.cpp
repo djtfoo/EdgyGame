@@ -203,7 +203,7 @@ void CSpatialPartition::RenderSingleGrid(Vector3 position)
     modelStack.PushMatrix();
     modelStack.Translate(0.0f, yOffset, 0.0f);
             modelStack.PushMatrix();
-            modelStack.Translate(xGridSize*xIndex - (xSize >> 1) + (xGridSize >> 1), 0.0f, zGridSize*zIndex - (zSize >> 1) + (zGridSize >> 1));
+            modelStack.Translate(xGridSize*xIndex - (xSize >> 1) + (xGridSize >> 1), 10.0f, zGridSize*zIndex - (zSize >> 1) + (zGridSize >> 1));
             modelStack.PushMatrix();
             modelStack.Scale(xGridSize, 1.0f, zGridSize);
             modelStack.Rotate(-90, 1, 0, 0);

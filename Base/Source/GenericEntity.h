@@ -17,9 +17,6 @@ public:
 	virtual void Update(double _dt);
 	virtual void Render();
 
-	// Set the maxAABB and minAABB
-	void SetAABB(Vector3 maxAABB, Vector3 minAABB);
-
 private:
 	Mesh* modelMesh;
 };
