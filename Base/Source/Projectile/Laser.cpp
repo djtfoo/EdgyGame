@@ -30,7 +30,6 @@ CLaser::CLaser(Mesh* _modelMesh)
 CLaser::~CLaser(void)
 {
 	modelMesh = NULL;
-	theSource = NULL;
 }
 
 // Set the length of the laser
@@ -105,7 +104,7 @@ void CLaser::Render(void)
 				modelStack.PushMatrix();
 					modelStack.Rotate(180 / Math::PI * angle_y, 1.0f, 0.0f, 0.0f);
 					glLineWidth(5.0f);
-					RenderHelper::RenderMesh(modelMesh);
+					RenderHelper::RenderMeshWithLight(modelMesh);
 					glLineWidth(1.0f);
 				modelStack.PopMatrix();
 			modelStack.PopMatrix();
@@ -120,7 +119,7 @@ CLaser* Create::Laser(const std::string& _meshName,
 								const float m_fLength, 
 								const float m_fLifetime, 
 								const float m_fSpeed,
-								CPlayerInfo* _source)
+								GroundEntity* _ground)
 {
 	Mesh* modelMesh = MeshBuilder::GetInstance()->GetMesh(_meshName);
 	if (modelMesh == nullptr)
@@ -131,7 +130,7 @@ CLaser* Create::Laser(const std::string& _meshName,
 	result->SetLength(m_fLength);
 	result->SetStatus(true);
 	result->SetCollider(true);
-	result->SetSource(_source);
+	result->SetGround(_ground);
 	EntityManager::GetInstance()->AddEntity(result);
 
 	Vector3 base = Vector3(1.0f, 0.0f, 0.0f);

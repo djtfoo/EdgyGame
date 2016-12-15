@@ -34,7 +34,7 @@ void CGrenadeThrow::Init(void)
 }
 
 // Discharge this weapon
-void CGrenadeThrow::Discharge(Vector3 position, Vector3 target, CPlayerInfo* _source)
+void CGrenadeThrow::Discharge(Vector3 position, Vector3 target, GroundEntity* _ground)
 {
 	if (bFire)
 	{
@@ -48,7 +48,7 @@ void CGrenadeThrow::Discharge(Vector3 position, Vector3 target, CPlayerInfo* _so
 														(target - position).Normalized(),
 														7.0f,
 														8.0f,
-														_source);
+														_ground);
 			aProjectile->SetCollider(true);
 			aProjectile->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
 			bFire = false;

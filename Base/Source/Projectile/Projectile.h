@@ -2,6 +2,7 @@
 #include "EntityBase.h"
 #include "Vector3.h"
 #include "Collider/Collider.h"
+#include "../GroundEntity.h"
 
 class Mesh;
 class CPlayerInfo;
@@ -34,10 +35,16 @@ public:
 	void SetSpeed(const float m_fSpeed);
 	// Get the speed of the projectile
 	float GetSpeed(void) const;
-	// Set the source of the projectile
-	void SetSource(CPlayerInfo* _source);
-	// Get the source of the projectile
-	CPlayerInfo* GetSource(void) const;
+
+	//// Set the source of the projectile
+	//void SetSource(CPlayerInfo* _source);
+	//// Get the source of the projectile
+	//CPlayerInfo* GetSource(void) const;
+
+    // Set ground
+    void SetGround(GroundEntity* ground);
+    // Get the ground
+    GroundEntity* GetGround(void) const;
 
 	// Update the status of this projectile
 	virtual void Update(double dt = 0.0333f);
@@ -54,8 +61,10 @@ protected:
 	float m_fSpeed;
 	// The direction of the projectile
 	Vector3 theDirection;
-	// The character which fired this projectile
-	CPlayerInfo* theSource;
+	//// The character which fired this projectile
+	//CPlayerInfo* theSource;
+
+    GroundEntity* theGround;
 };
 
 namespace Create
@@ -65,6 +74,5 @@ namespace Create
 							const Vector3& _direction, 
 							const float m_fLifetime, 
 							const float m_fSpeed,
-							CPlayerInfo* _source=NULL);
+							GroundEntity* _ground=NULL);
 };
-

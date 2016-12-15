@@ -35,8 +35,13 @@ public:
 	// Get the flag, bLaser
 	virtual bool GetIsLaser(void) const;
 
+    // Whether it is in scene graph
     bool GetIsInSceneGraph();   // Check if this entity is inside SceneGraph
     void SetInSceneGraph(const bool b_isInGraph);
+
+    // Get whether it's a low-res to render (for LOD)
+    bool GetIsLowResRender() const;
+    void SetLowResRender(bool b_lowRes);
 
     string GetName() const;
 
@@ -51,6 +56,7 @@ protected:
 	bool bLaser;
 
     bool m_bIsInSceneGraph;
+    bool b_isLowResRender;
 };
 
 #endif // ENTITY_BASE_H

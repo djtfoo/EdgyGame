@@ -33,7 +33,8 @@ CProjectile::CProjectile(Mesh* _modelMesh, string name)
 	, theDirection(0, 0, 0)
 	, m_fLifetime(-1)
 	, m_fSpeed(10.0f)
-	, theSource(NULL)
+//	, theSource(NULL)
+    , theGround(NULL)
     , EntityBase(name)
 {
 }
@@ -41,7 +42,8 @@ CProjectile::CProjectile(Mesh* _modelMesh, string name)
 CProjectile::~CProjectile(void)
 {
 	modelMesh = NULL;
-	theSource = NULL;
+    theGround = NULL;
+	//theSource = NULL;
 }
 
 // Activate the projectile. true == active, false == inactive
@@ -103,17 +105,31 @@ void CProjectile::SetSpeed(const float m_fSpeed)
 	this->m_fSpeed = m_fSpeed;
 }
 
-// Set the source of the projectile
-void CProjectile::SetSource(CPlayerInfo* _source)
+//// Set the source of the projectile
+//void CProjectile::SetSource(CPlayerInfo* _source)
+//{
+//	theSource = _source;
+//}
+//
+//// Get the source of the projectile
+//CPlayerInfo* CProjectile::GetSource(void) const
+//{
+//	return theSource;
+//}
+
+
+// Set ground
+void CProjectile::SetGround(GroundEntity* ground)
 {
-	theSource = _source;
+    this->theGround = ground;
 }
 
-// Get the source of the projectile
-CPlayerInfo* CProjectile::GetSource(void) const
+// Get the ground
+GroundEntity* CProjectile::GetGround(void) const
 {
-	return theSource;
+    return theGround;
 }
+
 
 // Update the status of this projectile
 void CProjectile::Update(double dt)
@@ -150,7 +166,7 @@ void CProjectile::Render(void)
 	modelStack.PushMatrix();
 	modelStack.Translate(position.x, position.y, position.z);
 	//modelStack.Scale(scale.x, scale.y, scale.z);
-	RenderHelper::RenderMesh(modelMesh);
+	RenderHelper::RenderMeshWithLight(modelMesh);
 	modelStack.PopMatrix();
 }
 
@@ -160,7 +176,7 @@ CProjectile* Create::Projectile(const std::string& _meshName,
 								const Vector3& _direction, 
 								const float m_fLifetime, 
 								const float m_fSpeed,
-								CPlayerInfo* _source)
+								GroundEntity* _ground)
 {
 	Mesh* modelMesh = MeshBuilder::GetInstance()->GetMesh(_meshName);
 	if (modelMesh == nullptr)
@@ -170,7 +186,7 @@ CProjectile* Create::Projectile(const std::string& _meshName,
 	result->Set(_position, _direction, m_fLifetime, m_fSpeed);
 	result->SetStatus(true);
 	result->SetCollider(true);
-	result->SetSource(_source);
+	result->SetGround(_ground);
 	EntityManager::GetInstance()->AddEntity(result);
 
 	return result;

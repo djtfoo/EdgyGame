@@ -294,7 +294,7 @@ operator* overload for matrix-vector3 multiplication
 Vector3 Mtx44::operator*(const Vector3& rhs) const {
 	float b[4];
 	for(int i = 0; i < 4; i++)
-		b[i] = a[0 * 4 + i] * rhs.x + a[1 * 4 + i] * rhs.y + a[2 * 4 + i] * rhs.z + a[3 * 4 + i] * 0;
+		b[i] = a[0 * 4 + i] * rhs.x + a[1 * 4 + i] * rhs.y + a[2 * 4 + i] * rhs.z + a[3 * 4 + i] * 1;
 	Vector3 ret(b[0], b[1], b[2]);
 	return ret;
 }
