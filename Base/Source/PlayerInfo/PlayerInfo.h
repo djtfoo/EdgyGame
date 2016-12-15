@@ -8,6 +8,10 @@
 class CPlayerInfo
 {
 protected:
+    static CPlayerInfo *s_instance;
+	CPlayerInfo(void);
+
+public:
     enum MOVEMENT_STATE     // movement speed
     {
         MOVEMENT_STATE_IDLE,
@@ -24,10 +28,6 @@ protected:
         HEIGHT_STATE_TOTAL
     };
 
-    static CPlayerInfo *s_instance;
-	CPlayerInfo(void);
-
-public:
 	static CPlayerInfo *GetInstance()
 	{
 		if (!s_instance)
@@ -78,6 +78,19 @@ public:
     // Get HeldWeapon
     HeldWeapon* GetHeldWeapon();
 
+    // For movement & collision response
+    MOVEMENT_STATE GetMovementState();
+    void SetMovementState(MOVEMENT_STATE state);
+    HEIGHT_STATE GetHeightState();
+    void SetHeightState(HEIGHT_STATE state);
+
+    bool b_setToJump;
+    float GetJumpSpeed();
+    void SetJumpSpeed(float jumpSpeed);
+    
+    float GetMovementSpeed();
+    void SetMovementSpeed(float mSpeed);
+
 	// Update
 	void Update(double dt = 0.0333f);
 
@@ -103,8 +116,8 @@ private:
     
     Vector3 m_prevVelocity;
 
-    const float m_STAND_EYELEVEL = 5.f;
-    const float m_CROUCH_EYELEVEL = 2.5f;
+    const float m_STAND_EYELEVEL;
+    const float m_CROUCH_EYELEVEL;
 
     float m_eyeLevel;
     float m_speed;

@@ -187,8 +187,8 @@ void SceneText::Init()
 
     MeshBuilder::GetInstance()->GenerateOBJ("high_res_tower", "OBJ//tower_high_res.obj");
     MeshBuilder::GetInstance()->GetMesh("high_res_tower")->textureID = LoadTGA("Image//Buildings//tower_high_res_UV.tga");
-    MeshBuilder::GetInstance()->GenerateOBJ("med_res_tower", "OBJ//tower_low_res.obj");
-    MeshBuilder::GetInstance()->GetMesh("med_res_tower")->textureID = LoadTGA("Image//Buildings//tower_low_res_UV.tga");
+    MeshBuilder::GetInstance()->GenerateOBJ("med_res_tower", "OBJ//tower_high_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("med_res_tower")->textureID = LoadTGA("Image//Buildings//tower_med_res_UV.tga");
     MeshBuilder::GetInstance()->GenerateOBJ("low_res_tower", "OBJ//tower_low_res.obj");
     MeshBuilder::GetInstance()->GetMesh("low_res_tower")->textureID = LoadTGA("Image//Buildings//tower_low_res_UV.tga");
 
@@ -266,8 +266,8 @@ void SceneText::Init()
 											 "ceiling", "carpet");
 
     // ----------- Spawn Buildings ----------- //
-    SpawnArena(Vector3(10, -0, 10));
-    SpawnTunnel(Vector3(-10, -0, -10));
+    SpawnArena(Vector3(10, 1.f, 10));
+    SpawnTunnel(Vector3(-10, 0, -10));
 	SpawnCastle(Vector3(-20, -0, 0));
 
 	// Customise the ground entity
@@ -438,7 +438,7 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     // ----------- LOW RES ----------- //
     GenericBalloon* lowResStructure = Create::Balloon("low_res_cube", Vector3(0, 0, 0));
     lowResStructure->SetCollider(false);
-    lowResStructure->SetScale(Vector3(10, 2, 10));
+    lowResStructure->SetScale(Vector3(10, 5, 10));
     lowResStructure->InitLOD("", "", "low_res_cube");
     lowResStructure->SetPosition(spawnPos);
     lowResStructure->SetLowResRender(true);
@@ -574,15 +574,15 @@ void SceneText::SpawnArena(Vector3 spawnPos)
     CSceneNode* firstStepNode = lowResNode->AddChild(firstStepBlock);
     firstStepNode->ApplyTranslate(0.f, -0.5f, 6.f);
 
-    // Second Step
-    GenericBalloon* secondStepBlock = Create::Balloon("high_res_cube", Vector3(0, 0, 0));
-    secondStepBlock->SetCollider(true);
-    secondStepBlock->SetScale(Vector3(3, 1, 1));
-    secondStepBlock->SetAABB(Vector3(1.5f, 0.5f, 0.5f), Vector3(-1.5f, -0.5f, -0.5f));
-    secondStepBlock->InitLOD("high_res_cube", "med_res_cube", "");
-    secondStepBlock->SetPosition(spawnPos);
-    CSceneNode* secondStepNode = lowResNode->AddChild(secondStepBlock);
-    secondStepNode->ApplyTranslate(0.f, 0.5f, 5.5f);
+    //// Second Step
+    //GenericBalloon* secondStepBlock = Create::Balloon("high_res_cube", Vector3(0, 0, 0));
+    //secondStepBlock->SetCollider(true);
+    //secondStepBlock->SetScale(Vector3(3, 1, 1));
+    //secondStepBlock->SetAABB(Vector3(1.5f, 0.5f, 0.5f), Vector3(-1.5f, -0.5f, -0.5f));
+    //secondStepBlock->InitLOD("high_res_cube", "med_res_cube", "");
+    //secondStepBlock->SetPosition(spawnPos);
+    //CSceneNode* secondStepNode = lowResNode->AddChild(secondStepBlock);
+    //secondStepNode->ApplyTranslate(0.f, 0.5f, 5.5f);
 }
 
 void SceneText::SpawnTunnel(Vector3 spawnPos)
@@ -742,9 +742,9 @@ void SceneText::SpawnTower(Vector3 spawnPos, CSceneNode* baseEntity)
     // Base
     GenericEntity* baseBlock = Create::Entity("high_res_tower", Vector3(0, 0, 0));
     baseBlock->SetCollider(true);
-    baseBlock->SetScale(Vector3(5, 5, 5));
+    baseBlock->SetScale(Vector3(4.f, 4.f, 4.f));
     baseBlock->SetAABB(Vector3(0.5f, 0.5f, 0.5f), Vector3(-0.5f, -0.5f, -0.5f));
-    baseBlock->InitLOD("high_res_tower", "high_res_tower", "low_res_tower");
+    baseBlock->InitLOD("high_res_tower", "med_res_tower", "low_res_tower");
 
 	CSceneNode* TowerNode = baseEntity->AddChild(baseBlock);
 	TowerNode->ApplyTranslate(spawnPos.x, spawnPos.y, spawnPos.z);

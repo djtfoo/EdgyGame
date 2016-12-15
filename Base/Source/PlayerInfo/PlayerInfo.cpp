@@ -27,6 +27,9 @@ CPlayerInfo::CPlayerInfo(void)
 	, m_pTerrain(NULL)
 //	, primaryWeapon(NULL)
 //	, secondaryWeapon(NULL)
+, m_STAND_EYELEVEL(3.f)
+, m_CROUCH_EYELEVEL(1.f)
+
 {
     m_eyeLevel = m_STAND_EYELEVEL;
     m_speed = 0.f;
@@ -36,6 +39,8 @@ CPlayerInfo::CPlayerInfo(void)
 
     m_movementState = MOVEMENT_STATE_IDLE;
     m_heightState = HEIGHT_STATE_STANDING;
+
+    b_setToJump = false;
 }
 
 CPlayerInfo::~CPlayerInfo(void)
@@ -302,15 +307,22 @@ void CPlayerInfo::Update(double dt)
         break;
     }
 
-    m_jumpSpeed += (float)(m_gravity * dt);
-    velocity.y = m_jumpSpeed;
-
     bool collisionX = false, collisionY = false, collisionZ = false;
-    collisionY = EntityManager::GetInstance()->CheckPlayerCollision(position + Vector3(0, -m_eyeLevel, 0));
+    if (!b_setToJump)
+    {
+        collisionY = EntityManager::GetInstance()->CheckPlayerCollision(dt, position + Vector3(0, -m_eyeLevel, 0), this);
+    }
+    else
+    {
+        b_setToJump = false;
+    }
 
     if (m_heightState != HEIGHT_STATE_JUMP && (position.y - m_eyeLevel <= m_pTerrain->GetTerrainHeight(position))) {
         collisionY = true;
     }
+
+    m_jumpSpeed += (float)(m_gravity * dt);
+    velocity.y = m_jumpSpeed;
 
     if (!collisionY || m_jumpSpeed > 0.f)
     {
@@ -340,7 +352,6 @@ void CPlayerInfo::Update(double dt)
     else
     {
         if (m_heightState == HEIGHT_STATE_JUMP) {   // just landed
-            m_heightState = HEIGHT_STATE_STANDING;
 
             //when landing, reduce MoveVel (impact)
             m_speed = Math::Max(0.f, m_speed - 5.f);
@@ -362,8 +373,8 @@ void CPlayerInfo::Update(double dt)
     // x and z collision
     if (m_speed > Math::EPSILON)
     {
-        collisionX = EntityManager::GetInstance()->CheckPlayerCollision(position + Vector3(5.f * velocity.x, 0, 0));
-        collisionZ = EntityManager::GetInstance()->CheckPlayerCollision(position + Vector3(0, 0, 5.f * velocity.z));
+        collisionX = EntityManager::GetInstance()->CheckPlayerCollision(dt, position + Vector3(5.f * velocity.x, 0, 0), this);
+        collisionZ = EntityManager::GetInstance()->CheckPlayerCollision(dt, position + Vector3(0, 0, 5.f * velocity.z), this);
 
         //position += velocity * m_speed * (float)(dt);
         if (!collisionX)
@@ -585,7 +596,9 @@ void CPlayerInfo::Jump()
     if (m_heightState != HEIGHT_STATE_JUMP) {
         m_heightState = HEIGHT_STATE_JUMP;
 
-        m_jumpSpeed = 80.f;    //dt not needed
+        m_jumpSpeed = 30.f;    //dt not needed
+
+        b_setToJump = true;
     }
 }
 
@@ -707,4 +720,44 @@ void CPlayerInfo::RenderWeapon()
     m_heldWeapon->Render();
 
     modelStack.PopMatrix();
+}
+
+CPlayerInfo::MOVEMENT_STATE CPlayerInfo::GetMovementState()
+{
+    return m_movementState;
+}
+
+void CPlayerInfo::SetMovementState(MOVEMENT_STATE state)
+{
+    m_movementState = state;
+}
+
+CPlayerInfo::HEIGHT_STATE CPlayerInfo::GetHeightState()
+{
+    return m_heightState;
+}
+
+void CPlayerInfo::SetHeightState(HEIGHT_STATE state)
+{
+    m_heightState = state;
+}
+
+float CPlayerInfo::GetJumpSpeed()
+{
+    return m_jumpSpeed;
+}
+
+void CPlayerInfo::SetJumpSpeed(float jumpSpeed)
+{
+    m_jumpSpeed = jumpSpeed;
+}
+
+float CPlayerInfo::GetMovementSpeed()
+{
+    return m_speed;
+}
+
+void CPlayerInfo::SetMovementSpeed(float mSpeed)
+{
+    m_speed = mSpeed;
 }

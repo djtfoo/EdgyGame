@@ -4,6 +4,8 @@
 #include "Projectile/Laser.h"
 #include "SceneGraph\SceneGraph.h"
 
+#include "BalloonBlock\GenericBalloon.h"
+
 #include <iostream>
 using namespace std;
 
@@ -353,7 +355,7 @@ bool EntityManager::CheckLineSegmentPlane(	Vector3 line_start, Vector3 line_end,
 }
 
 // Check for Player Collision
-bool EntityManager::CheckPlayerCollision(const Vector3& point)
+bool EntityManager::CheckPlayerCollision(const double dt, const Vector3& point, CPlayerInfo* player)
 {
     std::list<EntityBase*>::iterator colliderThis, colliderThisEnd;
     colliderThisEnd = entityList.end();
@@ -397,6 +399,25 @@ bool EntityManager::CheckPlayerCollision(const Vector3& point)
             if (CheckPointToAABB(point, minAABB, maxAABB)) {
 
                 // INSERT COLLISION RESPONSE HERE
+                if (player->GetHeightState() == CPlayerInfo::HEIGHT_STATE_JUMP)
+                {
+                    float VelocityLoss = Math::Max(1.5f, player->GetJumpSpeed() / 2.f);
+                    
+                    player->SetJumpSpeed(-player->GetJumpSpeed() - VelocityLoss);
+                    if (player->GetJumpSpeed() > 0.f)
+                        return false;
+                    else
+                        return true;
+                }
+                //else if (player->GetMovementState() == CPlayerInfo::MOVEMENT_STATE_RUN && point.y <= Math::EPSILON)
+                //{
+                //    float force_pushback = 5000.f;
+                //    player->SetMovementSpeed(player->GetMovementSpeed() + force_pushback * (float)(dt));
+                //    std::cout << player->GetMovementSpeed();
+                //    return false;
+                //}
+
+
                 return true;
             }
         }
@@ -429,7 +450,7 @@ bool EntityManager::CheckForCollision(void)
 				if (colliderThat == colliderThis)
 					continue;
 
-				if ((*colliderThat)->HasCollider())
+                if ((*colliderThat)->GetName() == "GenericBalloon" && (*colliderThat)->HasCollider())
 				{
 					Vector3 hitPosition = Vector3(0, 0, 0);
 
@@ -466,21 +487,26 @@ bool EntityManager::CheckForCollision(void)
 												thatMinAABB, thatMaxAABB,
 												hitPosition) == true)
 					{
-						(*colliderThis)->SetIsDone(true);
-						(*colliderThat)->SetIsDone(true);
+                        (*colliderThis)->SetIsDone(true);
+                        GenericBalloon* balloon = dynamic_cast<GenericBalloon*>(*colliderThat);
 
-                        std::cout << "COLLISION" << std::endl;
+                        balloon->SetState(GenericBalloon::DEFLATING);
 
-						// Remove from Scene Graph
-						if (CSceneGraph::GetInstance()->DeleteNode((*colliderThis)) == true)
-						{
-							cout << "*** This Entity removed ***" << endl;
-						}
-						// Remove from Scene Graph
-						if (CSceneGraph::GetInstance()->DeleteNode((*colliderThat)) == true)
-						{
-							cout << "*** That Entity removed ***" << endl;
-						}
+						//(*colliderThis)->SetIsDone(true);
+						//(*colliderThat)->SetIsDone(true);
+                        //
+                        //std::cout << "COLLISION" << std::endl;
+                        //
+						//// Remove from Scene Graph
+						//if (CSceneGraph::GetInstance()->DeleteNode((*colliderThis)) == true)
+						//{
+						//	cout << "*** This Entity removed ***" << endl;
+						//}
+						//// Remove from Scene Graph
+						//if (CSceneGraph::GetInstance()->DeleteNode((*colliderThat)) == true)
+						//{
+						//	cout << "*** That Entity removed ***" << endl;
+						//}
 
 
                         break;

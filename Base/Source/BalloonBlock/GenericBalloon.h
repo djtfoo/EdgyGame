@@ -38,8 +38,8 @@ private:
 
     // Functions to put in update
 
+    // Deflating
     void Deflate(double dt);
-
 };
 
 namespace Create
