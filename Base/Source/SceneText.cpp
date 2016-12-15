@@ -290,8 +290,9 @@ void SceneText::Init()
 											 "ceiling", "carpet");
 
     // ----------- Spawn Buildings ----------- //
-    SpawnArena(Vector3(10, 1, 10));
-    SpawnTunnel(Vector3(-10, 0, -10));
+    SpawnArena(Vector3(10, 1.f, 10));
+    SpawnTunnel(Vector3(-10, 1.f, -10));
+    SpawnArena(Vector3(-20, 1.f, 30));
 	//SpawnCastle(Vector3(-20, -0, 0));
 
 	// Customise the ground entity
@@ -333,40 +334,40 @@ void SceneText::Update(double dt)
 	EntityManager::GetInstance()->Update(dt);
 
 	// THIS WHOLE CHUNK TILL <THERE> CAN REMOVE INTO ENTITIES LOGIC! Or maybe into a scene function to keep the update clean
-	if(KeyboardController::GetInstance()->IsKeyDown('1'))
-		glEnable(GL_CULL_FACE);
-	if(KeyboardController::GetInstance()->IsKeyDown('2'))
-		glDisable(GL_CULL_FACE);
-	if(KeyboardController::GetInstance()->IsKeyDown('3'))
-		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	if(KeyboardController::GetInstance()->IsKeyDown('4'))
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	//if(KeyboardController::GetInstance()->IsKeyDown('1'))
+	//	glEnable(GL_CULL_FACE);
+	//if(KeyboardController::GetInstance()->IsKeyDown('2'))
+	//	glDisable(GL_CULL_FACE);
+	//if(KeyboardController::GetInstance()->IsKeyDown('3'))
+	//	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	//if(KeyboardController::GetInstance()->IsKeyDown('4'))
+	//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	
-	if(KeyboardController::GetInstance()->IsKeyDown('5'))
-	{
-		lights[0]->type = Light::LIGHT_POINT;
-	}
-	else if(KeyboardController::GetInstance()->IsKeyDown('6'))
-	{
-		lights[0]->type = Light::LIGHT_DIRECTIONAL;
-	}
-	else if(KeyboardController::GetInstance()->IsKeyDown('7'))
-	{
-		lights[0]->type = Light::LIGHT_SPOT;
-	}
-
-	if(KeyboardController::GetInstance()->IsKeyDown('I'))
-		lights[0]->position.z -= (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('K'))
-		lights[0]->position.z += (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('J'))
-		lights[0]->position.x -= (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('L'))
-		lights[0]->position.x += (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('O'))
-		lights[0]->position.y -= (float)(10.f * dt);
-	if(KeyboardController::GetInstance()->IsKeyDown('P'))
-		lights[0]->position.y += (float)(10.f * dt);
+	//if(KeyboardController::GetInstance()->IsKeyDown('5'))
+	//{
+	//	lights[0]->type = Light::LIGHT_POINT;
+	//}
+	//else if(KeyboardController::GetInstance()->IsKeyDown('6'))
+	//{
+	//	lights[0]->type = Light::LIGHT_DIRECTIONAL;
+	//}
+	//else if(KeyboardController::GetInstance()->IsKeyDown('7'))
+	//{
+	//	lights[0]->type = Light::LIGHT_SPOT;
+	//}
+    
+	//if(KeyboardController::GetInstance()->IsKeyDown('I'))
+	//	lights[0]->position.z -= (float)(10.f * dt);
+	//if(KeyboardController::GetInstance()->IsKeyDown('K'))
+	//	lights[0]->position.z += (float)(10.f * dt);
+	//if(KeyboardController::GetInstance()->IsKeyDown('J'))
+	//	lights[0]->position.x -= (float)(10.f * dt);
+	//if(KeyboardController::GetInstance()->IsKeyDown('L'))
+	//	lights[0]->position.x += (float)(10.f * dt);
+	//if(KeyboardController::GetInstance()->IsKeyDown('O'))
+	//	lights[0]->position.y -= (float)(10.f * dt);
+	//if(KeyboardController::GetInstance()->IsKeyDown('P'))
+	//	lights[0]->position.y += (float)(10.f * dt);
 
 	if (KeyboardController::GetInstance()->IsKeyReleased('M'))
 	{
@@ -380,26 +381,26 @@ void SceneText::Update(double dt)
 	}
 
 	// if the left mouse button was released
-	if (MouseController::GetInstance()->IsButtonReleased(MouseController::LMB))
-	{
-		cout << "Left Mouse Button was released!" << endl;
-	}
-	if (MouseController::GetInstance()->IsButtonReleased(MouseController::RMB))
-	{
-		cout << "Right Mouse Button was released!" << endl;
-	}
-	if (MouseController::GetInstance()->IsButtonReleased(MouseController::MMB))
-	{
-		cout << "Middle Mouse Button was released!" << endl;
-	}
-	if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) != 0.0)
-	{
-		cout << "Mouse Wheel has offset in X-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) << endl;
-	}
-	if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) != 0.0)
-	{
-		cout << "Mouse Wheel has offset in Y-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) << endl;
-	}
+	//if (MouseController::GetInstance()->IsButtonReleased(MouseController::LMB))
+	//{
+	//	cout << "Left Mouse Button was released!" << endl;
+	//}
+	//if (MouseController::GetInstance()->IsButtonReleased(MouseController::RMB))
+	//{
+	//	cout << "Right Mouse Button was released!" << endl;
+	//}
+	//if (MouseController::GetInstance()->IsButtonReleased(MouseController::MMB))
+	//{
+	//	cout << "Middle Mouse Button was released!" << endl;
+	//}
+	//if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) != 0.0)
+	//{
+	//	cout << "Mouse Wheel has offset in X-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_XOFFSET) << endl;
+	//}
+	//if (MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) != 0.0)
+	//{
+	//	cout << "Mouse Wheel has offset in Y-axis of " << MouseController::GetInstance()->GetMouseScrollStatus(MouseController::SCROLL_TYPE_YOFFSET) << endl;
+	//}
 	// <THERE>
 
 	// Update the player position and other details based on keyboard and mouse inputs
@@ -622,7 +623,7 @@ void SceneText::SpawnTunnel(Vector3 spawnPos)
     // Tunnel Structure Low Res
     GenericBalloon* lowResTunnel = Create::Balloon("low_res_cube", Vector3(0, 0, 0));
     lowResTunnel->SetCollider(false);
-    lowResTunnel->SetScale(Vector3(4, 11, 12));
+    lowResTunnel->SetScale(Vector3(3.f, 10, 11.f));
     lowResTunnel->InitLOD("", "", "low_res_cube");
     lowResTunnel->SetLowResRender(true);
     lowResTunnel->SetPosition(spawnPos);

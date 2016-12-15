@@ -62,7 +62,7 @@ public:
 	void Update(void);
 	// Render the spatial partition
 	void Render(Vector3* theCameraPosition = NULL);
-    void RenderSingleGrid(Vector3 position);
+    void RenderSingleGrid(const Vector3& position);
 
 	// Get xSize of the entire spatial partition
 	int GetxSize(void) const;
@@ -78,6 +78,7 @@ public:
 	int GetzNumOfGrid(void) const;
 
 	// Get a particular grid
+    CGrid GetGrid(const Vector3& position);
 	CGrid GetGrid(const int xIndex, const int zIndex) const;
 
 	// Get vector of objects from this Spatial Partition
@@ -86,7 +87,7 @@ public:
 	// Add a new object
 	void Add(EntityBase* theObject);
 	// Remove but not delete object from this grid
-	void Remove(EntityBase* theObject);
+	bool Remove(EntityBase* theObject);
 
 	// Calculate the squared distance from camera to a grid's centrepoint
 	float CalculateDistanceSquare(Vector3* theCameraPosition, const int xIndex, const int zIndex);

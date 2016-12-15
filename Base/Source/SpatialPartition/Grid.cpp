@@ -3,6 +3,7 @@
 #include "MeshBuilder.h"
 #include "RenderHelper.h"
 #include "../GenericEntity.h"
+#include "../SceneGraph/SceneGraph.h"
 
 /********************************************************************************
 Constructor
@@ -69,20 +70,48 @@ void CGrid::Update(vector<EntityBase*>* migrationList)
 	while (it != ListOfObjects.end())
 	{
 		Vector3 position = (*it)->GetPosition();
+        
+		//if (((min.x <= position.x) && (position.x <= max.x)) &&
+		//	((min.z <= position.z) && (position.z <= max.z)))
+		//{
+		//	// Move on otherwise
+		//	++it;
+		//}
+		//else
+		//{
+		//	migrationList->push_back(*it);
+        //
+		//	// Remove from this Grid
+		//	it = ListOfObjects.erase(it);
+		//}
 
-		if (((min.x <= position.x) && (position.x <= max.x)) &&
-			((min.z <= position.z) && (position.z <= max.z)))
-		{
-			// Move on otherwise
-			++it;
-		}
-		else
-		{
-			migrationList->push_back(*it);
+        CSceneNode* thisNode = CSceneGraph::GetInstance()->GetNode(*it);
+        if (thisNode != NULL)
+        {
+            Mtx44 transformMtx;
+            if (thisNode->GetParent() != NULL) {
+                transformMtx = thisNode->GetParent()->GetTransform() * thisNode->GetTransform();
+            }
+            else {
+                transformMtx = thisNode->GetTransform();
+            }
 
-			// Remove from this Grid
-			it = ListOfObjects.erase(it);
-		}
+            position = transformMtx * position;
+        }
+
+        if (((min.x <= position.x) && (position.x <= max.x)) &&
+        	((min.z <= position.z) && (position.z <= max.z)))
+        {
+        	// Move on otherwise
+        	++it;
+        }
+        else
+        {
+        	migrationList->push_back(*it);
+        
+        	// Remove from this Grid
+        	it = ListOfObjects.erase(it);
+        }
 	}
 }
 

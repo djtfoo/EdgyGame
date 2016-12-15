@@ -5,6 +5,8 @@
 #include "RenderHelper.h"
 #include "../LevelOfDetails/LevelOfDetails.h"
 
+#include "../SceneGraph/SceneGraph.h"
+
 template <typename T> vector<T> concat(vector<T> &a, vector<T> &b) {
 	vector<T> ret = vector<T>();
 	copy(a.begin(), a.end(), back_inserter(ret));
@@ -188,7 +190,7 @@ void CSpatialPartition::Render(Vector3* theCameraPosition)
 	modelStack.PopMatrix();
 }
 
-void CSpatialPartition::RenderSingleGrid(Vector3 position)
+void CSpatialPartition::RenderSingleGrid(const Vector3& position)
 {
     // Get the indices of the object's position
     int xIndex = (((int)position.x - (-xSize >> 1)) / (xSize / xNumOfGrid));
@@ -260,6 +262,15 @@ int CSpatialPartition::GetzNumOfGrid(void) const
 /********************************************************************************
  Get a particular grid
  ********************************************************************************/
+CGrid CSpatialPartition::GetGrid(const Vector3& position)
+{
+    // Get the indices of the object's position
+    int xIndex = (((int)position.x - (-xSize >> 1)) / (xSize / xNumOfGrid));
+    int zIndex = (((int)position.z - (-zSize >> 1)) / (zSize / zNumOfGrid));
+
+    return theGrid[xIndex*zNumOfGrid + zIndex];
+}
+
 CGrid CSpatialPartition::GetGrid(const int xIndex, const int yIndex) const
 {
 	return theGrid[ xIndex*zNumOfGrid + yIndex ];
@@ -282,9 +293,25 @@ vector<EntityBase*> CSpatialPartition::GetObjects(Vector3 position, const float 
  ********************************************************************************/
 void CSpatialPartition::Add(EntityBase* theObject)
 {
+    Vector3 pos = theObject->GetPosition();
+
+    CSceneNode* thisNode = CSceneGraph::GetInstance()->GetNode(theObject);
+    if (thisNode != NULL)
+    {
+        Mtx44 transformMtx;
+        if (thisNode->GetParent() != NULL) {
+            transformMtx = thisNode->GetParent()->GetTransform() * thisNode->GetTransform();
+        }
+        else {
+            transformMtx = thisNode->GetTransform();
+        }
+
+        pos = transformMtx * pos;
+    }
+
 	// Get the indices of the object's position
-	int xIndex = (((int)theObject->GetPosition().x - (-xSize >> 1)) / (xSize / xNumOfGrid));
-	int zIndex = (((int)theObject->GetPosition().z - (-zSize >> 1)) / (zSize / zNumOfGrid));
+	int xIndex = (((int)pos.x - (-xSize >> 1)) / (xSize / xNumOfGrid));
+	int zIndex = (((int)pos.z - (-zSize >> 1)) / (zSize / zNumOfGrid));
 
 	// Add them to each grid
 	if (((xIndex >= 0) && (xIndex<xNumOfGrid)) && ((zIndex >= 0) && (zIndex<zNumOfGrid)))
@@ -294,19 +321,35 @@ void CSpatialPartition::Add(EntityBase* theObject)
 }
 
 // Remove but not delete object from this grid
-void CSpatialPartition::Remove(EntityBase* theObject)
+bool CSpatialPartition::Remove(EntityBase* theObject)
 {
-	/*
-	// Get the indices of the object's position
-	int xIndex = (((int)theObject->GetPosition().x - (-xSize >> 1)) / (xSize / xNumOfGrid));
-	int zIndex = (((int)theObject->GetPosition().z - (-zSize >> 1)) / (zSize / zNumOfGrid));
+    Vector3 pos = theObject->GetPosition();
 
-	// Add them to each grid
+    CSceneNode* thisNode = CSceneGraph::GetInstance()->GetNode(theObject);
+    if (thisNode != NULL)
+    {
+        Mtx44 transformMtx;
+        if (thisNode->GetParent() != NULL) {
+            transformMtx = thisNode->GetParent()->GetTransform() * thisNode->GetTransform();
+        }
+        else {
+            transformMtx = thisNode->GetTransform();
+        }
+
+        pos = transformMtx * pos;
+    }
+
+    // Get the indices of the object's position
+    int xIndex = (((int)pos.x - (-xSize >> 1)) / (xSize / xNumOfGrid));
+    int zIndex = (((int)pos.z - (-zSize >> 1)) / (zSize / zNumOfGrid));
+
+	// Remove them form each grid
 	if (((xIndex >= 0) && (xIndex<xNumOfGrid)) && ((zIndex >= 0) && (zIndex<zNumOfGrid)))
 	{
-		theGrid[xIndex*zNumOfGrid + zIndex].Remove(theObject);
+		return theGrid[xIndex*zNumOfGrid + zIndex].Remove(theObject);
 	}
-	*/
+
+    return false;
 }
 
 /********************************************************************************

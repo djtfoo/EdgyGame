@@ -357,10 +357,12 @@ bool EntityManager::CheckLineSegmentPlane(	Vector3 line_start, Vector3 line_end,
 // Check for Player Collision
 bool EntityManager::CheckPlayerCollision(const double dt, const Vector3& point, CPlayerInfo* player)
 {
-    std::list<EntityBase*>::iterator colliderThis, colliderThisEnd;
-    colliderThisEnd = entityList.end();
+    std::vector<EntityBase*> objectsInGrid = theSpatialPartition->GetObjects(point, 1.f);
 
-    for (colliderThis = entityList.begin(); colliderThis != colliderThisEnd; ++colliderThis)
+    std::vector<EntityBase*>::iterator colliderThis, colliderThisEnd;
+    colliderThisEnd = objectsInGrid.end();
+
+    for (colliderThis = objectsInGrid.begin(); colliderThis != colliderThisEnd; ++colliderThis)
     {
         // Check if this entity is a Balloon type
         if ((*colliderThis)->GetName() == "GenericBalloon" && (*colliderThis)->HasCollider())
@@ -431,7 +433,7 @@ bool EntityManager::CheckForCollision(void)
 {
 	// Check for Collision
 	std::list<EntityBase*>::iterator colliderThis, colliderThisEnd;
-	std::list<EntityBase*>::iterator colliderThat, colliderThatEnd;
+	//std::list<EntityBase*>::iterator colliderThat, colliderThatEnd;
 
 	colliderThisEnd = entityList.end();
 	for (colliderThis = entityList.begin(); colliderThis != colliderThisEnd; ++colliderThis)
@@ -443,13 +445,13 @@ bool EntityManager::CheckForCollision(void)
 			CLaser* thisEntity = dynamic_cast<CLaser*>(*colliderThis);
 
 			// Check for collision with another collider class
-			colliderThatEnd = entityList.end();
-			int counter = 0;
-			for (colliderThat = entityList.begin(); colliderThat != colliderThatEnd; ++colliderThat)
-			{
-				if (colliderThat == colliderThis)
-					continue;
+            std::vector<EntityBase*> objectsInGrid = theSpatialPartition->GetObjects((*colliderThis)->GetPosition(), 1.f);
 
+            std::vector<EntityBase*>::iterator colliderThat, colliderThatEnd;
+            colliderThatEnd = objectsInGrid.end();
+
+            for (colliderThat = objectsInGrid.begin(); colliderThat != colliderThatEnd; ++colliderThat)
+			{
                 if ((*colliderThat)->GetName() == "GenericBalloon" && (*colliderThat)->HasCollider())
 				{
 					Vector3 hitPosition = Vector3(0, 0, 0);
@@ -491,6 +493,12 @@ bool EntityManager::CheckForCollision(void)
                         GenericBalloon* balloon = dynamic_cast<GenericBalloon*>(*colliderThat);
 
                         balloon->SetState(GenericBalloon::DEFLATING);
+                        // Remove from Spatial Partitioning
+                        if (theSpatialPartition->Remove(*colliderThat) == true)
+                        {
+                            cout << "*** REMOVED from Spatial Partitioning ***" << endl;
+                        }
+
 
 						//(*colliderThis)->SetIsDone(true);
 						//(*colliderThat)->SetIsDone(true);
@@ -514,45 +522,45 @@ bool EntityManager::CheckForCollision(void)
 				}
 			}
 		}
-		else if ((*colliderThis)->HasCollider())
-		{
-			// This object was derived from a CCollider class, then it will have Collision Detection methods
-			//CCollider *thisCollider = dynamic_cast<CCollider*>(*colliderThis);
-			EntityBase *thisEntity = dynamic_cast<EntityBase*>(*colliderThis);
-
-			// Check for collision with another collider class
-			colliderThatEnd = entityList.end();
-			int counter = 0;
-			for (colliderThat = entityList.begin(); colliderThat != colliderThatEnd; ++colliderThat)
-			{
-				if (colliderThat == colliderThis)
-					continue;
-
-				if ((*colliderThat)->HasCollider())
-				{
-					EntityBase *thatEntity = dynamic_cast<EntityBase*>(*colliderThat);
-					if (CheckSphereCollision(thisEntity, thatEntity))
-					{
-						if (CheckAABBCollision(thisEntity, thatEntity))
-						{
-							//thisEntity->SetIsDone(true);
-							//thatEntity->SetIsDone(true);
-
-       //                     // Remove from Scene Graph
-       //                     if (CSceneGraph::GetInstance()->DeleteNode((*colliderThis)) == true)
-       //                     {
-       //                         cout << "*** This Entity removed ***" << endl;
-       //                     }
-       //                     // Remove from Scene Graph
-       //                     if (CSceneGraph::GetInstance()->DeleteNode((*colliderThat)) == true)
-       //                     {
-       //                         cout << "*** That Entity removed ***" << endl;
-       //                     }
-						}
-					}
-				}
-			}
-		}
+		//else if ((*colliderThis)->HasCollider())
+		//{
+		//	// This object was derived from a CCollider class, then it will have Collision Detection methods
+		//	//CCollider *thisCollider = dynamic_cast<CCollider*>(*colliderThis);
+		//	EntityBase *thisEntity = dynamic_cast<EntityBase*>(*colliderThis);
+        //
+		//	// Check for collision with another collider class
+		//	colliderThatEnd = entityList.end();
+		//	int counter = 0;
+		//	for (colliderThat = entityList.begin(); colliderThat != colliderThatEnd; ++colliderThat)
+		//	{
+		//		if (colliderThat == colliderThis)
+		//			continue;
+        //
+		//		if ((*colliderThat)->HasCollider())
+		//		{
+		//			EntityBase *thatEntity = dynamic_cast<EntityBase*>(*colliderThat);
+		//			if (CheckSphereCollision(thisEntity, thatEntity))
+		//			{
+		//				if (CheckAABBCollision(thisEntity, thatEntity))
+		//				{
+		//					//thisEntity->SetIsDone(true);
+		//					//thatEntity->SetIsDone(true);
+        //
+       ////                     // Remove from Scene Graph
+       ////                     if (CSceneGraph::GetInstance()->DeleteNode((*colliderThis)) == true)
+       ////                     {
+       ////                         cout << "*** This Entity removed ***" << endl;
+       ////                     }
+       ////                     // Remove from Scene Graph
+       ////                     if (CSceneGraph::GetInstance()->DeleteNode((*colliderThat)) == true)
+       ////                     {
+       ////                         cout << "*** That Entity removed ***" << endl;
+       ////                     }
+		//				}
+		//			}
+		//		}
+		//	}
+		//}
 	}
 	return false;
 }
