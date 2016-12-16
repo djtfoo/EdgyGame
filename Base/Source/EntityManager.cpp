@@ -668,7 +668,7 @@ bool EntityManager::CheckForCollision(CPlayerInfo* player)
 												thatMinAABB, thatMaxAABB,
 												hitPosition) == true)
 					{
-                        //(*colliderThis)->SetIsDone(true);
+                        (*colliderThis)->SetIsDone(true);
                         GenericBalloon* balloon = dynamic_cast<GenericBalloon*>(*colliderThat);
 
                         balloon->SetState(GenericBalloon::DEFLATING);
@@ -694,7 +694,6 @@ bool EntityManager::CheckForCollision(CPlayerInfo* player)
 						//{
 						//	cout << "*** That Entity removed ***" << endl;
 						//}
-
 
                         break;
 					}
