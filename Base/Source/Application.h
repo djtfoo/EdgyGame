@@ -2,6 +2,11 @@
 #define APPLICATION_H
 
 #include "timer.h"
+#include "Vector3.h"
+
+#include <irrKlang.h>
+
+using namespace irrklang;
 
 struct GLFWwindow;
 
@@ -26,6 +31,16 @@ public:
 	int GetWindowHeight();
 	int GetWindowWidth();
 	
+    // sound engine
+    static ISoundEngine *m_soundEngine;
+    static ISound *Sound_Footstep;
+    static ISound *Sound_BalloonDeflating;
+    static ISound *Sound_GrenadeExplode;
+    static ISound *Sound_BalloonPop;
+
+    static void PlayBalloonDeflateSE(const Vector3& playerPos, const Vector3& playerTarget, const Vector3& balloonPos);
+    static void PlayGrenadeExplodeSE(const Vector3& playerPos, const Vector3& playerTarget, const Vector3& explodePos);
+
 private:
 	Application();
 	~Application();

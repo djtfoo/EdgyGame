@@ -10,6 +10,8 @@
 #include "../SpatialPartition/SpatialPartition.h"
 #include "../SceneGraph/SceneGraph.h"
 
+#include "../Application.h"
+
 #include <iostream>
 using namespace std;
 
@@ -47,6 +49,8 @@ void CGrenade::Update(double dt)
 	{
 		SetStatus(false);
 		SetIsDone(true);	// This method informs EntityManager to remove this instance
+
+        Application::PlayGrenadeExplodeSE(Vector3(0, 0, 0), Vector3(0, 1, 0), this->position);
 
 		// Check the SpatialPartition to destroy nearby objects
 		vector<EntityBase*> ExportList = CSpatialPartition::GetInstance()->GetObjects(position, 1.0f);

@@ -6,6 +6,8 @@
 
 #include "RenderHelper.h"
 
+#include "../Application.h"
+
 HeldWeapon::HeldWeapon()
 {
     weapon_type = WEAPON_NEEDLEGUN;
@@ -197,6 +199,16 @@ void HeldWeapon::WeaponAction()
         else {
             // DISCHARGE USING PLAYER'S POSITION AND TARGET
             curr_weapon->Discharge(player_pos, player_target);
+
+            switch (weapon_type)
+            {
+            case WEAPON_NEEDLEGUN:
+                Application::GetInstance().m_soundEngine->play2D("Sound//SE_shoot_needlegun.wav");
+                break;
+            case WEAPON_GRENADE:
+                Application::GetInstance().m_soundEngine->play2D("Sound//SE_grenade throw.wav");
+                break;
+            }
         }
 
     }
@@ -230,10 +242,11 @@ void HeldWeapon::WeaponAction()
         //camera.target = camera.position + camera.viewDirection;
 
         recoilTime = curr_weapon->GetTimeBetweenShots();
+
         break;
 
     case WA_RELOAD:
-        //Application::GetInstance().m_soundEngine->play2D("Sound//SE_reload.mp3");
+        Application::GetInstance().m_soundEngine->play2D("Sound//SE_reload.wav");
         break;
 
     case WA_CHANGEWEAPON:
@@ -247,12 +260,12 @@ void HeldWeapon::WeaponAction()
         //    break;
         //}
 
-        //Application::GetInstance().m_soundEngine->play2D("Sound//SE_change weapon.wav");
+        Application::GetInstance().m_soundEngine->play2D("Sound//SE_change weapon.wav");
 
         break;
 
     case WA_NOAMMO:
-        //Application::GetInstance().m_soundEngine->play2D("Sound//SE_no ammo.wav");
+        Application::GetInstance().m_soundEngine->play2D("Sound//SE_no ammo.wav");
         break;
 
     case WA_NIL:

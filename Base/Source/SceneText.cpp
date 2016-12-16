@@ -359,11 +359,41 @@ void SceneText::Init()
 	theEnemy->Init();
 
     vector<Vector3>waypoints;
-    waypoints.push_back(Vector3(0, 5, 0));
-    waypoints.push_back(Vector3(5, 5, 5));
-    waypoints.push_back(Vector3(-8, 5, 4));
-    waypoints.push_back(Vector3(7, 5, -8));
+    waypoints.push_back(Vector3(10, 5, 10));
+    waypoints.push_back(Vector3(15, 5, 15));
+    waypoints.push_back(Vector3(8, 5, 14));
+    waypoints.push_back(Vector3(17, 5, 8));
     theEnemy->SetWaypoints(waypoints);
+
+    // Create a new CEnemy
+    theEnemy = new CEnemy();
+    theEnemy->SetTerrain(groundEntity);
+    theEnemy->Init();
+
+    vector<Vector3>waypoints2;
+    waypoints.push_back(Vector3(10, 5, -15));
+    waypoints.push_back(Vector3(-10, 5, 15));
+
+    theEnemy->SetWaypoints(waypoints);
+
+    theEnemy = new CEnemy();
+    theEnemy->SetTerrain(groundEntity);
+    theEnemy->Init();
+
+    waypoints.clear();
+    waypoints.push_back(Vector3(18, 5, 18));
+    waypoints.push_back(Vector3(-18, 5, -18));
+    theEnemy->SetWaypoints(waypoints);
+
+    theEnemy = new CEnemy();
+    theEnemy->SetTerrain(groundEntity);
+    theEnemy->Init();
+
+    waypoints.clear();
+    waypoints.push_back(Vector3(-15, 5, -17));
+    waypoints.push_back(Vector3(15, 5, -17));
+    theEnemy->SetWaypoints(waypoints);
+
 
 	// Setup the 2D entities
 	float halfWindowWidth = Application::GetInstance().GetWindowWidth() / 2.0f;
@@ -391,7 +421,7 @@ void SceneText::Init()
 void SceneText::Update(double dt)
 {
 	// Update our entities
-	EntityManager::GetInstance()->Update(dt);
+	EntityManager::GetInstance()->Update(dt, playerInfo);
 
 	// THIS WHOLE CHUNK TILL <THERE> CAN REMOVE INTO ENTITIES LOGIC! Or maybe into a scene function to keep the update clean
 	//if(KeyboardController::GetInstance()->IsKeyDown('1'))
@@ -563,7 +593,7 @@ void SceneText::SpawnArena(Vector3 spawnPos)
 
     // ----------- LOW RES ----------- //
     GenericBalloon* lowResStructure = Create::Balloon("low_res_cube", Vector3(0, 0, 0));
-    lowResStructure->SetCollider(true);
+    lowResStructure->SetCollider(false);
     lowResStructure->SetScale(Vector3(10, 5, 14));
     lowResStructure->InitLOD("", "", "low_res_cube");
     lowResStructure->SetPosition(spawnPos);

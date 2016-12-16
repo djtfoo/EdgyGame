@@ -6,11 +6,13 @@
 
 #include "BalloonBlock\GenericBalloon.h"
 
+#include "Application.h"
+
 #include <iostream>
 using namespace std;
 
 // Update all entities
-void EntityManager::Update(double _dt)
+void EntityManager::Update(double _dt, CPlayerInfo* player)
 {
 	// Update all entities
 	std::list<EntityBase*>::iterator it, end;
@@ -28,7 +30,7 @@ void EntityManager::Update(double _dt)
 		theSpatialPartition->Update();
 
 	// Check for Collision amongst entities with collider properties
-	CheckForCollision();
+	CheckForCollision(player);
 
 	// Clean up entities that are done
 	it = entityList.begin();
@@ -558,6 +560,8 @@ bool EntityManager::CheckPlayerCollision(const double dt, const Vector3& point, 
                     (*colliderThis)->SetIsDone(true);
                     player->SetDiamondsLeftToCollect(player->GetDiamondsLeftToCollect() - 1);
 
+                    Application::GetInstance().m_soundEngine->play2D("Sound//SE_diamond pickup.wav");
+
                     // Remove from Spatial Partitioning
                     if (theSpatialPartition->Remove(*colliderThis) == true)
                     {
@@ -577,6 +581,8 @@ bool EntityManager::CheckPlayerCollision(const double dt, const Vector3& point, 
                         player->GetHeldWeapon()->GetCurrentWeapon()->SetMagRound(1);
 
                         (*colliderThis)->SetIsDone(true);
+
+                        Application::GetInstance().m_soundEngine->play2D("Sound//SE_ammo pickup.wav");
 
                         // Remove from Spatial Partitioning
                         if (theSpatialPartition->Remove(*colliderThis) == true)
@@ -599,7 +605,7 @@ bool EntityManager::CheckPlayerCollision(const double dt, const Vector3& point, 
 }
 
 // Check if any Collider is colliding with another Collider
-bool EntityManager::CheckForCollision(void)
+bool EntityManager::CheckForCollision(CPlayerInfo* player)
 {
 	// Check for Collision
 	std::list<EntityBase*>::iterator colliderThis, colliderThisEnd;
@@ -668,7 +674,7 @@ bool EntityManager::CheckForCollision(void)
                         {
                             cout << "*** REMOVED from Spatial Partitioning ***" << endl;
                         }
-
+                        Application::PlayBalloonDeflateSE(player->GetPos(), player->GetTarget(), (*colliderThat)->GetPosition());
 
 						//(*colliderThis)->SetIsDone(true);
 						//(*colliderThat)->SetIsDone(true);

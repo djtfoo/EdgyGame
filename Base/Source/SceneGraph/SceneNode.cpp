@@ -380,6 +380,9 @@ bool CSceneNode::Update(void)
             {
                 GetEntity()->SetIsDone(true);
                 CSceneGraph::GetInstance()->DeleteNode(this->GetEntity());
+                // Remove from Spatial Partitioning
+                CSpatialPartition::GetInstance()->Remove(this->GetEntity());
+
                 //delete (*it);
                 return true;
             }

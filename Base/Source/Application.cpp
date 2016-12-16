@@ -20,6 +20,13 @@ GLFWwindow* m_window;
 const unsigned char FPS = 60; // FPS of this game
 const unsigned int frameTime = 1000 / FPS; // time for each frame
 
+ISoundEngine* Application::m_soundEngine = NULL;
+ISound* Application::Sound_Footstep = NULL;
+ISound* Application::Sound_BalloonDeflating = NULL;
+ISound * Application::Sound_GrenadeExplode = NULL;
+ISound * Application::Sound_BalloonPop = NULL;
+
+
 //Define an error callback
 static void error_callback(int error, const char* description)
 {
@@ -106,10 +113,15 @@ void Application::Init()
 
 	// Init systems
 	GraphicsManager::GetInstance()->Init();
+
+    // start sound engine with default parameters
+    m_soundEngine = createIrrKlangDevice();
 }
 
 void Application::Run()
 {
+    //m_soundEngine->play2D("Sound//BGM_wind.wav");
+
 	SceneManager::GetInstance()->SetActiveScene("Start");
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
 	while (!glfwWindowShouldClose(m_window) && !IsKeyPressed(VK_ESCAPE))
@@ -137,6 +149,11 @@ void Application::Exit()
 	glfwDestroyWindow(m_window);
 	//Finalize and clean up GLFW
 	glfwTerminate();
+
+    // Delete the sound engine
+    if (m_soundEngine != NULL) {
+        m_soundEngine->drop();
+    }
 }
 
 void Application::UpdateInput()
@@ -190,4 +207,33 @@ int Application::GetWindowHeight()
 int Application::GetWindowWidth()
 {
 	return m_window_width;
+}
+
+void Application::PlayBalloonDeflateSE(const Vector3& playerPos, const Vector3& playerTarget, const Vector3& balloonPos)
+{
+    //Application::GetInstance().m_soundEngine->play2D("Sound//SE_enemy hit.wav");
+    Sound_BalloonDeflating = Application::GetInstance().m_soundEngine->play3D("Sound//SE_deflating.wav", vec3df(balloonPos.x, balloonPos.y, balloonPos.z), false, false, true);
+    if (Sound_BalloonDeflating) {
+        Sound_BalloonDeflating->setMinDistance(50.f);
+        m_soundEngine->setListenerPosition(vec3df(playerPos.x, playerPos.y, playerPos.z),
+            vec3df(playerTarget.x, playerTarget.y, playerTarget.z));
+        Sound_BalloonDeflating->setPosition(vec3df(balloonPos.x, balloonPos.y, balloonPos.z));
+    }
+
+    //if (Sound_BalloonDeflating->isFinished()) {
+    //    Sound_BalloonDeflating = NULL;
+    //}
+}
+
+void Application::PlayGrenadeExplodeSE(const Vector3& playerPos, const Vector3& playerTarget, const Vector3& explodePos)
+{
+    Application::GetInstance().m_soundEngine->play2D("Sound//SE_grenade explode.wav");
+
+    //Sound_BalloonDeflating = Application::GetInstance().m_soundEngine->play3D("Sound//SE_deflating.wav", vec3df(balloonPos.x, balloonPos.y, balloonPos.z), false, false, true);
+    //if (Sound_BalloonDeflating) {
+    //    Sound_BalloonDeflating->setMinDistance(50.f);
+    //    m_soundEngine->setListenerPosition(vec3df(playerPos.x, playerPos.y, playerPos.z),
+    //        vec3df(playerTarget.x, playerTarget.y, playerTarget.z));
+    //    Sound_BalloonDeflating->setPosition(vec3df(balloonPos.x, balloonPos.y, balloonPos.z));
+    //}
 }

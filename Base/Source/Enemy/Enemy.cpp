@@ -219,72 +219,122 @@ void CEnemy::Update(double dt)
 
 void CEnemy::UpdateBodyParts(double dt)
 {
-    if (!m_Head->IsDone())
+    if (m_Head)
     {
-        m_Head->SetPosition(this->position);
-        m_Head->Update(dt);
+        if (!m_Head->IsDone())
+        {
+            m_Head->SetPosition(this->position);
+            m_Head->Update(dt);
 
-        //if (m_Head->IsParentDeflate(m_Head))
-        //{
-        //    // Make Object fly away
-        //    Vector3 dir = Vector3(0, 1, 0) * dt;
-        //    m_Head->SetPosition(this->position + dir);
-        //}
+            //if (m_Head->IsParentDeflate(m_Head))
+            //{
+            //    // Make Object fly away
+            //    Vector3 dir = Vector3(0, 1, 0) * dt;
+            //    m_Head->SetPosition(this->position + dir);
+            //}
+        }
+        else
+        {
+            // Remove from Spatial Partitioning
+            CSpatialPartition::GetInstance()->Remove(this);
+
+            if (CSceneGraph::GetInstance()->GetNode(m_Head)->GetParent())
+
+            m_Head = NULL;
+        }
     }
 
-    if (!m_Body->IsDone())
+    if (m_Body)
     {
-        m_Body->SetPosition(this->position);
-        m_Body->Update(dt);
+        if (!m_Body->IsDone())
+        {
+            m_Body->SetPosition(this->position);
+            m_Body->Update(dt);
+        }
+        else
+        {
+            m_Body = NULL;
+        }
     }
 
-    if (!m_LeftArm->IsDone())
+    if (m_LeftArm)
     {
-        m_LeftArm->SetPosition(this->position);
-        m_LeftArm->Update(dt);
+        if (!m_LeftArm->IsDone())
+        {
+            m_LeftArm->SetPosition(this->position);
+            m_LeftArm->Update(dt);
 
-        //if (m_LeftArm->IsParentDeflate(m_LeftArm))
-        //{
-        //    // Make Object fly away
-        //    Vector3 dir = Vector3(-1, 0.5, 0) * dt;
-        //    m_LeftArm->SetPosition(this->position + dir);
-        //}
+            //if (m_LeftArm->IsParentDeflate(m_LeftArm))
+            //{
+            //    // Make Object fly away
+            //    Vector3 dir = Vector3(-1, 0.5, 0) * dt;
+            //    m_LeftArm->SetPosition(this->position + dir);
+            //}
+        }
+        else
+        {
+            m_LeftArm = NULL;
+        }
     }
-    if (!m_RightArm->IsDone())
-    {
-        m_RightArm->SetPosition(this->position);
-        m_RightArm->Update(dt);
 
-        //if (m_RightArm->IsParentDeflate(m_RightArm))
-        //{
-        //    // Make Object fly away
-        //    Vector3 dir = Vector3(1, 0.5, 0) * dt;
-        //    m_RightArm->SetPosition(this->position + dir);
-        //}
+    if (m_RightArm)
+    {
+        if (!m_RightArm->IsDone())
+        {
+            m_RightArm->SetPosition(this->position);
+            m_RightArm->Update(dt);
+
+            //if (m_RightArm->IsParentDeflate(m_RightArm))
+            //{
+            //    // Make Object fly away
+            //    Vector3 dir = Vector3(1, 0.5, 0) * dt;
+            //    m_RightArm->SetPosition(this->position + dir);
+            //}
+        }
+        else
+        {
+            m_RightArm = NULL;
+        }
     }
-    if (!m_LeftLeg->IsDone())
-    {
-        m_LeftLeg->SetPosition(this->position);
-        m_LeftLeg->Update(dt);
 
-        //if (m_LeftLeg->IsParentDeflate(m_LeftLeg))
-        //{
-        //    // Make Object fly away
-        //    Vector3 dir = Vector3(-1, -0.5, 0) * dt;
-        //    m_LeftLeg->SetPosition(this->position + dir);
-        //}
+    if (m_LeftLeg)
+    {
+        if (!m_LeftLeg->IsDone())
+        {
+            m_LeftLeg->SetPosition(this->position);
+            m_LeftLeg->Update(dt);
+
+            //if (m_LeftLeg->IsParentDeflate(m_LeftLeg))
+            //{
+            //    // Make Object fly away
+            //    Vector3 dir = Vector3(-1, -0.5, 0) * dt;
+            //    m_LeftLeg->SetPosition(this->position + dir);
+            //}
+        }
+        else
+        {
+            m_LeftLeg = NULL;
+        }
     }
-    if (!m_RightLeg->IsDone())
-    {
-        m_RightLeg->SetPosition(this->position);
-        m_RightLeg->Update(dt);
 
-        //if (m_RightLeg->IsParentDeflate(m_RightLeg))
-        //{
-        //    // Make Object fly away
-        //    Vector3 dir = Vector3(1, -0.5, 0) * dt;
-        //    m_RightLeg->SetPosition(this->position + dir);
-        //}
+    if (m_RightLeg)
+    {
+        if (!m_RightLeg->IsDone())
+        {
+            m_RightLeg->SetPosition(this->position);
+            m_RightLeg->Update(dt);
+
+            //if (m_RightLeg->IsParentDeflate(m_RightLeg))
+            //{
+            //    // Make Object fly away
+            //    Vector3 dir = Vector3(1, -0.5, 0) * dt;
+            //    m_RightLeg->SetPosition(this->position + dir);
+            //}
+        }
+        else
+        {
+            m_RightLeg = NULL;
+        }
     }
 }
 
