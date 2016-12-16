@@ -201,17 +201,21 @@ void SceneText::Init()
 
     MeshBuilder::GetInstance()->GenerateOBJ("high_res_windmill_base", "OBJ//Windmill//windmill_base_high_res.obj");
     MeshBuilder::GetInstance()->GetMesh("high_res_windmill_base")->textureID = LoadTGA("Image//Windmill//windmill_base_high_res_UV.tga");
+    MeshBuilder::GetInstance()->GenerateOBJ("med_res_windmill_base", "OBJ//Windmill//windmill_base_med_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("med_res_windmill_base")->textureID = LoadTGA("Image//Windmill//windmill_base_med_res_UV.tga");
     MeshBuilder::GetInstance()->GenerateOBJ("low_res_windmill_base", "OBJ//Windmill//windmill_base_low_res.obj");
     MeshBuilder::GetInstance()->GetMesh("low_res_windmill_base")->textureID = LoadTGA("Image//Windmill//windmill_base_low_res_UV.tga");
 
     MeshBuilder::GetInstance()->GenerateOBJ("high_res_windmill_rotator", "OBJ//Windmill//windmill_rotator_high_res.obj");
     MeshBuilder::GetInstance()->GetMesh("high_res_windmill_rotator")->textureID = LoadTGA("Image//Windmill//windmill_rotator_high_res_UV.tga");
+    MeshBuilder::GetInstance()->GenerateOBJ("med_res_windmill_rotator", "OBJ//Windmill//windmill_rotator_med_res.obj");
+    MeshBuilder::GetInstance()->GetMesh("med_res_windmill_rotator")->textureID = LoadTGA("Image//Windmill//windmill_rotator_med_res_UV.tga");
     MeshBuilder::GetInstance()->GenerateOBJ("low_res_windmill_rotator", "OBJ//Windmill//windmill_rotator_low_res.obj");
     MeshBuilder::GetInstance()->GetMesh("low_res_windmill_rotator")->textureID = LoadTGA("Image//Windmill//windmill_rotator_low_res_UV.tga");
 
     MeshBuilder::GetInstance()->GenerateOBJ("high_res_windmill_blades", "OBJ//Windmill//windmill_blades_high_res.obj");
     MeshBuilder::GetInstance()->GetMesh("high_res_windmill_blades")->textureID = LoadTGA("Image//Windmill//windmill_blades_high_res_UV.tga");
-    MeshBuilder::GetInstance()->GenerateOBJ("low_res_windmill_blades", "OBJ//Windmill//windmill_blades_low_res.obj");
+    MeshBuilder::GetInstance()->GenerateOBJ("low_res_windmill_blades", "OBJ//Windmill//windmill_blades_med_res.obj");
     MeshBuilder::GetInstance()->GetMesh("low_res_windmill_blades")->textureID = LoadTGA("Image//Windmill//windmill_blades_low_res_UV.tga");
 
 
@@ -344,8 +348,11 @@ void SceneText::Init()
 
     // ----------- Spawn Pickups ----------- //
     SpawnDiamond(Vector3(-50, 5, 20));
+    SpawnDiamond(Vector3(80, 5, 70));
+    SpawnDiamond(Vector3(50, 5, 0));
     SpawnAmmo(Vector3(-50, 3, 30));
-    SpawnAmmo(Vector3(-50, 3, 40));
+    SpawnAmmo(Vector3(-50, 3, 60));
+    SpawnAmmo(Vector3(40, 3, -10));
 
 	// Customise the ground entity
 	groundEntity->SetPosition(Vector3(0, 0, 0));
@@ -371,28 +378,10 @@ void SceneText::Init()
     theEnemy->Init();
 
     vector<Vector3>waypoints2;
-    waypoints.push_back(Vector3(10, 5, -15));
-    waypoints.push_back(Vector3(-10, 5, 15));
+    waypoints2.push_back(Vector3(20, 5, -15));
+    waypoints2.push_back(Vector3(-20, 5, 15));
 
-    theEnemy->SetWaypoints(waypoints);
-
-    theEnemy = new CEnemy();
-    theEnemy->SetTerrain(groundEntity);
-    theEnemy->Init();
-
-    waypoints.clear();
-    waypoints.push_back(Vector3(18, 5, 18));
-    waypoints.push_back(Vector3(-18, 5, -18));
-    theEnemy->SetWaypoints(waypoints);
-
-    theEnemy = new CEnemy();
-    theEnemy->SetTerrain(groundEntity);
-    theEnemy->Init();
-
-    waypoints.clear();
-    waypoints.push_back(Vector3(-15, 5, -17));
-    waypoints.push_back(Vector3(15, 5, -17));
-    theEnemy->SetWaypoints(waypoints);
+    theEnemy->SetWaypoints(waypoints2);
 
 
 	// Setup the 2D entities
@@ -420,6 +409,9 @@ void SceneText::Init()
 
 void SceneText::Update(double dt)
 {
+    // Update the player position and other details based on keyboard and mouse inputs
+    playerInfo->Update(dt);
+
 	// Update our entities
 	EntityManager::GetInstance()->Update(dt, playerInfo);
 
@@ -493,24 +485,21 @@ void SceneText::Update(double dt)
 	//}
 	// <THERE>
 
-	// Update the player position and other details based on keyboard and mouse inputs
-	playerInfo->Update(dt);
-
 	//camera.Update(dt); // Can put the camera into an entity rather than here (Then we don't have to write this)
 
 	GraphicsManager::GetInstance()->UpdateLights(dt);
 
 	// Update the 2 text object values. NOTE: Can do this in their own class but i'm lazy to do it now :P
 	// Eg. FPSRenderEntity or inside RenderUI for LightEntity
-    std::ostringstream ss;
-    ss.precision(5);
-    float fps = (float)(1.f / dt);
-    ss << "FPS: " << fps;
-    textObj[1]->SetText(ss.str());
+    //std::ostringstream ss;
+    //ss.precision(5);
+    //float fps = (float)(1.f / dt);
+    //ss << "FPS: " << fps;
+    //textObj[2]->SetText(ss.str());
 
     std::ostringstream ss1;
     ss1 << "Player(" << (int)playerInfo->GetPos().x << "," << (int)playerInfo->GetPos().y << "," << (int)playerInfo->GetPos().z << ")";
-    textObj[2]->SetText(ss1.str());
+    textObj[1]->SetText(ss1.str());
 
     // how many balloons destroyed
     std::ostringstream ss2;

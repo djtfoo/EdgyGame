@@ -368,7 +368,6 @@ bool CSceneNode::Update(void)
 
             for (it = theChildren.begin(); it != theChildren.end(); ++it)
             {
-
                 if ((*it)->GetEntity())
                 {
                     hasChildren = true;
@@ -379,9 +378,13 @@ bool CSceneNode::Update(void)
             if (!hasChildren)
             {
                 GetEntity()->SetIsDone(true);
-                CSceneGraph::GetInstance()->DeleteNode(this->GetEntity());
                 // Remove from Spatial Partitioning
-                CSpatialPartition::GetInstance()->Remove(this->GetEntity());
+                if (EntityManager::GetInstance()->GetSpartialPartition()->Remove(this->GetEntity()) == true)
+                {
+                    cout << "*** REMOVED from Spatial Partitioning ***" << endl;
+                }
+
+                CSceneGraph::GetInstance()->DeleteNode(this->GetEntity());
 
                 //delete (*it);
                 return true;

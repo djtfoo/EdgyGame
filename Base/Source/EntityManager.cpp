@@ -40,6 +40,7 @@ void EntityManager::Update(double _dt, CPlayerInfo* player)
 		{
 			// Delete if done
 			delete *it;
+            *it = NULL;
 			it = entityList.erase(it);
 		}
 		else
@@ -496,7 +497,9 @@ bool EntityManager::CheckPlayerCollision(const double dt, const Vector3& point, 
 
     for (colliderThis = objectsInGrid.begin(); colliderThis != colliderThisEnd; ++colliderThis)
     {
-        // Check if this entity is a Balloon type
+        if ((*colliderThis) == NULL)
+            continue;
+        // Check if this entity has a collider
         if ((*colliderThis)->HasCollider())
         {
             CCollider *thisCollider = dynamic_cast<CCollider*>(*colliderThis);
@@ -665,15 +668,15 @@ bool EntityManager::CheckForCollision(CPlayerInfo* player)
 												thatMinAABB, thatMaxAABB,
 												hitPosition) == true)
 					{
-                        (*colliderThis)->SetIsDone(true);
+                        //(*colliderThis)->SetIsDone(true);
                         GenericBalloon* balloon = dynamic_cast<GenericBalloon*>(*colliderThat);
 
                         balloon->SetState(GenericBalloon::DEFLATING);
-                        // Remove from Spatial Partitioning
-                        if (theSpatialPartition->Remove(*colliderThat) == true)
-                        {
-                            cout << "*** REMOVED from Spatial Partitioning ***" << endl;
-                        }
+                        //// Remove from Spatial Partitioning
+                        //if (theSpatialPartition->Remove(*colliderThat) == true)
+                        //{
+                        //    cout << "*** REMOVED from Spatial Partitioning ***" << endl;
+                        //}
                         Application::PlayBalloonDeflateSE(player->GetPos(), player->GetTarget(), (*colliderThat)->GetPosition());
 
 						//(*colliderThis)->SetIsDone(true);

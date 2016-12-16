@@ -45,6 +45,12 @@ void GenericBalloon::Update(double dt)
         {
             cout << "*** That Entity removed ***" << endl;
         }
+        // Remove from Spatial Partitioning
+        if (EntityManager::GetInstance()->GetSpartialPartition()->Remove(this) == true)
+        {
+            cout << "*** REMOVED from Spatial Partitioning ***" << endl;
+        }
+
         break;
     default:
         break;

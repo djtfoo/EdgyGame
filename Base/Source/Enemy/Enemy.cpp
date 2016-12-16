@@ -53,13 +53,13 @@ void CEnemy::Init()
     // Add to EntityManager
     EntityManager::GetInstance()->AddEntity(this, true);
 
-	// --------- Set up individual Models --------- // 
+    // --------- Set up individual Models --------- // 
 
     // Body
     m_Body = Create::Balloon("high_res_enemy_body", Vector3(0, 0, 0));
     m_Body->SetCollider(true);
     m_Body->SetScale(Vector3(1, 1, 1));
-    m_Body->SetAABB((m_Body->GetScale() * 0.5), -(m_Body->GetScale() * 0.5));
+    m_Body->SetAABB((m_Body->GetScale() * 0.8), -(m_Body->GetScale() * 0.8));
     m_Body->InitLOD("high_res_enemy_body", "low_res_enemy_body", "");
     m_Body->SetPosition(this->position);
     CSceneNode* EnemyBodyNode = lowResNode->AddChild(m_Body);
@@ -68,7 +68,7 @@ void CEnemy::Init()
     m_Head = Create::Balloon("high_res_enemy_head", Vector3(0, 0, 0));
     m_Head->SetCollider(true);
     m_Head->SetScale(Vector3(1, 1, 1));
-    m_Head->SetAABB((m_Head->GetScale() * 0.5), -(m_Head->GetScale() * 0.5));
+    m_Head->SetAABB((m_Head->GetScale() * 0.8), -(m_Head->GetScale() * 0.8));
     m_Head->InitLOD("high_res_enemy_head", "low_res_enemy_head", "");
     m_Head->SetPosition(this->position);
     CSceneNode* EnemyHeadNode = EnemyBodyNode->AddChild(m_Head);
@@ -77,8 +77,8 @@ void CEnemy::Init()
     // L-Arm
     m_LeftArm = Create::Balloon("high_res_enemy_arm", Vector3(0, 0, 0));
     m_LeftArm->SetCollider(true);
-    m_LeftArm->SetScale(Vector3(1, 0.8, 1));
-    m_LeftArm->SetAABB((m_LeftArm->GetScale() * 0.5), -(m_LeftArm->GetScale() * 0.5));
+    m_LeftArm->SetScale(Vector3(1, 0.5, 1));
+    m_LeftArm->SetAABB((m_LeftArm->GetScale() * 0.8), -(m_LeftArm->GetScale() * 0.8));
     m_LeftArm->InitLOD("high_res_enemy_arm", "low_res_enemy_arm", "");
     m_LeftArm->SetPosition(this->position);
     CSceneNode* EnemyarmNode = EnemyBodyNode->AddChild(m_LeftArm);
@@ -93,8 +93,8 @@ void CEnemy::Init()
     // R-Arm
     m_RightArm = Create::Balloon("high_res_enemy_arm", Vector3(0, 0, 0));
     m_RightArm->SetCollider(true);
-    m_RightArm->SetScale(Vector3(1, 0.8, 1));
-    m_RightArm->SetAABB((m_RightArm->GetScale() * 0.5), -(m_RightArm->GetScale() * 0.5));
+    m_RightArm->SetScale(Vector3(1, 0.5, 1));
+    m_RightArm->SetAABB((m_RightArm->GetScale() * 0.8), -(m_RightArm->GetScale() * 0.8));
     m_RightArm->InitLOD("high_res_enemy_arm", "low_res_enemy_arm", "");
     m_RightArm->SetPosition(this->position);
     EnemyarmNode = EnemyBodyNode->AddChild(m_RightArm);
@@ -111,7 +111,7 @@ void CEnemy::Init()
     m_LeftLeg = Create::Balloon("high_res_enemy_leg", Vector3(0, 0, 0));
     m_LeftLeg->SetCollider(true);
     m_LeftLeg->SetScale(Vector3(0.5, 1, 1));
-    m_LeftLeg->SetAABB((m_LeftLeg->GetScale() * 0.5), -(m_LeftLeg->GetScale() * 0.5));
+    m_LeftLeg->SetAABB((m_LeftLeg->GetScale() * 0.8), -(m_LeftLeg->GetScale() * 0.8));
     m_LeftLeg->InitLOD("high_res_enemy_leg", "low_res_enemy_leg", "");
     m_LeftLeg->SetPosition(this->position);
     CSceneNode* EnemylegNode = EnemyBodyNode->AddChild(m_LeftLeg);
@@ -121,7 +121,7 @@ void CEnemy::Init()
     m_RightLeg = Create::Balloon("high_res_enemy_leg", Vector3(0, 0, 0));
     m_RightLeg->SetCollider(true);
     m_RightLeg->SetScale(Vector3(0.5, 1, 1));
-    m_RightLeg->SetAABB((m_RightLeg->GetScale() * 0.5), -(m_RightLeg->GetScale() * 0.5));
+    m_RightLeg->SetAABB((m_RightLeg->GetScale() * 0.8), -(m_RightLeg->GetScale() * 0.8));
     m_RightLeg->InitLOD("high_res_enemy_leg", "low_res_enemy_leg", "");
     m_RightLeg->SetPosition(this->position);
     EnemylegNode = EnemyBodyNode->AddChild(m_RightLeg);
@@ -235,11 +235,6 @@ void CEnemy::UpdateBodyParts(double dt)
         }
         else
         {
-            // Remove from Spatial Partitioning
-            CSpatialPartition::GetInstance()->Remove(this);
-
-            if (CSceneGraph::GetInstance()->GetNode(m_Head)->GetParent())
-
             m_Head = NULL;
         }
     }
@@ -253,6 +248,7 @@ void CEnemy::UpdateBodyParts(double dt)
         }
         else
         {
+            std::cout << "BOO'";
             m_Body = NULL;
         }
     }
