@@ -40,15 +40,16 @@ void GenericBalloon::Update(double dt)
         break;
     case GenericBalloon::DEFLATED:
         this->SetIsDone(true);
-        // Remove from Scene Graph
+		// Remove from Spatial Partitioning
+		if (EntityManager::GetInstance()->GetSpartialPartition()->Remove(this) == true)
+		{
+			cout << "*** REMOVED from Spatial Partitioning ***" << endl;
+		}
+
+		// Remove from Scene Graph
         if (CSceneGraph::GetInstance()->DeleteNode(this) == true)
         {
             cout << "*** That Entity removed ***" << endl;
-        }
-        // Remove from Spatial Partitioning
-        if (EntityManager::GetInstance()->GetSpartialPartition()->Remove(this) == true)
-        {
-            cout << "*** REMOVED from Spatial Partitioning ***" << endl;
         }
 
         break;

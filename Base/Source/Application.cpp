@@ -14,6 +14,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//Include Lua system
+#include "LuaInterface.h"
+
 #include "SceneText.h"
 
 GLFWwindow* m_window;
@@ -61,6 +64,13 @@ Application::~Application()
 
 void Application::Init()
 {
+    // Init the Lua system
+    CLuaInterface::GetInstance()->Init();
+
+    // Get the OpenGL resolution
+    m_window_width = CLuaInterface::GetInstance()->GetIntValue("width");
+    m_window_height = CLuaInterface::GetInstance()->GetIntValue("height");
+
 	//Set the error callback
 	glfwSetErrorCallback(error_callback);
 

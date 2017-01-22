@@ -420,10 +420,10 @@ void SceneText::Update(double dt)
 	//	glEnable(GL_CULL_FACE);
 	//if(KeyboardController::GetInstance()->IsKeyDown('2'))
 	//	glDisable(GL_CULL_FACE);
-	//if(KeyboardController::GetInstance()->IsKeyDown('3'))
-	//	glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-	//if(KeyboardController::GetInstance()->IsKeyDown('4'))
-	//	glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	if(KeyboardController::GetInstance()->IsKeyDown('3'))
+		glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+	if(KeyboardController::GetInstance()->IsKeyDown('4'))
+		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 	
 	//if(KeyboardController::GetInstance()->IsKeyDown('5'))
 	//{

@@ -499,6 +499,10 @@ bool EntityManager::CheckPlayerCollision(const double dt, const Vector3& point, 
     {
         if ((*colliderThis) == NULL)
             continue;
+
+		if ((*colliderThis)->GetIsLowResRender())
+			continue;
+
         // Check if this entity has a collider
         if ((*colliderThis)->HasCollider())
         {

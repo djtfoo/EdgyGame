@@ -58,7 +58,7 @@ void CEnemy::Init()
     // Body
     m_Body = Create::Balloon("high_res_enemy_body", Vector3(0, 0, 0));
     m_Body->SetCollider(true);
-    m_Body->SetScale(Vector3(1, 1, 1));
+    m_Body->SetScale(Vector3(1.f, 1.f, 1.f));
     m_Body->SetAABB((m_Body->GetScale() * 0.8), -(m_Body->GetScale() * 0.8));
     m_Body->InitLOD("high_res_enemy_body", "low_res_enemy_body", "");
     m_Body->SetPosition(this->position);
@@ -224,7 +224,7 @@ void CEnemy::UpdateBodyParts(double dt)
         if (!m_Head->IsDone())
         {
             m_Head->SetPosition(this->position);
-            m_Head->Update(dt);
+            //m_Head->Update(dt);
 
             //if (m_Head->IsParentDeflate(m_Head))
             //{
@@ -244,11 +244,10 @@ void CEnemy::UpdateBodyParts(double dt)
         if (!m_Body->IsDone())
         {
             m_Body->SetPosition(this->position);
-            m_Body->Update(dt);
+            //m_Body->Update(dt);
         }
         else
         {
-            std::cout << "BOO'";
             m_Body = NULL;
         }
     }
@@ -258,7 +257,7 @@ void CEnemy::UpdateBodyParts(double dt)
         if (!m_LeftArm->IsDone())
         {
             m_LeftArm->SetPosition(this->position);
-            m_LeftArm->Update(dt);
+            //m_LeftArm->Update(dt);
 
             //if (m_LeftArm->IsParentDeflate(m_LeftArm))
             //{
@@ -278,7 +277,7 @@ void CEnemy::UpdateBodyParts(double dt)
         if (!m_RightArm->IsDone())
         {
             m_RightArm->SetPosition(this->position);
-            m_RightArm->Update(dt);
+            //m_RightArm->Update(dt);
 
             //if (m_RightArm->IsParentDeflate(m_RightArm))
             //{
@@ -298,7 +297,7 @@ void CEnemy::UpdateBodyParts(double dt)
         if (!m_LeftLeg->IsDone())
         {
             m_LeftLeg->SetPosition(this->position);
-            m_LeftLeg->Update(dt);
+            //m_LeftLeg->Update(dt);
 
             //if (m_LeftLeg->IsParentDeflate(m_LeftLeg))
             //{
@@ -318,7 +317,7 @@ void CEnemy::UpdateBodyParts(double dt)
         if (!m_RightLeg->IsDone())
         {
             m_RightLeg->SetPosition(this->position);
-            m_RightLeg->Update(dt);
+            //m_RightLeg->Update(dt);
 
             //if (m_RightLeg->IsParentDeflate(m_RightLeg))
             //{

@@ -25,6 +25,7 @@ void CSceneNode::Destroy(void)
 	{
 		(*it)->Destroy();
 		delete *it;
+		*it = NULL;
 		theChildren.erase(it);
 	}
 
@@ -115,6 +116,7 @@ bool CSceneNode::DeleteChild(EntityBase* theEntity)
 				}
 				(*it)->GetEntity()->SetIsDone(true);
 				delete *it;
+				*it = NULL;
 				it = theChildren.erase(it);
 			}
 		}
