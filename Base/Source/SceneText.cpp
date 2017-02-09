@@ -27,6 +27,8 @@
 
 #include "RenderHelper.h"
 
+#include "../Lua/LuaInterface.h"
+
 #include <iostream>
 using namespace std;
 

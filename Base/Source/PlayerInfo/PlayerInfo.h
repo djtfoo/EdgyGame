@@ -150,4 +150,10 @@ private:
     HeldWeapon* m_heldWeapon;   // shift CWeaponInfo weapons here
 
     int m_diamondsLeftToCollect;
+
+    // Keys to move the player
+    char keyMoveForward;
+    char keyMoveBackward;
+    char keyMoveLeft;
+    char keyMoveRight;
 };
