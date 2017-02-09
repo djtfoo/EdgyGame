@@ -59,7 +59,10 @@ bool CSceneNode::SetEntity(EntityBase* theEntity)
 // Get the ID for this node
 EntityBase* CSceneNode::GetEntity(void) const
 {
-	return theEntity;
+    if (theEntity)
+	    return theEntity;
+
+    return NULL;
 }
 
 // Set a parent to this node
@@ -71,7 +74,10 @@ void CSceneNode::SetParent(CSceneNode* theParent)
 // Get parent of this node
 CSceneNode* CSceneNode::GetParent(void) const
 {
-	return theParent;
+    if (theParent)
+	    return theParent;
+
+    return NULL;
 }
 
 // Add a child to this node

@@ -368,7 +368,7 @@ void SceneText::Init()
 	theEnemy->Init();
 
     vector<Vector3>waypoints;
-    waypoints.push_back(Vector3(10, 5, 10));
+    waypoints.push_back(Vector3(-50, 5, 50));
     waypoints.push_back(Vector3(15, 5, 15));
     waypoints.push_back(Vector3(8, 5, 14));
     waypoints.push_back(Vector3(17, 5, 8));
@@ -380,7 +380,7 @@ void SceneText::Init()
     theEnemy->Init();
 
     vector<Vector3>waypoints2;
-    waypoints2.push_back(Vector3(20, 5, -15));
+    waypoints2.push_back(Vector3(100, 5, -15));
     waypoints2.push_back(Vector3(-20, 5, 15));
 
     theEnemy->SetWaypoints(waypoints2);

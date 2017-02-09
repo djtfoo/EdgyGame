@@ -514,15 +514,19 @@ bool EntityManager::CheckPlayerCollision(const double dt, const Vector3& point, 
                 Mtx44 transformMtx;
                 transformMtx.SetToIdentity();
                 CSceneNode* node = CSceneGraph::GetInstance()->GetNode(*colliderThis);
-                if (node->GetParent() != NULL) {
-                    transformMtx = node->GetParent()->GetTransform() * node->GetTransform();
-                }
-                else {
-                    transformMtx = node->GetTransform();
-                }
 
-                minAABB = transformMtx * ((*colliderThis)->GetPosition() + thisCollider->GetMinAABB());
-                maxAABB = transformMtx * ((*colliderThis)->GetPosition() + thisCollider->GetMaxAABB());
+                if (node)
+                {
+                    if (node->GetParent() != NULL) {
+                        transformMtx = node->GetParent()->GetTransform() * node->GetTransform();
+                    }
+                    else {
+                        transformMtx = node->GetTransform();
+                    }
+
+                    minAABB = transformMtx * ((*colliderThis)->GetPosition() + thisCollider->GetMinAABB());
+                    maxAABB = transformMtx * ((*colliderThis)->GetPosition() + thisCollider->GetMaxAABB());
+                }
             }
             else {
                 minAABB = (*colliderThis)->GetPosition() + thisCollider->GetMinAABB();

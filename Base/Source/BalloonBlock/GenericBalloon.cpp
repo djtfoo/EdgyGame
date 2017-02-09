@@ -6,6 +6,8 @@
 
 GenericBalloon::GenericBalloon(Mesh* _modelMesh)
     : GenericEntity(_modelMesh, "GenericBalloon")
+    , m_type(GREEN)
+    , m_state(ALIVE)
 {
 
 }
