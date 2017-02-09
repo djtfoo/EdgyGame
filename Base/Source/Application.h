@@ -4,6 +4,8 @@
 #include "timer.h"
 #include "Vector3.h"
 
+#include "ShaderProgram.h"
+
 #include <irrKlang.h>
 
 using namespace irrklang;
@@ -21,6 +23,8 @@ public:
 	void Init();
 	void Run();
 	void Exit();
+
+    void InitDisplay(); // initialise the OpenGL environment here
 
 	void UpdateInput();
 	void PostInputUpdate();
@@ -55,6 +59,9 @@ private:
 
 	//Declare a window object
 	StopWatch m_timer;
+
+    // Pointer to shader program
+    ShaderProgram* currProg;
 };
 
 #endif

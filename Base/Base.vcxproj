@@ -34,6 +34,8 @@
     <ClCompile Include="Source\SceneGraph\SceneNode.cpp" />
     <ClCompile Include="Source\SceneGraph\Transform.cpp" />
     <ClCompile Include="Source\SceneGraph\UpdateTransformation.cpp" />
+    <ClCompile Include="Source\Scenes\SceneIntro.cpp" />
+    <ClCompile Include="Source\Scenes\SceneMenu.cpp" />
     <ClCompile Include="Source\SceneText.cpp" />
     <ClCompile Include="Source\SkyBox\SkyBoxEntity.cpp" />
     <ClCompile Include="Source\SpatialPartition\Grid.cpp" />
@@ -75,6 +77,8 @@
     <ClInclude Include="Source\SceneGraph\SceneNode.h" />
     <ClInclude Include="Source\SceneGraph\Transform.h" />
     <ClInclude Include="Source\SceneGraph\UpdateTransformation.h" />
+    <ClInclude Include="Source\Scenes\SceneIntro.h" />
+    <ClInclude Include="Source\Scenes\SceneMenu.h" />
     <ClInclude Include="Source\SceneText.h" />
     <ClInclude Include="Source\SkyBox\SkyBoxEntity.h" />
     <ClInclude Include="Source\SpatialPartition\Grid.h" />

@@ -31,7 +31,7 @@ public:
 	virtual void Exit();
 
 private:
-	SceneText(SceneManager* _sceneMgr); // This is used to register to SceneManager
+	//SceneText(SceneManager* _sceneMgr); // This is used to register to SceneManager
 
 	ShaderProgram* currProg;
 	CPlayerInfo* playerInfo;
@@ -44,7 +44,7 @@ private:
 	GenericEntity* theCube;
     CEnemy* theEnemy;
 
-	static SceneText* sInstance; // The pointer to the object that gets registered
+	//static SceneText* sInstance; // The pointer to the object that gets registered
 
     // Fucntions to spawn buildings
     void SpawnArena(Vector3 spawnPos); 

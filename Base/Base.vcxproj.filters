@@ -49,6 +49,9 @@
     <Filter Include="Header Files\Enemy\Waypoint">
       <UniqueIdentifier>{58fc019e-7870-44ac-96c5-2551c50ca4c0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Scenes">
+      <UniqueIdentifier>{0436628e-426d-4033-9c0e-fc5ad0229d79}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source\Application.cpp">
@@ -155,6 +158,12 @@
     </ClCompile>
     <ClCompile Include="Source\Enemy\Waypoint\WaypointManager.cpp">
       <Filter>Header Files\Enemy\Waypoint</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scenes\SceneIntro.cpp">
+      <Filter>Scenes</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\Scenes\SceneMenu.cpp">
+      <Filter>Scenes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -274,6 +283,12 @@
     </ClInclude>
     <ClInclude Include="Source\Enemy\Waypoint\WaypointManager.h">
       <Filter>Header Files\Enemy\Waypoint</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scenes\SceneIntro.h">
+      <Filter>Scenes</Filter>
+    </ClInclude>
+    <ClInclude Include="Source\Scenes\SceneMenu.h">
+      <Filter>Scenes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

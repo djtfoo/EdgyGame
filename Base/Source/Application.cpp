@@ -17,7 +17,11 @@
 //Include Lua system
 #include "LuaInterface.h"
 
+// Scenes
 #include "SceneText.h"
+#include "Scenes/SceneIntro.h"
+#include "Scenes/SceneMenu.h"
+
 
 GLFWwindow* m_window;
 const unsigned char FPS = 60; // FPS of this game
@@ -126,13 +130,70 @@ void Application::Init()
 
     // start sound engine with default parameters
     m_soundEngine = createIrrKlangDevice();
+
+    // Create the Game States
+    SceneManager::GetInstance()->AddScene("IntroState", new SceneIntro());
+    SceneManager::GetInstance()->AddScene("MenuState", new SceneMenu());
+    SceneManager::GetInstance()->AddScene("GameState", new SceneText());
+
+    SceneManager::GetInstance()->SetActiveScene("IntroState");
+}
+
+void Application::InitDisplay()
+{
+    currProg = GraphicsManager::GetInstance()->LoadShader("default", "Shader//Texture.vertexshader", "Shader//Texture.fragmentshader");
+
+    // Tell the shader program to store these uniform locations
+    currProg->AddUniform("MVP");
+    currProg->AddUniform("MV");
+    currProg->AddUniform("MV_inverse_transpose");
+    currProg->AddUniform("material.kAmbient");
+    currProg->AddUniform("material.kDiffuse");
+    currProg->AddUniform("material.kSpecular");
+    currProg->AddUniform("material.kShininess");
+    currProg->AddUniform("lightEnabled");
+    currProg->AddUniform("numLights");
+    currProg->AddUniform("lights[0].type");
+    currProg->AddUniform("lights[0].position_cameraspace");
+    currProg->AddUniform("lights[0].color");
+    currProg->AddUniform("lights[0].power");
+    currProg->AddUniform("lights[0].kC");
+    currProg->AddUniform("lights[0].kL");
+    currProg->AddUniform("lights[0].kQ");
+    currProg->AddUniform("lights[0].spotDirection");
+    currProg->AddUniform("lights[0].cosCutoff");
+    currProg->AddUniform("lights[0].cosInner");
+    currProg->AddUniform("lights[0].exponent");
+    currProg->AddUniform("lights[1].type");
+    currProg->AddUniform("lights[1].position_cameraspace");
+    currProg->AddUniform("lights[1].color");
+    currProg->AddUniform("lights[1].power");
+    currProg->AddUniform("lights[1].kC");
+    currProg->AddUniform("lights[1].kL");
+    currProg->AddUniform("lights[1].kQ");
+    currProg->AddUniform("lights[1].spotDirection");
+    currProg->AddUniform("lights[1].cosCutoff");
+    currProg->AddUniform("lights[1].cosInner");
+    currProg->AddUniform("lights[1].exponent");
+    currProg->AddUniform("colorTextureEnabled");
+    currProg->AddUniform("colorTexture");
+    currProg->AddUniform("textEnabled");
+    currProg->AddUniform("textColor");
+
+    // Tell the graphics manager to use the shader we just loaded
+    GraphicsManager::GetInstance()->SetActiveShader("default");
+
+    currProg->UpdateInt("numLights", 1);
+    currProg->UpdateInt("textEnabled", 0);
 }
 
 void Application::Run()
 {
     //m_soundEngine->play2D("Sound//BGM_wind.wav");
 
-	SceneManager::GetInstance()->SetActiveScene("Start");
+    InitDisplay();
+
+	//SceneManager::GetInstance()->SetActiveScene("Start");
 	m_timer.startTimer();    // Start timer to calculate how long it takes to render this frame
 	while (!glfwWindowShouldClose(m_window) && !IsKeyPressed(VK_ESCAPE))
 	{
